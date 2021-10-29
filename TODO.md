@@ -1,4 +1,3 @@
-- license
 - examine (anything => auto take, auto use not in inv, otherwise describe)
     - becomes target item (for using inventory item)
     - should it be target instead of examine?

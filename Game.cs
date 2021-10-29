@@ -4,18 +4,19 @@ using System.Linq;
 
 namespace csif
 {
-    public class Game
+    abstract public class Game
     {
         public static Game instance = null;
 
-        private Room curRoom = null;
+        public Room CurRoom { get; protected set; } = null;
+
         private List<Item> inventory = new List<Item>();
 
         private Dictionary<string, Action<string[]>> commandDict = new Dictionary<string, Action<string[]>>();
         private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
         private bool isRunning = false;
 
-        public Game()
+        public Game(string title, string author)
         {
             if (instance != null)
                 throw new Exception("Attempted to create second Game instance");
@@ -24,11 +25,9 @@ namespace csif
 
             LoadCommands();
             LoadRooms();
-        }
+            Console.WriteLine();
 
-        public Game(string filename) : this()
-        {
-            // TODO load from file
+            Console.WriteLine($"{title} by {author}");
         }
 
         public void Run()
@@ -46,15 +45,29 @@ namespace csif
             }
         }
 
+        protected abstract void LoadRooms();
+
+        private void CommandExamine(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("What would you like to examine?");
+                return;
+            }
+
+            var item = CurRoom.FindItem(args);
+            item.WriteDesc();
+        }
+
         private void CommandLook(string[] args)
         {
-            if (curRoom == null)
+            if (CurRoom == null)
             {
                 Console.WriteLine("You are nowhere.");
                 return;
             }
 
-            curRoom.WriteAll();
+            CurRoom.WriteAll();
         }
 
         private void CommandMove(string[] args)
@@ -78,7 +91,7 @@ namespace csif
             }
 
             var direction = (Room.Direction)result;
-            var newRoom = curRoom.GetExit(direction);
+            var newRoom = CurRoom.GetExit(direction);
             if (newRoom == null)
             {
                 Console.WriteLine($"You see no exit {direction.ToString().ToLower()} from here.");
@@ -86,7 +99,7 @@ namespace csif
             }
 
             Console.WriteLine($"You go {direction.ToString().ToLower()}.");
-            curRoom = newRoom;
+            CurRoom = newRoom;
             RunCommand("look");
         }
 
@@ -98,6 +111,7 @@ namespace csif
 
         private void LoadCommands()
         {
+            commandDict.Add("examine", CommandExamine);
             commandDict.Add("move", CommandMove);
             commandDict.Add("look", CommandLook);
             commandDict.Add("quit", CommandQuit);
@@ -109,6 +123,8 @@ namespace csif
                 LoadMoveCommand(dirstr);
             }
 
+            aliasDict.Add("ex", "examine");
+            aliasDict.Add("x", "examine");
             aliasDict.Add("l", "look");
 
             // movement aliases
@@ -131,16 +147,6 @@ namespace csif
             var lowerDir = direction.ToLower();
             commandDict.Add(lowerDir,
                 (string[] args) => { CommandMove(new string[] { lowerDir }); });
-        }
-
-        private void LoadRooms()
-        {
-            var bedroom = new Room("Bedroom", "It's a bedroom.");
-
-            var hall = new Room("Hall", "It's a hall.");
-            bedroom.SetExit(Room.Direction.West, hall);
-
-            curRoom = bedroom;
         }
 
         private void Parse(string input)
@@ -186,6 +192,5 @@ namespace csif
             }
             return false;
         }
-
     }
 }

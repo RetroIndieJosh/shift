@@ -6,7 +6,7 @@ Released under a permissive GPL v3 license. See LICENSE.txt for more information
 
 A simple interactive fiction system modeled after behaviors in 3D survival horror games to serve as an outlining and prototyping tool for that style of game.
 
-Currently under development, so the following description may include unimplemented features.
+Currently under development, so the following description may include unimplemented or incomplete features.
 
 Commands are simplified to movement, `LOOK`, `EXAMINE`, and `USE`:
 

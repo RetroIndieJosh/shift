@@ -23,18 +23,69 @@ namespace csif
             items.Add(item);
         }
 
+        public void AddItems(Item[] item)
+        {
+            this.items.AddRange(items);
+        }
+
+        // TODO ambiguity handling (multiple matching items)
+        public Item FindItem(string[] args)
+        {
+            foreach (var item in items)
+            {
+                if (item.Matches(args))
+                    return item;
+            }
+            return null;
+        }
+
         public Room GetExit(Direction direction)
         {
             return exits[(int)direction];
         }
 
-        public void SetExit(Direction direction, Room room)
+        public Direction GetOppositeDirection(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.East:
+                    return Direction.West;
+                case Direction.North:
+                    return Direction.South;
+                case Direction.South:
+                    return Direction.North;
+                case Direction.West:
+                    return Direction.East;
+                case Direction.Northeast:
+                    return Direction.Southwest;
+                case Direction.Northwest:
+                    return Direction.Southeast;
+                case Direction.Southeast:
+                    return Direction.Northwest;
+                case Direction.Southwest:
+                    return Direction.Northeast;
+                case Direction.Down:
+                    return Direction.Up;
+                case Direction.Up:
+                    return Direction.Down;
+                default:
+                    return Direction.Count;
+            }
+        }
+
+        public void SetExit(Direction direction, Room targetRoom, bool oneway = false)
         {
             int dirint = (int)direction;
             if (exits[dirint] != null)
                 Console.WriteLine($"WARNING: overwriting {direction} exit from "
-                    + $"{this} (orignally to {exits[dirint]} but now to {room})");
-            exits[dirint] = room;
+                    + $"{this} (orignally to {exits[dirint]} but now to {targetRoom})");
+            exits[dirint] = targetRoom;
+
+            if (oneway)
+                return;
+
+            var oppositeDirection = GetOppositeDirection(direction);
+            targetRoom.SetExit(oppositeDirection, this, true);
         }
 
         public override string ToString()
