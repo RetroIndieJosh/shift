@@ -76,9 +76,12 @@ namespace csif
             {
                 item.Location.RemoveItem(item);
                 inventory.Add(item);
+                item.IsCarried = true;
                 Console.WriteLine("[taken]");
                 return;
             }
+
+            CurTarget = item;
         }
 
         private void CommandCredits(string[] args)
@@ -89,10 +92,7 @@ namespace csif
         private void CommandHelp(string[] args)
         {
             if (args.Length > 0)
-            {
-                Console.WriteLine("Sorry, help for commands is not yet implemented.");
-                return;
-            }
+                Console.WriteLine("Sorry, help for commands is not yet implemented. Here is the general help.");
 
             Console.WriteLine("Available commands (and aliases):");
             var commands = commandDict.Keys.ToList();
@@ -207,6 +207,9 @@ namespace csif
             commandDict.Add("quit", CommandQuit);
             commandDict.Add("where", CommandWhere);
 
+            commandDict.Add("drop",
+                (string[] args) => { Console.WriteLine("You need not drop anything."); });
+
             // movement commands
             for (int i = 0; i < (int)Room.Direction.Count; ++i)
             {
@@ -219,17 +222,16 @@ namespace csif
             aliasDict.Add("how", "help");
             aliasDict.Add("who", "help");
             aliasDict.Add("why", "help");
-            aliasDict.Add("get", "help");
-            aliasDict.Add("take", "help");
-            aliasDict.Add("drop", "help");
             aliasDict.Add("pick", "help");
 
             aliasDict.Add("bye", "quit");
             aliasDict.Add("ex", "examine");
             aliasDict.Add("exit", "quit");
+            aliasDict.Add("get", "examine");
             aliasDict.Add("i", "inventory");
-            aliasDict.Add("x", "examine");
             aliasDict.Add("l", "look");
+            aliasDict.Add("take", "examine");
+            aliasDict.Add("x", "examine");
 
             // movement aliases
             aliasDict.Add("e", "east");

@@ -23,19 +23,37 @@ namespace csif
 
         public bool CanTake { get; set; }
         private bool canUse = false;
+        public bool IsCarried { get; set; } = false;
         private Item useTarget = null;
 
-        public static void Where(string[] args)
+        public static Item Find(string[] args, List<Item> items)
         {
             foreach (var item in items)
             {
-                if (!item.Matches(args))
-                    continue;
+                if (item.Matches(args))
+                    return item;
+            }
+            return null;
+        }
 
-                Console.WriteLine($"[{item} is in {item.location}]");
+        public static void Where(string[] args)
+        {
+            var item = Item.Find(args, items);
+            if (item == null)
+            {
+                Console.WriteLine($"[no item by name {string.Join(' ', args)}]");
                 return;
             }
-            Console.WriteLine($"[could not find item {string.Join(' ', args)}]");
+
+            string where = "";
+            if (item.IsCarried)
+                where = "inventory";
+            else if (item.location == null)
+                where = "limbo";
+            else
+                where = item.location.ToString();
+
+            Console.WriteLine($"[{item} is in {where}]");
         }
 
         public Item(string name, string desc, bool canTake = false) : base(name, desc)

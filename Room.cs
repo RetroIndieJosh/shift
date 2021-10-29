@@ -33,12 +33,7 @@ namespace csif
         // TODO ambiguity handling (multiple matching items)
         public Item FindItem(string[] args)
         {
-            foreach (var item in items)
-            {
-                if (item.Matches(args))
-                    return item;
-            }
-            return null;
+            return Item.Find(args, items);
         }
 
         public Room GetExit(Direction direction)
