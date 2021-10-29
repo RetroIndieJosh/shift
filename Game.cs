@@ -20,7 +20,9 @@ namespace csif
                 throw new Exception("Attempted to create second Game instance");
 
             instance = this;
+
             LoadCommands();
+            LoadRooms();
         }
 
         public Game(string filename) : this()
@@ -66,6 +68,16 @@ namespace csif
             commandDict.Add("look", CommandLook);
             commandDict.Add("quit", CommandQuit);
             Console.WriteLine($"Loaded {commandDict.Count} commands");
+        }
+
+        private void LoadRooms()
+        {
+            var bedroom = new Room("Bedroom", "It's a bedroom.");
+
+            var hall = new Room("Hall", "It's a hall.");
+            bedroom.SetExit(Room.Direction.West, hall);
+
+            curRoom = bedroom;
         }
 
         private void Parse(string input)

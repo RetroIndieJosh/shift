@@ -13,6 +13,11 @@ namespace csif
             this.desc = desc;
         }
 
+        public override string ToString()
+        {
+            return name;
+        }
+
         public void WriteDesc()
         {
             Console.Write(desc);
