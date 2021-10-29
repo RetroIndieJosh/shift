@@ -8,7 +8,8 @@ namespace csif
     {
         public static Game instance = null;
 
-        public Room CurRoom { get; protected set; } = null;
+        protected Room CurRoom { get; set; } = null;
+        protected Item CurTarget { get; set; } = null;
 
         private List<Item> inventory = new List<Item>();
 
@@ -38,10 +39,10 @@ namespace csif
             RunCommand("look");
             while (isRunning)
             {
+                Console.WriteLine();
                 Console.Write(">> ");
                 var input = Console.ReadLine();
                 Parse(input);
-                Console.WriteLine();
             }
         }
 
@@ -56,8 +57,22 @@ namespace csif
             }
 
             var item = CurRoom.FindItem(args);
+            if (item == null)
+            {
+                Console.WriteLine($"You see no {string.Join(' ', args)} here.");
+                return;
+            }
+
             item.WriteDesc();
             Console.WriteLine();
+
+            if (item.CanTake)
+            {
+                item.Location.RemoveItem(item);
+                inventory.Add(item);
+                Console.WriteLine("[taken]");
+                return;
+            }
         }
 
         private void CommandLook(string[] args)

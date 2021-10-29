@@ -1,6 +1,7 @@
 - examine (anything => auto take, auto use not in inv, otherwise describe)
     - becomes target item (for using inventory item)
     - should it be target instead of examine?
+- view inventory (INVENTORY command)
 - use (inventory)
 - combine (inventory)
 - help (list commands - per command help?)

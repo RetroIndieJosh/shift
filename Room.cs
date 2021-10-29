@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace csif
 {
-    public class Room : Item
+    public class Room : Entity
     {
         public enum Direction
         {

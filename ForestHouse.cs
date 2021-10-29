@@ -11,7 +11,9 @@ namespace csif
         {
             var bedroom = new Room("Bedroom", "It's a bedroom.");
             bedroom.AddItems(new Item[] {
-                new Item("lamp", "A bronze lamp."),
+                new Item("lamp",
+                    "You yank the lamp's cord from its socket, intent on carrying it around.",
+                    true),
                 new Item("dresser", "Contains clothes.")
             });
 
