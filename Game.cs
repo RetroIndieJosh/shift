@@ -57,6 +57,7 @@ namespace csif
 
             var item = CurRoom.FindItem(args);
             item.WriteDesc();
+            Console.WriteLine();
         }
 
         private void CommandLook(string[] args)
@@ -115,6 +116,7 @@ namespace csif
             commandDict.Add("move", CommandMove);
             commandDict.Add("look", CommandLook);
             commandDict.Add("quit", CommandQuit);
+            commandDict.Add("where", CommandWhere);
 
             // movement commands
             for (int i = 0; i < (int)Room.Direction.Count; ++i)
@@ -160,6 +162,11 @@ namespace csif
                 match = TryAlias(userCommand, args);
             if (!match)
                 Console.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
+        }
+
+        private void CommandWhere(string[] args)
+        {
+            Item.Where(args);
         }
 
         private void RunCommand(string command, string[] args = null)

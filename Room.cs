@@ -20,12 +20,14 @@ namespace csif
 
         public void AddItem(Item item)
         {
+            item.Location = this;
             items.Add(item);
         }
 
-        public void AddItems(Item[] item)
+        public void AddItems(Item[] items)
         {
-            this.items.AddRange(items);
+            foreach (var item in items)
+                AddItem(item);
         }
 
         // TODO ambiguity handling (multiple matching items)
@@ -88,6 +90,14 @@ namespace csif
             targetRoom.SetExit(oppositeDirection, this, true);
         }
 
+        public void RemoveItem(Item item)
+        {
+            if (!items.Contains(item))
+                throw new Exception($"Tried to remove item {item} not in room {this}");
+            items.Remove(item);
+            item.Location = null;
+        }
+
         public override string ToString()
         {
             return base.ToString();
@@ -97,7 +107,8 @@ namespace csif
         {
             Console.Write("--= ");
             WriteName();
-            Console.WriteLine(" =-- ");
+            Console.WriteLine(" =--");
+            Console.WriteLine($"[{items.Count} items]");
             WriteDesc();
             Console.WriteLine();
 
@@ -105,7 +116,7 @@ namespace csif
                 return;
 
             var itemStr = string.Join(", ", items);
-            Console.Write("You also see {0}.", itemStr);
+            Console.WriteLine("You also see {0}.", itemStr);
         }
     }
 }
