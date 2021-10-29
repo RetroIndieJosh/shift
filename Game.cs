@@ -17,6 +17,9 @@ namespace csif
         private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
         private bool isRunning = false;
 
+        private string author;
+        private string title;
+
         public Game(string title, string author)
         {
             if (instance != null)
@@ -27,6 +30,9 @@ namespace csif
             LoadCommands();
             LoadRooms();
             Console.WriteLine();
+
+            this.title = title;
+            this.author = author;
 
             Console.WriteLine($"{title} by {author}");
         }
@@ -73,6 +79,47 @@ namespace csif
                 Console.WriteLine("[taken]");
                 return;
             }
+        }
+
+        private void CommandCredits(string[] args)
+        {
+            Console.WriteLine($"You are currently playing {title} by {author}.");
+        }
+
+        private void CommandHelp(string[] args)
+        {
+            if (args.Length > 0)
+            {
+                Console.WriteLine("Sorry, help for commands is not yet implemented.");
+                return;
+            }
+
+            Console.WriteLine("Available commands (and aliases):");
+            var commands = commandDict.Keys.ToList();
+            commands.Sort();
+            foreach (var command in commands)
+            {
+                if (command == "help")
+                    continue;
+
+                Console.Write($"\t{command.ToUpper()}");
+
+                var aliases = new List<string>();
+                foreach (var alias in aliasDict.Keys)
+                {
+                    if (aliasDict[alias] == command)
+                        aliases.Add(alias.ToUpper());
+                }
+                if (aliases.Count == 0)
+                {
+                    Console.WriteLine();
+                    continue;
+                }
+
+                aliases.Sort();
+                Console.WriteLine($" ({string.Join(", ", aliases)})");
+            }
+            Console.WriteLine("\nUse HELP (COMMAND) to get help on a specific command.");
         }
 
         private void CommandInventory(string[] args)
@@ -144,12 +191,19 @@ namespace csif
             Console.WriteLine("Goodbye!");
         }
 
+        private void CommandWhere(string[] args)
+        {
+            Item.Where(args);
+        }
+
         private void LoadCommands()
         {
+            commandDict.Add("credits", CommandCredits);
             commandDict.Add("examine", CommandExamine);
             commandDict.Add("inventory", CommandInventory);
             commandDict.Add("move", CommandMove);
             commandDict.Add("look", CommandLook);
+            commandDict.Add("help", CommandHelp);
             commandDict.Add("quit", CommandQuit);
             commandDict.Add("where", CommandWhere);
 
@@ -160,7 +214,19 @@ namespace csif
                 LoadMoveCommand(dirstr);
             }
 
+            aliasDict.Add("?", "help");
+            aliasDict.Add("what", "help");
+            aliasDict.Add("how", "help");
+            aliasDict.Add("who", "help");
+            aliasDict.Add("why", "help");
+            aliasDict.Add("get", "help");
+            aliasDict.Add("take", "help");
+            aliasDict.Add("drop", "help");
+            aliasDict.Add("pick", "help");
+
+            aliasDict.Add("bye", "quit");
             aliasDict.Add("ex", "examine");
+            aliasDict.Add("exit", "quit");
             aliasDict.Add("i", "inventory");
             aliasDict.Add("x", "examine");
             aliasDict.Add("l", "look");
@@ -198,11 +264,6 @@ namespace csif
                 match = TryAlias(userCommand, args);
             if (!match)
                 Console.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
-        }
-
-        private void CommandWhere(string[] args)
-        {
-            Item.Where(args);
         }
 
         private void RunCommand(string command, string[] args = null)
