@@ -75,6 +75,25 @@ namespace csif
             }
         }
 
+        private void CommandInventory(string[] args)
+        {
+            if (args.Length > 0)
+            {
+                Console.WriteLine("Just INVENTORY (or I) will suffice.");
+                return;
+            }
+
+            if (inventory.Count == 0)
+            {
+                Console.WriteLine("You are carrying nothing.");
+                return;
+            }
+
+            Console.WriteLine("You are carrying:");
+            foreach (var item in inventory)
+                Console.WriteLine($"\t{item}");
+        }
+
         private void CommandLook(string[] args)
         {
             if (CurRoom == null)
@@ -128,6 +147,7 @@ namespace csif
         private void LoadCommands()
         {
             commandDict.Add("examine", CommandExamine);
+            commandDict.Add("inventory", CommandInventory);
             commandDict.Add("move", CommandMove);
             commandDict.Add("look", CommandLook);
             commandDict.Add("quit", CommandQuit);
@@ -141,6 +161,7 @@ namespace csif
             }
 
             aliasDict.Add("ex", "examine");
+            aliasDict.Add("i", "inventory");
             aliasDict.Add("x", "examine");
             aliasDict.Add("l", "look");
 
