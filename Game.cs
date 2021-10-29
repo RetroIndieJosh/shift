@@ -12,6 +12,7 @@ namespace csif
         private List<Item> inventory = new List<Item>();
 
         private Dictionary<string, Action<string[]>> commandDict = new Dictionary<string, Action<string[]>>();
+        private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
         private bool isRunning = false;
 
         public Game()
@@ -56,6 +57,39 @@ namespace csif
             curRoom.WriteAll();
         }
 
+        private void CommandMove(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Which direction?");
+                return;
+            }
+
+            if (args.Length > 1)
+            {
+                Console.WriteLine("Please provide a single direction, i.e. north, up, southwest");
+                return;
+            }
+
+            if (!Enum.TryParse(typeof(Room.Direction), args[0], true, out object result))
+            {
+                Console.WriteLine($"Sorry, '{args[0]}' is not a valid direction.");
+                return;
+            }
+
+            var direction = (Room.Direction)result;
+            var newRoom = curRoom.GetExit(direction);
+            if (newRoom == null)
+            {
+                Console.WriteLine($"You see no exit {direction.ToString().ToLower()} from here.");
+                return;
+            }
+
+            Console.WriteLine($"You go {direction.ToString().ToLower()}.");
+            curRoom = newRoom;
+            RunCommand("look");
+        }
+
         private void CommandQuit(string[] args)
         {
             isRunning = false;
@@ -64,10 +98,39 @@ namespace csif
 
         private void LoadCommands()
         {
-            commandDict.Add("l", CommandLook);
+            commandDict.Add("move", CommandMove);
             commandDict.Add("look", CommandLook);
             commandDict.Add("quit", CommandQuit);
-            Console.WriteLine($"Loaded {commandDict.Count} commands");
+
+            // movement commands
+            for (int i = 0; i < (int)Room.Direction.Count; ++i)
+            {
+                var dirstr = ((Room.Direction)i).ToString();
+                LoadMoveCommand(dirstr);
+            }
+
+            aliasDict.Add("l", "look");
+
+            // movement aliases
+            aliasDict.Add("e", "east");
+            aliasDict.Add("n", "north");
+            aliasDict.Add("s", "south");
+            aliasDict.Add("w", "west");
+            aliasDict.Add("ne", "northeast");
+            aliasDict.Add("nw", "northwest");
+            aliasDict.Add("se", "southeast");
+            aliasDict.Add("sw", "southwest");
+            aliasDict.Add("d", "down");
+            aliasDict.Add("u", "up");
+
+            Console.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]");
+        }
+
+        private void LoadMoveCommand(string direction)
+        {
+            var lowerDir = direction.ToLower();
+            commandDict.Add(lowerDir,
+                (string[] args) => { CommandMove(new string[] { lowerDir }); });
         }
 
         private void LoadRooms()
@@ -85,17 +148,10 @@ namespace csif
             var tokens = input.Split(' ');
             var userCommand = tokens[0];
             var args = tokens.Skip(1).ToArray();
-            var match = false;
 
-            foreach (var command in commandDict.Keys)
-            {
-                if (command != userCommand)
-                    continue;
-                RunCommand(command, args);
-                match = true;
-                break;
-            }
-
+            var match = TryCommand(userCommand, args);
+            if (!match)
+                match = TryAlias(userCommand, args);
             if (!match)
                 Console.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
         }
@@ -106,5 +162,30 @@ namespace csif
                 throw new KeyNotFoundException($"No command '{command}' in command dict");
             commandDict[command].Invoke(args);
         }
+
+        private bool TryAlias(string userCommand, string[] args)
+        {
+            foreach (var alias in aliasDict.Keys)
+            {
+                if (userCommand != alias)
+                    continue;
+                RunCommand(aliasDict[alias], args);
+                return true;
+            }
+            return false;
+        }
+
+        private bool TryCommand(string userCommand, string[] args)
+        {
+            foreach (var command in commandDict.Keys)
+            {
+                if (command != userCommand)
+                    continue;
+                RunCommand(command, args);
+                return true;
+            }
+            return false;
+        }
+
     }
 }
