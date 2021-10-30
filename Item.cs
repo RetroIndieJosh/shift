@@ -56,7 +56,7 @@ namespace csif
             var item = Item.Find(args, items);
             if (item == null)
             {
-                Console.WriteLine($"[no item by name {string.Join(' ', args)}]");
+                Display.WriteLine($"[no item by name {string.Join(' ', args)}]");
                 return;
             }
 
@@ -68,20 +68,20 @@ namespace csif
             else
                 where = item.location.ToString();
 
-            Console.WriteLine($"[{item} is in {where}]");
+            Display.WriteLine($"[{item} is in {where}]");
         }
 
         static public void WriteInventory()
         {
             if (inventory.Count == 0)
             {
-                Console.WriteLine("You are carrying nothing.");
+                Display.WriteLine("You are carrying nothing.");
                 return;
             }
 
-            Console.WriteLine("You are carrying:");
+            Display.WriteLine("You are carrying:");
             foreach (var item in inventory)
-                Console.WriteLine($"\t{item}");
+                Display.WriteLine($"\t{item}");
         }
 
         public Item(string name, string desc, string takeDesc = null, string useDesc = null)
@@ -103,29 +103,29 @@ namespace csif
                 if (!canUse)
                 {
                     WriteDesc();
-                    Console.WriteLine();
+                    Display.WriteLine();
                     return;
                 }
 
-                Console.WriteLine("[{0}] Would you like to e(x)amine, (c)ombine, (u)se, or (b)ack?",
+                Display.WriteLine("[{0}] Would you like to e(x)amine, (c)ombine, (u)se, or (b)ack?",
                     this);
                 do
                 {
-                    var ch = Console.ReadKey(true);
+                    var ch = Display.ReadKey(true);
                     if (ch.KeyChar == 'x' || ch.KeyChar == 'X')
                     {
                         WriteDesc();
-                        Console.WriteLine();
+                        Display.WriteLine();
                         return;
                     }
                     else if (ch.KeyChar == 'u' || ch.KeyChar == 'U')
                     {
-                        Console.WriteLine(useDesc, this);
+                        Display.WriteLine(useDesc, this);
                         return;
                     }
                     else if (ch.KeyChar == 'c' || ch.KeyChar == 'C')
                     {
-                        Console.WriteLine("[combine not yet implemented]");
+                        Display.WriteLine("[combine not yet implemented]");
                         return;
                     }
                     else if (ch.KeyChar == 'b' || ch.KeyChar == 'B' || ch.Key == ConsoleKey.Escape)
@@ -139,13 +139,13 @@ namespace csif
                 Location.RemoveItem(this);
                 inventory.Add(this);
                 isCarried = true;
-                Console.WriteLine(takeDesc, this);
-                Console.WriteLine("[taken]");
+                Display.WriteLine(takeDesc, this);
+                Display.WriteLine("[taken]");
                 return;
             }
 
             WriteDesc();
-            Console.WriteLine();
+            Display.WriteLine();
 
             if (!isCarried)
                 CurTarget = this;

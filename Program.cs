@@ -7,8 +7,8 @@ namespace csif
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("CSIF // A basic IF system in C#");
-            Console.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
+            Display.WriteLine("CSIF // A basic IF system in C#");
+            Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
             var game = new ForestHouse();
             game.Run();
         }

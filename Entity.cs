@@ -29,12 +29,12 @@ namespace csif
 
         public void WriteDesc()
         {
-            Console.Write(desc);
+            Display.Write(desc);
         }
 
         public void WriteName()
         {
-            Console.Write(name);
+            Display.Write(name);
         }
     }
 }

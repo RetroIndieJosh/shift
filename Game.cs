@@ -27,25 +27,27 @@ namespace csif
 
             LoadCommands();
             LoadRooms();
-            Console.WriteLine();
+            Display.WriteLine();
 
             this.title = title;
             this.author = author;
 
-            Console.WriteLine($"{title} by {author}");
+            Display.WriteLine($"{title} by {author}");
         }
 
         public void Run()
         {
             isRunning = true;
 
-            Console.WriteLine();
+            Display.WriteLine();
             RunCommand("look");
             while (isRunning)
             {
-                Console.WriteLine();
-                Console.Write(">> ");
-                var input = Console.ReadLine();
+                Display.WriteLine();
+                Display.Write(">> ");
+                Display.Flush();
+
+                var input = Display.ReadLine();
                 Parse(input);
             }
         }
@@ -56,14 +58,14 @@ namespace csif
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("What would you like to examine?");
+                Display.WriteLine("What would you like to examine?");
                 return;
             }
 
             var item = CurRoom.FindItem(args);
             if (item == null)
             {
-                Console.WriteLine($"You see no {string.Join(' ', args)} here.");
+                Display.WriteLine($"You see no {string.Join(' ', args)} here.");
                 return;
             }
 
@@ -72,15 +74,15 @@ namespace csif
 
         private void CommandCredits(string[] args)
         {
-            Console.WriteLine($"You are currently playing {title} by {author}.");
+            Display.WriteLine($"You are currently playing {title} by {author}.");
         }
 
         private void CommandHelp(string[] args)
         {
             if (args.Length > 0)
-                Console.WriteLine("Sorry, help for commands is not yet implemented. Here is the general help.");
+                Display.WriteLine("Sorry, help for commands is not yet implemented. Here is the general help.");
 
-            Console.WriteLine("Available commands (and aliases):");
+            Display.WriteLine("Available commands (and aliases):");
             var commands = commandDict.Keys.ToList();
             commands.Sort();
             foreach (var command in commands)
@@ -88,7 +90,7 @@ namespace csif
                 if (command == "help")
                     continue;
 
-                Console.Write($"\t{command.ToUpper()}");
+                Display.Write($"\t{command.ToUpper()}");
 
                 var aliases = new List<string>();
                 foreach (var alias in aliasDict.Keys)
@@ -98,21 +100,21 @@ namespace csif
                 }
                 if (aliases.Count == 0)
                 {
-                    Console.WriteLine();
+                    Display.WriteLine();
                     continue;
                 }
 
                 aliases.Sort();
-                Console.WriteLine($" ({string.Join(", ", aliases)})");
+                Display.WriteLine($" ({string.Join(", ", aliases)})");
             }
-            Console.WriteLine("\nUse HELP (COMMAND) to get help on a specific command.");
+            Display.WriteLine("\nUse HELP (COMMAND) to get help on a specific command.");
         }
 
         private void CommandInventory(string[] args)
         {
             if (args.Length > 0)
             {
-                Console.WriteLine("Just INVENTORY (or I) will suffice.");
+                Display.WriteLine("Just INVENTORY (or I) will suffice.");
                 return;
             }
 
@@ -122,35 +124,35 @@ namespace csif
         private void CommandLook(string[] args)
         {
             if (CurRoom == null)
-                Console.WriteLine("You are nowhere.");
+                Display.WriteLine("You are nowhere.");
             else
                 CurRoom.WriteAll();
 
             if (Item.CurTarget == null)
                 return;
 
-            Console.Write("[Currently targeting: ");
+            Display.Write("[Currently targeting: ");
             Item.CurTarget.WriteName();
-            Console.WriteLine("]");
+            Display.WriteLine("]");
         }
 
         private void CommandMove(string[] args)
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Which direction?");
+                Display.WriteLine("Which direction?");
                 return;
             }
 
             if (args.Length > 1)
             {
-                Console.WriteLine("Please provide a single direction, i.e. north, up, southwest");
+                Display.WriteLine("Please provide a single direction, i.e. north, up, southwest");
                 return;
             }
 
             if (!Enum.TryParse(typeof(Room.Direction), args[0], true, out object result))
             {
-                Console.WriteLine($"Sorry, '{args[0]}' is not a valid direction.");
+                Display.WriteLine($"Sorry, '{args[0]}' is not a valid direction.");
                 return;
             }
 
@@ -158,11 +160,11 @@ namespace csif
             var newRoom = CurRoom.GetExit(direction);
             if (newRoom == null)
             {
-                Console.WriteLine($"You see no exit {direction.ToString().ToLower()} from here.");
+                Display.WriteLine($"You see no exit {direction.ToString().ToLower()} from here.");
                 return;
             }
 
-            Console.WriteLine($"You go {direction.ToString().ToLower()}.");
+            Display.WriteLine($"You go {direction.ToString().ToLower()}.");
             CurRoom = newRoom;
             RunCommand("look");
         }
@@ -170,7 +172,7 @@ namespace csif
         private void CommandQuit(string[] args)
         {
             isRunning = false;
-            Console.WriteLine("Goodbye!");
+            Display.WriteLine("Goodbye!");
         }
 
         private void CommandWhere(string[] args)
@@ -190,7 +192,7 @@ namespace csif
             commandDict.Add("where", CommandWhere);
 
             commandDict.Add("drop",
-                (string[] args) => { Console.WriteLine("You need not drop anything."); });
+                (string[] args) => { Display.WriteLine("You need not drop anything."); });
 
             // movement commands
             for (int i = 0; i < (int)Room.Direction.Count; ++i)
@@ -227,7 +229,7 @@ namespace csif
             aliasDict.Add("d", "down");
             aliasDict.Add("u", "up");
 
-            Console.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]");
+            Display.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]");
         }
 
         private void LoadMoveCommand(string direction)
@@ -249,7 +251,7 @@ namespace csif
             if (!match)
                 match = TryItem(tokens);
             if (!match)
-                Console.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
+                Display.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
         }
 
         private void RunCommand(string command, string[] args = null)

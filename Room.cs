@@ -74,7 +74,7 @@ namespace csif
         {
             int dirint = (int)direction;
             if (exits[dirint] != null)
-                Console.WriteLine($"WARNING: overwriting {direction} exit from "
+                Display.WriteLine($"WARNING: overwriting {direction} exit from "
                     + $"{this} (orignally to {exits[dirint]} but now to {targetRoom})");
             exits[dirint] = targetRoom;
 
@@ -100,18 +100,18 @@ namespace csif
 
         public void WriteAll()
         {
-            Console.Write("--= ");
+            Display.Write("--= ");
             WriteName();
-            Console.WriteLine(" =--");
-            Console.WriteLine($"[{items.Count} items]");
+            Display.WriteLine(" =--");
+            Display.WriteLine($"[{items.Count} items]");
             WriteDesc();
-            Console.WriteLine();
+            Display.WriteLine();
 
             if (items.Count == 0)
                 return;
 
             var itemStr = string.Join(", ", items);
-            Console.WriteLine("You also see {0}.", itemStr);
+            Display.WriteLine("You also see {0}.", itemStr);
         }
     }
 }
