@@ -1,6 +1,16 @@
 - use (inventory)
+        target item (null for self)
+        destroy self?
+        destroy target?
+        self state set (null for no change)
+        target state set (null for no change)
+        unlock target (door, null for no change)
 - use messages based on state
+        "[if state a]state a response[else if state b]state b response[else]other states response[end]"
 - combine (inventory)
+        combine target
+        new item created
+        (auto destroy both, place new item in inventory)
 - help (list commands - per command help?)
     command = action + help text + more?
 - item aliases
