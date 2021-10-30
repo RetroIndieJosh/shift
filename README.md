@@ -21,7 +21,10 @@ Commands are simplified to movement, `LOOK`, `EXAMINE`, and `USE`:
         - If there is no target, prints a "can't use" message
         - Otherwise uses the item on the target
     - Otherwise, uses the item
-- `LOOK` describes the room, including what item the player is targeting
+- `LOOK` describes the room, including what item the user is targeting
+- The user can also type the name of an item
+    - Out of inventory, this will take a takeable or otherwise examine it and set it as the current target
+    - In inventory, this will ask if the user wants to `EXAMINE` or `USE` the item
 - Targeting is lost upon movement to a new room
 - Traditional interactive fiction movement (cardinal and ordinal directions plus up and down)
 

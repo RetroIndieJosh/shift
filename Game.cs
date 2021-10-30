@@ -9,7 +9,6 @@ namespace csif
         public static Game instance = null;
 
         protected Room CurRoom { get; set; } = null;
-        protected Item CurTarget { get; set; } = null;
 
         private List<Item> inventory = new List<Item>();
 
@@ -69,19 +68,7 @@ namespace csif
                 return;
             }
 
-            item.WriteDesc();
-            Console.WriteLine();
-
-            if (item.CanTake)
-            {
-                item.Location.RemoveItem(item);
-                inventory.Add(item);
-                item.IsCarried = true;
-                Console.WriteLine("[taken]");
-                return;
-            }
-
-            CurTarget = item;
+            item.Target();
         }
 
         private void CommandCredits(string[] args)
@@ -144,12 +131,16 @@ namespace csif
         private void CommandLook(string[] args)
         {
             if (CurRoom == null)
-            {
                 Console.WriteLine("You are nowhere.");
-                return;
-            }
+            else
+                CurRoom.WriteAll();
 
-            CurRoom.WriteAll();
+            if (Item.CurTarget == null)
+                return;
+
+            Console.Write("[Currently targeting: ");
+            Item.CurTarget.WriteName();
+            Console.WriteLine("]");
         }
 
         private void CommandMove(string[] args)
@@ -265,6 +256,8 @@ namespace csif
             if (!match)
                 match = TryAlias(userCommand, args);
             if (!match)
+                match = TryItem(tokens);
+            if (!match)
                 Console.WriteLine($"Sorry, I don't know how to '{userCommand}'.");
         }
 
@@ -297,6 +290,16 @@ namespace csif
                 return true;
             }
             return false;
+        }
+
+        private bool TryItem(string[] tokens)
+        {
+            var targetItem = CurRoom.FindItem(tokens);
+            if (targetItem == null)
+                return false;
+
+            targetItem.Target();
+            return true;
         }
     }
 }

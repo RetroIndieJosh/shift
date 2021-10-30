@@ -6,6 +6,10 @@ namespace csif
     public class Item : Entity
     {
         static List<Item> items = new List<Item>();
+        static public Item CurTarget { get; private set; }
+
+        private string takeDesc = "You take {0}.";
+        private string useDesc = "You use {0}.";
 
         public Room Location
         {
@@ -21,9 +25,9 @@ namespace csif
 
         private Room location;
 
-        public bool CanTake { get; set; }
+        private bool canTake = false;
         private bool canUse = false;
-        public bool IsCarried { get; set; } = false;
+        private bool isCarried = false;
         private Item useTarget = null;
 
         public static Item Find(string[] args, List<Item> items)
@@ -46,7 +50,7 @@ namespace csif
             }
 
             string where = "";
-            if (item.IsCarried)
+            if (item.isCarried)
                 where = "inventory";
             else if (item.location == null)
                 where = "limbo";
@@ -59,7 +63,26 @@ namespace csif
         public Item(string name, string desc, bool canTake = false) : base(name, desc)
         {
             items.Add(this);
-            CanTake = canTake;
+            this.canTake = canTake;
+        }
+
+        public void Target()
+        {
+            if (canTake)
+            {
+                Location.RemoveItem(this);
+                //inventory.Add(item);
+                isCarried = true;
+                Console.WriteLine(takeDesc, this);
+                Console.WriteLine("[taken]");
+                return;
+            }
+
+            WriteDesc();
+            Console.WriteLine();
+
+            if (!isCarried)
+                CurTarget = this;
         }
     }
 }
