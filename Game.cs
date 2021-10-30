@@ -10,10 +10,9 @@ namespace csif
 
         protected Room CurRoom { get; set; } = null;
 
-        private List<Item> inventory = new List<Item>();
-
         private Dictionary<string, Action<string[]>> commandDict = new Dictionary<string, Action<string[]>>();
         private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
+
         private bool isRunning = false;
 
         private string author;
@@ -117,15 +116,7 @@ namespace csif
                 return;
             }
 
-            if (inventory.Count == 0)
-            {
-                Console.WriteLine("You are carrying nothing.");
-                return;
-            }
-
-            Console.WriteLine("You are carrying:");
-            foreach (var item in inventory)
-                Console.WriteLine($"\t{item}");
+            Item.WriteInventory();
         }
 
         private void CommandLook(string[] args)
@@ -295,6 +286,8 @@ namespace csif
         private bool TryItem(string[] tokens)
         {
             var targetItem = CurRoom.FindItem(tokens);
+            if (targetItem == null)
+                targetItem = Item.FindInInventory(tokens);
             if (targetItem == null)
                 return false;
 

@@ -28,4 +28,11 @@ Commands are simplified to movement, `LOOK`, `EXAMINE`, and `USE`:
 - Targeting is lost upon movement to a new room
 - Traditional interactive fiction movement (cardinal and ordinal directions plus up and down)
 
-Additional meta commands include CREDITS, HELP, and QUIT.
+Additional meta commands include `CREDITS`, `HELP`, `WHERE`, and `QUIT`.
+
+## Items
+
+- Static (~~CanUse~~, ~~CanTake~~): items in the scene that are described on interaction. If using the item does not change state, the item should be static.
+- Collectible (~~CanUse~~, CanTake true): item can be taken but not used, for things like ammo which serve a function but the user does not explicitly use
+- Device (CanUse, ~~CanTake~~): item cannot be taken, but can be used, which changes its state
+- Tool (CanUse, CanTake): item can be taken and used, either on its own or on a target in the scene, to cause a state change in itself, another item, a room, or the player character

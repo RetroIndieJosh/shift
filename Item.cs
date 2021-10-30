@@ -5,11 +5,16 @@ namespace csif
 {
     public class Item : Entity
     {
-        static List<Item> items = new List<Item>();
-        static public Item CurTarget { get; private set; }
+        const string DefaultTakeDesc = "You take {0}.";
+        const string DefaultUseDesc = "You take {0}.";
 
-        private string takeDesc = "You take {0}.";
-        private string useDesc = "You use {0}.";
+        static public Item CurTarget { get; private set; } = null;
+
+        static private List<Item> inventory = new List<Item>();
+        static List<Item> items = new List<Item>();
+
+        private string takeDesc = null;
+        private string useDesc = null;
 
         public Room Location
         {
@@ -23,12 +28,13 @@ namespace csif
             }
         }
 
+
         private Room location;
 
         private bool canTake = false;
         private bool canUse = false;
+        private List<Item> usableOn = new List<Item>();
         private bool isCarried = false;
-        private Item useTarget = null;
 
         public static Item Find(string[] args, List<Item> items)
         {
@@ -38,6 +44,11 @@ namespace csif
                     return item;
             }
             return null;
+        }
+
+        public static Item FindInInventory(string[] args)
+        {
+            return Find(args, inventory);
         }
 
         public static void Where(string[] args)
@@ -60,18 +71,73 @@ namespace csif
             Console.WriteLine($"[{item} is in {where}]");
         }
 
-        public Item(string name, string desc, bool canTake = false) : base(name, desc)
+        static public void WriteInventory()
         {
+            if (inventory.Count == 0)
+            {
+                Console.WriteLine("You are carrying nothing.");
+                return;
+            }
+
+            Console.WriteLine("You are carrying:");
+            foreach (var item in inventory)
+                Console.WriteLine($"\t{item}");
+        }
+
+        public Item(string name, string desc, string takeDesc = null, string useDesc = null)
+            : base(name, desc)
+        {
+            this.canTake = (takeDesc != null);
+            this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
+
+            this.canUse = (useDesc != null);
+            this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
+
             items.Add(this);
-            this.canTake = canTake;
         }
 
         public void Target()
         {
+            if (isCarried)
+            {
+                if (!canUse)
+                {
+                    WriteDesc();
+                    Console.WriteLine();
+                    return;
+                }
+
+                Console.WriteLine("[{0}] Would you like to e(x)amine, (c)ombine, (u)se, or (b)ack?",
+                    this);
+                do
+                {
+                    var ch = Console.ReadKey(true);
+                    if (ch.KeyChar == 'x' || ch.KeyChar == 'X')
+                    {
+                        WriteDesc();
+                        Console.WriteLine();
+                        return;
+                    }
+                    else if (ch.KeyChar == 'u' || ch.KeyChar == 'U')
+                    {
+                        Console.WriteLine(useDesc, this);
+                        return;
+                    }
+                    else if (ch.KeyChar == 'c' || ch.KeyChar == 'C')
+                    {
+                        Console.WriteLine("[combine not yet implemented]");
+                        return;
+                    }
+                    else if (ch.KeyChar == 'b' || ch.KeyChar == 'B' || ch.Key == ConsoleKey.Escape)
+                    {
+                        return;
+                    }
+                } while (true);
+            }
             if (canTake)
             {
                 Location.RemoveItem(this);
-                //inventory.Add(item);
+                inventory.Add(this);
                 isCarried = true;
                 Console.WriteLine(takeDesc, this);
                 Console.WriteLine("[taken]");
@@ -84,5 +150,6 @@ namespace csif
             if (!isCarried)
                 CurTarget = this;
         }
+
     }
 }

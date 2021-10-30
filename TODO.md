@@ -1,11 +1,5 @@
-- make Item responsible for its own manipulation
-- allow fallthrough commands specifying only item (no action)
-
-- examine (anything => auto take, auto use not in inv, otherwise describe)
-    - becomes target item (for using inventory item)
-    - should it be target instead of examine?
-- view inventory (INVENTORY command)
 - use (inventory)
+- use messages based on state
 - combine (inventory)
 - help (list commands - per command help?)
     command = action + help text + more?
@@ -18,3 +12,9 @@
 - autokeys?
 - room/item scripting
 - command scripting
+- command history with up
+- command completion with tab
+- CLEAR
+- SAVE/LOAD
+- TRANCSRIPT
+- DEBUG (extra messages - or as arg to shift)
