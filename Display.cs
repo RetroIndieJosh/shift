@@ -16,11 +16,13 @@ namespace csif
 
         static public ConsoleKeyInfo ReadKey(bool capture = false)
         {
+            Flush();
             return Console.ReadKey(capture);
         }
 
         static public string ReadLine()
         {
+            Flush();
             return Console.ReadLine();
         }
 

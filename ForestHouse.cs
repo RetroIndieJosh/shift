@@ -4,7 +4,6 @@ namespace csif
     {
         public ForestHouse() : base("The Forest House", "Joshua McLean")
         {
-
         }
 
         protected override void LoadRooms()
