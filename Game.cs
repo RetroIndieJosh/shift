@@ -35,17 +35,15 @@ namespace csif
             Display.WriteLine($"{title} by {author}");
         }
 
-        public string AutoComplete(string start)
+        public string AutoComplete(string start, int depth = 0)
         {
-            var matchList = commandDict.Keys
+            var potentialMatchList = commandDict.Keys
                 .Concat(CurRoom.GetItemNames())
                 .Concat(Item.GetInventoryNames());
-            foreach (var match in matchList)
-            {
-                if (match.StartsWith(start))
-                    return match;
-            }
-            return start;
+
+            var matchList = potentialMatchList.Where(m => m.StartsWith(start)).ToList();
+            depth %= matchList.Count;
+            return matchList[depth];
         }
 
         public void Run()

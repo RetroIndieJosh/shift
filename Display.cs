@@ -36,33 +36,44 @@ namespace csif
             commandHistory.Add("");
             RewriteInput();
 
+            int autoCompleteDepth = 0;
+            string autoCompleteRoot = "";
             while (true)
             {
                 var input = ReadKey(true);
+
+                // autocomplete
+                if (input.Key == ConsoleKey.Tab)
+                {
+                    Command = Game.instance.AutoComplete(autoCompleteRoot, autoCompleteDepth);
+                    ++autoCompleteDepth;
+                    RewriteInput();
+                    continue;
+                }
+
+                // send input
+                if (input.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                    break;
+                }
+
+                // command history
                 if (input.Key == ConsoleKey.UpArrow)
                 {
                     historyIndex = Math.Max(historyIndex - 1, 0);
                     RewriteInput();
                     continue;
                 }
-                else if (input.Key == ConsoleKey.DownArrow)
+                if (input.Key == ConsoleKey.DownArrow)
                 {
                     historyIndex = Math.Min(historyIndex + 1, commandHistory.Count - 1);
                     RewriteInput();
                     continue;
                 }
-                else if (input.Key == ConsoleKey.Tab)
-                {
-                    Command = Game.instance.AutoComplete(Command);
-                    RewriteInput();
-                    continue;
-                }
-                else if (input.Key == ConsoleKey.Enter)
-                {
-                    Console.WriteLine();
-                    break;
-                }
-                else if (input.Key == ConsoleKey.Backspace)
+
+                // erase
+                if (input.Key == ConsoleKey.Backspace)
                 {
                     if (Command.Length == 0)
                         continue;
@@ -70,12 +81,16 @@ namespace csif
                     RewriteInput();
                 }
 
-                if (input.KeyChar == ' ' || char.IsLetterOrDigit(input.KeyChar))
+                // normal input
+                else if (input.KeyChar == ' ' || char.IsLetterOrDigit(input.KeyChar))
                 {
                     Command += input.KeyChar;
                     Write($"{input.KeyChar}");
                     Flush();
                 }
+
+                autoCompleteRoot = Command;
+                autoCompleteDepth = 0;
             }
 
             // place modified historical command into new command slot
