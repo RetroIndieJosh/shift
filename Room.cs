@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace csif
 {
@@ -39,6 +40,11 @@ namespace csif
         public Room GetExit(Direction direction)
         {
             return exits[(int)direction];
+        }
+
+        public List<string> GetItemNames()
+        {
+            return items.Select(item => item.Name).ToList();
         }
 
         public Direction GetOppositeDirection(Direction direction)

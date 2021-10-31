@@ -11,7 +11,13 @@ namespace csif
         static private string text = "";
         static private int historyIndex = 0;
 
-        static private string Prompt = ">> ";
+        static private string Command
+        {
+            get => commandHistory[historyIndex];
+            set => commandHistory[historyIndex] = value;
+        }
+
+        static private string Prompt { get; set; } = ">> ";
 
         static public void Flush()
         {
@@ -23,21 +29,6 @@ namespace csif
         {
             Flush();
             return Console.ReadKey(capture);
-        }
-
-        static private string Command
-        {
-            get => commandHistory[historyIndex];
-            set => commandHistory[historyIndex] = value;
-        }
-
-        static private void RewriteInput()
-        {
-            //Prompt = $"{historyIndex} >> ";
-
-            var spaces = new string(' ', Console.WindowWidth - 1);
-            Write($"\r{spaces}\r{Prompt}{Command}");
-            Flush();
         }
 
         static public string ReadLine()
@@ -61,8 +52,11 @@ namespace csif
                     continue;
                 }
                 else if (input.Key == ConsoleKey.Tab)
-                    // TODO autocomplete
+                {
+                    Command = Game.instance.AutoComplete(Command);
+                    RewriteInput();
                     continue;
+                }
                 else if (input.Key == ConsoleKey.Enter)
                 {
                     Console.WriteLine();
@@ -108,6 +102,15 @@ namespace csif
             if (!string.IsNullOrEmpty(s))
                 Write(s, args);
             Write("\n");
+        }
+
+        static private void RewriteInput()
+        {
+            //Prompt = $"{historyIndex} >> ";
+
+            var spaces = new string(' ', Console.WindowWidth - 1);
+            Write($"\r{spaces}\r{Prompt}{Command}");
+            Flush();
         }
     }
 }

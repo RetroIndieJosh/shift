@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace csif
 {
@@ -51,6 +52,11 @@ namespace csif
             return Find(args, inventory);
         }
 
+        public static List<string> GetInventoryNames()
+        {
+            return inventory.Select(item => item.Name).ToList();
+        }
+
         public static void Where(string[] args)
         {
             var item = Item.Find(args, items);
@@ -85,7 +91,7 @@ namespace csif
         }
 
         public Item(string name, string desc, string takeDesc = null, string useDesc = null)
-            : base(name, desc)
+        : base(name, desc)
         {
             this.canTake = (takeDesc != null);
             this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);

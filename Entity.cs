@@ -4,27 +4,27 @@ namespace csif
 {
     public abstract class Entity
     {
-        private string name;
+        public string Name { get; private set; }
         private string desc;
 
         public Entity(string name, string desc)
         {
-            this.name = name;
+            this.Name = name;
             this.desc = desc;
         }
 
         public bool Matches(string[] args)
         {
-            var nameTokens = name.Split(' ');
+            var nameTokens = Name.Split(' ');
             if (nameTokens.Length == 1)
-                return this.name == args[0];
+                return this.Name == args[0];
             throw new NotImplementedException("Matching multiword names not yet "
                 + "supported. Please only use a single word for item names.");
         }
 
         public override string ToString()
         {
-            return name;
+            return Name;
         }
 
         public void WriteDesc()
@@ -34,7 +34,7 @@ namespace csif
 
         public void WriteName()
         {
-            Display.Write(name);
+            Display.Write(Name);
         }
     }
 }

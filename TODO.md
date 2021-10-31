@@ -1,4 +1,4 @@
-- command history with up
+- autocomplete: continue searching from initial typed letters with multiple tab presses
 - item info
         quantity (for ammo etc. gets combined with same-named, default 1)
         target item (null for no target, basic use)
