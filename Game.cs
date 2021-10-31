@@ -44,8 +44,6 @@ namespace csif
             while (isRunning)
             {
                 Display.WriteLine();
-                Display.Write(">> ");
-                Display.Flush();
 
                 var input = Display.ReadLine();
                 Parse(input);

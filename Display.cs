@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace csif
 {
@@ -6,7 +7,11 @@ namespace csif
     // (also potential speedup by limiting console writes, but needs profiling to verify)
     public class Display
     {
+        static List<string> commandHistory = new List<string>();
         static private string text = "";
+        static private int historyIndex = 0;
+
+        static private string Prompt = ">> ";
 
         static public void Flush()
         {
@@ -20,15 +25,82 @@ namespace csif
             return Console.ReadKey(capture);
         }
 
+        static private string Command
+        {
+            get => commandHistory[historyIndex];
+            set => commandHistory[historyIndex] = value;
+        }
+
+        static private void RewriteInput()
+        {
+            //Prompt = $"{historyIndex} >> ";
+
+            var spaces = new string(' ', Console.WindowWidth - 1);
+            Write($"\r{spaces}\r{Prompt}{Command}");
+            Flush();
+        }
+
         static public string ReadLine()
         {
-            Flush();
-            return Console.ReadLine();
+            commandHistory.Add("");
+            RewriteInput();
+
+            while (true)
+            {
+                var input = ReadKey(true);
+                if (input.Key == ConsoleKey.UpArrow)
+                {
+                    historyIndex = Math.Max(historyIndex - 1, 0);
+                    RewriteInput();
+                    continue;
+                }
+                else if (input.Key == ConsoleKey.DownArrow)
+                {
+                    historyIndex = Math.Min(historyIndex + 1, commandHistory.Count - 1);
+                    RewriteInput();
+                    continue;
+                }
+                else if (input.Key == ConsoleKey.Tab)
+                    // TODO autocomplete
+                    continue;
+                else if (input.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                    break;
+                }
+                else if (input.Key == ConsoleKey.Backspace)
+                {
+                    if (Command.Length == 0)
+                        continue;
+                    Command = Command.Substring(0, Command.Length - 1);
+                    RewriteInput();
+                }
+
+                if (input.KeyChar == ' ' || char.IsLetterOrDigit(input.KeyChar))
+                {
+                    Command += input.KeyChar;
+                    Write($"{input.KeyChar}");
+                    Flush();
+                }
+            }
+
+            // place modified historical command into new command slot
+            var command = Command;
+            historyIndex = commandHistory.Count - 1;
+            Command = command;
+
+            // go to next slot when we next read input
+            ++historyIndex;
+
+            return command;
         }
 
         static public void Write(string s, params object[] args)
         {
-            text += String.Format(s, args);
+            if (args.Length == 0)
+                text += s;
+            else
+                text += String.Format(s, args);
         }
 
         static public void WriteLine(string s = "", params object[] args)
