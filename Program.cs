@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace csif
+namespace shift
 {
     class Program
     {

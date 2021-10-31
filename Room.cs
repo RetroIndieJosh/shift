@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace csif
+namespace shift
 {
     public class Room : Entity
     {

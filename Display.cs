@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace csif
+namespace shift
 {
     // A wrapper for the C# console to allow easy modification for other interfaces
     // (also potential speedup by limiting console writes, but needs profiling to verify)

@@ -1,6 +1,5 @@
-- autocomplete: continue searching from initial typed letters with multiple tab presses
 - item info
-        quantity (for ammo etc. gets combined with same-named, default 1)
+        quantity (for ammo etc. gets combined with same-named, default 1 - this works because items never exist in multiple in a single area, and are combined on pickup)
         target item (null for no target, basic use)
         destroy self (default false)
         destroy target (default false)
@@ -14,18 +13,17 @@
         combine target
         new item created
         (auto destroy both, place new item in inventory)
-- help (list commands - per command help?)
-    command = action + help text + more?
+- help per command
+    str->str dict?
 - item aliases
+- multi word item names (disambiguation)
 - disallow item names that match loaded commands or aliases
-- disallow identical item names
 - intro text
 - passages between rooms
 - doors (closed, broken, locked)
 - autokeys?
 - room/item scripting
 - command scripting
-- command completion with tab
 - CLEAR
 - SAVE/LOAD
 - TRANCSRIPT

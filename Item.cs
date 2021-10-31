@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace csif
+namespace shift
 {
     public class Item : Entity
     {
@@ -13,9 +13,6 @@ namespace csif
 
         static private List<Item> inventory = new List<Item>();
         static List<Item> items = new List<Item>();
-
-        private string takeDesc = null;
-        private string useDesc = null;
 
         public Room Location
         {
@@ -31,11 +28,15 @@ namespace csif
 
 
         private Room location;
+        private string takeDesc = null;
+        private string useDesc = null;
 
         private bool canTake = false;
         private bool canUse = false;
         private List<Item> usableOn = new List<Item>();
         private bool isCarried = false;
+
+        private ItemStateMachine stateMachine;
 
         public static Item Find(string[] args, List<Item> items)
         {
@@ -91,7 +92,7 @@ namespace csif
         }
 
         public Item(string name, string desc, string takeDesc = null, string useDesc = null)
-        : base(name, desc)
+            : base(name, desc)
         {
             this.canTake = (takeDesc != null);
             this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
@@ -99,7 +100,14 @@ namespace csif
             this.canUse = (useDesc != null);
             this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
 
+            this.stateMachine = new ItemStateMachine(name);
+
             items.Add(this);
+        }
+
+        public void AddState(string[] stateNames, int defaultStateIndex = 0)
+        {
+            stateMachine.AddState(stateNames, defaultStateIndex);
         }
 
         public void Target()
@@ -157,5 +165,10 @@ namespace csif
                 CurTarget = this;
         }
 
+        public override void WriteDesc()
+        {
+            base.WriteDesc();
+            Display.Write($" [{stateMachine}]");
+        }
     }
 }

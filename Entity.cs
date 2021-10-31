@@ -1,6 +1,6 @@
 using System;
 
-namespace csif
+namespace shift
 {
     public abstract class Entity
     {
@@ -27,7 +27,7 @@ namespace csif
             return Name;
         }
 
-        public void WriteDesc()
+        public virtual void WriteDesc()
         {
             Display.Write(desc);
         }

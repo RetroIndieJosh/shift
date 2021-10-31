@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace csif
+namespace shift
 {
     abstract public class Game
     {
@@ -37,13 +37,14 @@ namespace csif
 
         public string AutoComplete(string start, int depth = 0)
         {
-            var potentialMatchList = commandDict.Keys
+            var potentialMatches = commandDict.Keys
                 .Concat(CurRoom.GetItemNames())
                 .Concat(Item.GetInventoryNames());
-
-            var matchList = potentialMatchList.Where(m => m.StartsWith(start)).ToList();
-            depth %= matchList.Count;
-            return matchList[depth];
+            var matches = potentialMatches
+                .Where(m => m.StartsWith(start))
+                .ToList();
+            depth %= matches.Count;
+            return matches[depth];
         }
 
         public void Run()
