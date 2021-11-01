@@ -114,8 +114,13 @@ namespace shift
                     return;
                 }
 
-                Display.WriteLine("[{0}] Would you like to e(x)amine, (c)ombine, (u)se, or (b)ack?",
-                    this);
+                Display.WriteLine($"Select an option for {this}:"
+                        + "\n\te(x)amine"
+                        + "\n\t(c)ombine"
+                        + "\n\t(u)se"
+                        + "\n\t(b)ack"
+                );
+
                 do
                 {
                     var ch = Display.ReadKey(true);

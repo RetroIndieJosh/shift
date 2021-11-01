@@ -37,14 +37,27 @@ namespace shift
 
         public string AutoComplete(string start, int depth = 0)
         {
+            var key = start;
+            var tokens = start.Split(' ');
+            if (tokens.Length > 1)
+                key = tokens.Last();
+
             var potentialMatches = commandDict.Keys
+                .Concat(aliasDict.Keys)
                 .Concat(CurRoom.GetItemNames())
                 .Concat(Item.GetInventoryNames());
             var matches = potentialMatches
-                .Where(m => m.StartsWith(start))
+                .Where(m => m.StartsWith(key))
                 .ToList();
+
+            if (matches.Count == 0)
+                return start;
+
             depth %= matches.Count;
-            return matches[depth];
+            var completed = matches[depth];
+            if (tokens.Length == 1)
+                return completed;
+            return string.Join(' ', tokens.SkipLast(1)) + ' ' + completed;
         }
 
         public void Run()
