@@ -88,8 +88,9 @@ namespace shift
             inventory.ForEach(item => Display.WriteLine($"\t{item}"));
         }
 
+        // item names use underscores internally for autocompletion
         public Item(string name, string desc, string takeDesc = null, string useDesc = null)
-            : base(name, desc)
+            : base(name.Replace(' ', '_'), desc)
         {
             this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
             this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);

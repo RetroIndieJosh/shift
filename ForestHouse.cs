@@ -18,7 +18,7 @@ namespace shift
             flashlight.AddState(new string[] { "off", "on" });
 
             bedroom.AddItems(new Item[] {
-                new Item("lamp", "Doesn't seem to turn on."),
+                new Item("bronze lamp", "Doesn't seem to turn on."),
                 new Item("dresser", "Contains clothes."),
                 flashlight
             });

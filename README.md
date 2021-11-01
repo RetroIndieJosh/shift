@@ -36,3 +36,10 @@ Additional meta commands include `CREDITS`, `HELP`, `WHERE`, and `QUIT`.
 - Collectible (~~CanUse~~, CanTake true): item can be taken but not used, for things like ammo which serve a function but the user does not explicitly use
 - Device (CanUse, ~~CanTake~~): item cannot be taken, but can be used, which changes its state
 - Tool (CanUse, CanTake): item can be taken and used, either on its own or on a target in the scene, to cause a state change in itself, another item, a room, or the player character
+
+## Text
+
+Underscores are printed as spaces. To write a literal underscore, write two consecutive underscores:
+
+- `hello_world` will render as `hello world`
+- `hello__world` will render as `hello_world`

@@ -73,6 +73,8 @@ namespace shift
                 var input = Display.ReadLine();
                 Parse(input);
             }
+
+            Display.WriteLine("Have fun out there!");
         }
 
         protected abstract void LoadRooms();

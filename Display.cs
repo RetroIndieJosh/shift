@@ -21,7 +21,9 @@ namespace shift
 
         static public void Flush()
         {
-            Console.Write(text);
+            // print underscorse as spaces, but double underscores as literal underscores
+            const string underscoreTag = "**UNDERSCORE**";
+            Console.Write(text.Replace("__", underscoreTag).Replace('_', ' ').Replace(underscoreTag, "_"));
             text = "";
         }
 
@@ -54,7 +56,7 @@ namespace shift
                 // send input
                 if (input.Key == ConsoleKey.Enter)
                 {
-                    Console.WriteLine();
+                    WriteLine();
                     break;
                 }
 
