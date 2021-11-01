@@ -1,3 +1,4 @@
+- more linq
 - item info
         quantity (for ammo etc. gets combined with same-named, default 1 - this works because items never exist in multiple in a single area, and are combined on pickup)
         target item (null for no target, basic use)
@@ -16,6 +17,7 @@
 - help per command
     str->str dict?
 - item aliases
+- item name plurals
 - multi word item names (disambiguation)
 - disallow item names that match loaded commands or aliases
 - intro text
@@ -28,3 +30,10 @@
 - SAVE/LOAD
 - TRANCSRIPT
 - DEBUG (extra messages - or as arg to shift)
+- pretty presentation
+        distinguish between output and input regions
+        "title bar" (can we change console name? at the very least, draw as first line)
+        mouse driven menus?
+        clickable item names?
+        ...or are those better not in the console?
+        could make web version with ASP interface (maybe overkill for prototyping)

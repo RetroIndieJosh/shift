@@ -26,26 +26,24 @@ namespace shift
             }
         }
 
-
         private Room location;
         private string takeDesc = null;
         private string useDesc = null;
 
-        private bool canTake = false;
-        private bool canUse = false;
-        private List<Item> usableOn = new List<Item>();
+        private bool CanTake { get => takeDesc != null; }
+        private bool CanUse { get => useDesc != null; }
         private bool isCarried = false;
 
         private ItemStateMachine stateMachine;
 
         public static Item Find(string[] args, List<Item> items)
         {
-            foreach (var item in items)
-            {
-                if (item.Matches(args))
-                    return item;
-            }
-            return null;
+            var matches = items.Where(item => item.Matches(args)).ToList();
+            if (matches.Count == 0)
+                return null;
+
+            // TODO disambiguation
+            return matches[0];
         }
 
         public static Item FindInInventory(string[] args)
@@ -87,17 +85,13 @@ namespace shift
             }
 
             Display.WriteLine("You are carrying:");
-            foreach (var item in inventory)
-                Display.WriteLine($"\t{item}");
+            inventory.ForEach(item => Display.WriteLine($"\t{item}"));
         }
 
         public Item(string name, string desc, string takeDesc = null, string useDesc = null)
             : base(name, desc)
         {
-            this.canTake = (takeDesc != null);
             this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
-
-            this.canUse = (useDesc != null);
             this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
 
             this.stateMachine = new ItemStateMachine(name);
@@ -114,10 +108,9 @@ namespace shift
         {
             if (isCarried)
             {
-                if (!canUse)
+                if (!CanUse)
                 {
-                    WriteDesc();
-                    Display.WriteLine();
+                    Use();
                     return;
                 }
 
@@ -148,13 +141,9 @@ namespace shift
                     }
                 } while (true);
             }
-            if (canTake)
+            if (CanTake)
             {
-                Location.RemoveItem(this);
-                inventory.Add(this);
-                isCarried = true;
-                Display.WriteLine(takeDesc, this);
-                Display.WriteLine("[taken]");
+                Take();
                 return;
             }
 
@@ -169,6 +158,22 @@ namespace shift
         {
             base.WriteDesc();
             Display.Write($" [{stateMachine}]");
+        }
+
+        private void Take()
+        {
+            Location.RemoveItem(this);
+            inventory.Add(this);
+            isCarried = true;
+            Display.WriteLine(takeDesc, this);
+            Display.WriteLine("[taken]");
+            return;
+        }
+
+        private void Use()
+        {
+            WriteDesc();
+            Display.WriteLine();
         }
     }
 }
