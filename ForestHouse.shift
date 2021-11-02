@@ -1,0 +1,23 @@
+title The Forest House
+author Joshua McLean
+
+room Bedroom
+    desc Moonlight illuminates the room.
+    start
+    item flashlight
+        ex A standard battery-powered portable light.
+        use [if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
+        state off, on
+    item bronze lamp
+        ex Doesn't seem to turn on.
+    item dresser
+        ex Contains clothes.
+    exit west open Hall
+
+room Hall
+    desc A door east leads to your bedroom.
+    exit south broken
+    exit west closed Kitchen
+
+room Kitchen
+    desc A normal kitchen.

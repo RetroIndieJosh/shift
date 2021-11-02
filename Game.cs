@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    abstract public class Game
+    public class Game
     {
         public static Game instance = null;
 
@@ -18,7 +18,7 @@ namespace shift
         private string author;
         private string title;
 
-        public Game(string title, string author)
+        public Game(string author, string title, Room startRoom)
         {
             if (instance != null)
                 throw new Exception("Attempted to create second Game instance");
@@ -26,13 +26,12 @@ namespace shift
             instance = this;
 
             LoadCommands();
-            LoadRooms();
             Display.WriteLine();
 
             this.title = title;
             this.author = author;
 
-            Display.WriteLine($"{title} by {author}");
+            CurRoom = startRoom;
         }
 
         public string AutoComplete(string start, int depth = 0)
@@ -62,6 +61,10 @@ namespace shift
 
         public void Run()
         {
+            Display.WriteLine("CSIF // A basic IF system in C#");
+            Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved\n");
+            Display.WriteLine($"{title} by {author}");
+
             isRunning = true;
 
             Display.WriteLine();
@@ -73,11 +76,7 @@ namespace shift
                 var input = Display.ReadLine();
                 Parse(input);
             }
-
-            Display.WriteLine("Have fun out there!");
         }
-
-        protected abstract void LoadRooms();
 
         private void CommandExamine(string[] args)
         {
@@ -197,7 +196,8 @@ namespace shift
         private void CommandQuit(string[] args)
         {
             isRunning = false;
-            Display.WriteLine("Goodbye!");
+            Display.WriteLine("Have fun out there!");
+            Display.Flush();
         }
 
         private void CommandWhere(string[] args)

@@ -6,6 +6,8 @@ namespace shift
 {
     public class Room : Entity
     {
+        static List<Room> rooms = new List<Room>();
+
         public enum Direction
         {
             East, North, Northeast, Northwest, South, Southeast, Southwest,
@@ -15,8 +17,18 @@ namespace shift
         private Room[] exits = new Room[(int)Direction.Count];
         private List<Item> items = new List<Item>();
 
+        public static Room Find(string name)
+        {
+            var matches = rooms.Where(room => room.Name == name).ToList();
+            if (matches.Count == 0)
+                return null;
+
+            return matches[0];
+        }
+
         public Room(string name, string desc) : base(name, desc)
         {
+            rooms.Add(this);
         }
 
         public void AddItem(Item item)

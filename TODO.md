@@ -1,10 +1,11 @@
+- parser: items
+    need to set name, desc, use desc, take desc
+    but that's a lot of local variables to store... and they would need to be set before adding states
+        since AddState needs the object
+- parser: exits
 - more linq
 - ctrl+backspace to clear words
 - complain and fail if extra args to input (i.e. `get flashlight lamp dresser` or `flashlight lamp`)
-    handling spaces in names will be tricky
-    maybe use underscores and only display as spaces
-    so the item name would be "brass lamp" but internally brass_lamp
-    hence an autocomplete of "br" would go to "brass_lamp" but display as "brass lamp"
 - item info
         quantity (for ammo etc. gets combined with same-named, default 1 - this works because items never exist in multiple in a single area, and are combined on pickup)
         target item (null for no target, basic use)
@@ -24,7 +25,6 @@
     str->str dict?
 - item aliases
 - item name plurals
-- multi word item names (disambiguation)
 - disallow item names that match loaded commands or aliases
 - intro text
 - passages between rooms
