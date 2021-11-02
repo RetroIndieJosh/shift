@@ -32,6 +32,8 @@ namespace shift
             public string name = null;
             public string desc = null;
 
+            public List<ItemData> items = new List<ItemData>();
+
             public RoomData(string name)
             {
                 this.name = name;
@@ -47,6 +49,8 @@ namespace shift
 
         static private int prevIndent = 0;
 
+        static private bool verboseMode = false;
+
         static private List<string> errorMessages = new List<string>();
         static private List<string> warnMessages = new List<string>();
 
@@ -55,13 +59,15 @@ namespace shift
             get => lines[curLineIndex];
         }
 
-        public static Game CreateGame(string filename)
+        public static Game CreateGame(string filename, bool verbose = false)
         {
             if (!File.Exists(filename))
             {
                 Console.WriteLine($"No file by name `{filename}`");
                 return null;
             }
+
+            verboseMode = verbose;
 
             lines = File.ReadAllLines(filename).ToArray();
             curLineIndex = 0;
@@ -105,13 +111,36 @@ namespace shift
 
         static private void EndItem()
         {
+            Log($"End item: {itemData.name}");
+
+            if (roomData == null)
+            {
+                Error($"No room data to add item `{itemData.name}`");
+                return;
+            }
+            roomData.items.Add(itemData);
+
             itemData = null;
         }
 
         static private void EndRoom()
         {
-            new Room(roomData.name, roomData.desc);
-            Console.WriteLine($"Loaded room {roomData.name}\n\t{roomData.desc}");
+            Log($"End room: {roomData.name}");
+
+            var room = new Room(roomData.name, roomData.desc);
+            Console.WriteLine($"Loaded room {room.Name}\n\t{roomData.desc}");
+            foreach (var itemData in roomData.items)
+            {
+                var item = new Item(itemData.name, itemData.desc, itemData.take, itemData.use);
+                room.AddItem(item);
+                Console.WriteLine($"Added item {item.Name} to {room.Name}");
+                if (itemData.desc != null)
+                    Console.WriteLine($"\t{itemData.desc}");
+                if (itemData.take != null)
+                    Console.WriteLine($"\t{itemData.take}");
+                if (itemData.use != null)
+                    Console.WriteLine($"\t{itemData.use}");
+            }
             roomData = null;
         }
 
@@ -144,21 +173,41 @@ namespace shift
             {
                 case "author":
                     gameData.author = rest;
+                    Log($"Game author: {rest}");
                     return;
                 case "room":
                     roomData = new RoomData(rest);
+                    Log($"New room: {rest}");
                     return;
                 case "title":
+                    Log($"Game title: {rest}");
                     gameData.title = rest;
                     return;
                 default:
                     Error($"Key `{key}` not valid at Game level");
+                    Log($"Invalid game key: {key}");
                     return;
             }
         }
 
         static private void ParseItem(string key, string rest)
         {
+            Log($"Parse item entry");
+            switch (key)
+            {
+                case "ex":
+                case "take":
+                case "use":
+                case "state":
+                case "combine":
+                    Warn($"Key `{key}` not yet implemented");
+                    Log($"Not implemented: {key}");
+                    return;
+                default:
+                    Error($"Key `{key}` not valid at Item level");
+                    Log($"Invalid item key: {key}");
+                    return;
+            }
         }
 
         static private void ParseRoom(string key, string rest)
@@ -167,18 +216,23 @@ namespace shift
             {
                 case "desc":
                     roomData.desc = rest;
+                    Log($"Room description: {rest}");
                     return;
                 case "exit":
                     Warn("Key `exit` not yet implemented");
+                    Log($"Exit: TODO");
                     return;
                 case "item":
                     itemData = new ItemData(rest);
+                    Log($"New item: {rest}");
                     return;
                 case "start":
                     gameData.startRoomName = roomData.name;
+                    Log($"Start room: {roomData.name}");
                     return;
                 default:
                     Error($"Key `{key}` not valid at Room level");
+                    Log($"Invalid room key: {key}");
                     return;
             }
         }
@@ -193,6 +247,12 @@ namespace shift
         static private void Error(string message)
         {
             errorMessages.Add($"[{curLineIndex + 1}] ERROR {message}");
+        }
+
+        static private void Log(string message)
+        {
+            if (verboseMode)
+                Console.WriteLine($"[{curLineIndex + 1}] {message}");
         }
 
         static private void Warn(string message)

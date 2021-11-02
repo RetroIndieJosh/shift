@@ -12,9 +12,9 @@ namespace shift
                 return;
             }
 
-            if (args.Length > 1)
+            if (!args[0].EndsWith(".shift"))
             {
-                Console.WriteLine("Too many arguments. Please only provide the game file.");
+                Console.WriteLine("First argument must be a .shift file.");
                 return;
             }
 

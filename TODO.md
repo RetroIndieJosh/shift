@@ -1,8 +1,16 @@
+- parser: comments
+    - start with // ?
+    - multiline?
+- parser: documentation
+    keywords
+    take, use with no description means "use standard description"
 - parser: items
     need to set name, desc, use desc, take desc
     but that's a lot of local variables to store... and they would need to be set before adding states
         since AddState needs the object
 - parser: exits
+- require room description in .shift files
+- default to "nothing interesting" message when no description for item
 - more linq
 - ctrl+backspace to clear words
 - complain and fail if extra args to input (i.e. `get flashlight lamp dresser` or `flashlight lamp`)

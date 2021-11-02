@@ -6,8 +6,13 @@ room Bedroom
     start
     item flashlight
         ex A standard battery-powered portable light.
+        take
         use [if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
         state off, on
+    item battery
+        ex A single D-cell battery.
+        take
+        combine flashlight
     item bronze lamp
         ex Doesn't seem to turn on.
     item dresser

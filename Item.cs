@@ -36,6 +36,13 @@ namespace shift
 
         private ItemStateMachine stateMachine;
 
+        // find an item loaded in the game
+        public static Item Find(string name)
+        {
+            return Find(new string[] { name }, items);
+        }
+
+        // find an item in a specific list i.e. room contents
         public static Item Find(string[] args, List<Item> items)
         {
             var matches = items.Where(item => item.Matches(args)).ToList();
