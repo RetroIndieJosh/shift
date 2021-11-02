@@ -63,7 +63,7 @@ namespace shift
         {
             if (!File.Exists(filename))
             {
-                Console.WriteLine($"No file by name `{filename}`");
+                Display.WriteLine($"No file by name `{filename}`");
                 return null;
             }
 
@@ -79,21 +79,21 @@ namespace shift
 
             if (warnMessages.Count > 0)
             {
-                Console.WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
-                warnMessages.ForEach(error => Console.WriteLine($"\t{error}"));
+                Display.WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
+                warnMessages.ForEach(error => Display.WriteLine($"\t{error}"));
             }
 
             if (errorMessages.Count > 0)
             {
-                Console.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
-                errorMessages.ForEach(error => Console.WriteLine($"\t{error}"));
+                Display.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
+                errorMessages.ForEach(error => Display.WriteLine($"\t{error}"));
                 return null;
             }
 
             var startRoom = Room.Find(gameData.startRoomName);
             if (startRoom == null)
             {
-                Console.WriteLine($"Error: Could not find room `{gameData.startRoomName}` flagged as start.");
+                Display.WriteLine($"Error: Could not find room `{gameData.startRoomName}` flagged as start.");
                 return null;
             }
             return new Game(gameData.author, gameData.title, startRoom);
@@ -128,18 +128,18 @@ namespace shift
             Log($"End room: {roomData.name}");
 
             var room = new Room(roomData.name, roomData.desc);
-            Console.WriteLine($"Loaded room {room.Name}\n\t{roomData.desc}");
+            Display.WriteLine($"Loaded room {room.Name}\n\t{roomData.desc}");
             foreach (var itemData in roomData.items)
             {
                 var item = new Item(itemData.name, itemData.desc, itemData.take, itemData.use);
                 room.AddItem(item);
-                Console.WriteLine($"Added item {item.Name} to {room.Name}");
+                Display.WriteLine($"Added item {item.Name} to {room.Name}");
                 if (itemData.desc != null)
-                    Console.WriteLine($"\t{itemData.desc}");
+                    Display.WriteLine($"\t{itemData.desc}");
                 if (itemData.take != null)
-                    Console.WriteLine($"\t{itemData.take}");
+                    Display.WriteLine($"\t{itemData.take}");
                 if (itemData.use != null)
-                    Console.WriteLine($"\t{itemData.use}");
+                    Display.WriteLine($"\t{itemData.use}");
             }
             roomData = null;
         }
@@ -252,7 +252,7 @@ namespace shift
         static private void Log(string message)
         {
             if (verboseMode)
-                Console.WriteLine($"[{curLineIndex + 1}] {message}");
+                Display.WriteLine($"[{curLineIndex + 1}] {message}");
         }
 
         static private void Warn(string message)

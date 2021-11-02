@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace shift
 {
@@ -22,8 +23,53 @@ namespace shift
         static public void Flush()
         {
             // print underscorse as spaces, but double underscores as literal underscores
-            const string underscoreTag = "**UNDERSCORE**";
-            Console.Write(text.Replace("__", underscoreTag).Replace('_', ' ').Replace(underscoreTag, "_"));
+            const int LinesPerPage = 12;
+            const string UnderscoreTag = "**UNDERSCORE**";
+            text = text.Replace("__", UnderscoreTag).Replace('_', ' ').Replace(UnderscoreTag, "_");
+
+            var lines = text.Split('\n');
+            var pages = new List<string>();
+            while (lines.Length > 0)
+            {
+                var pageLines = lines.Length > LinesPerPage ?
+                    lines.Take(LinesPerPage).ToArray()
+                    : lines;
+                var page = string.Join('\n', pageLines);
+                pages.Add(page);
+                lines = lines.Skip(LinesPerPage).ToArray();
+            }
+
+            var waitForKey = true;
+            for (var i = 0; i < pages.Count - 1; ++i)
+            {
+                var page = pages[i];
+                Console.WriteLine(page);
+                if (!waitForKey)
+                    continue;
+                Console.Write($"[Down for more, Enter to print all ({i + 1}/{pages.Count})]");
+                while (true)
+                {
+                    var key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.Escape)
+                    {
+                        ClearLineImmediate();
+                        Console.WriteLine("[Output interrupted, some text may be lost.]");
+                        text = "";
+                        RewriteInput();
+                        return;
+                    }
+                    if (key == ConsoleKey.DownArrow)
+                        break;
+                    if (key == ConsoleKey.Enter)
+                    {
+                        waitForKey = false;
+                        break;
+                    }
+                }
+                ClearLineImmediate();
+            }
+            Console.Write(pages.Last());
+
             text = "";
         }
 
@@ -121,12 +167,23 @@ namespace shift
             Write("\n");
         }
 
+        static private void ClearLine()
+        {
+            var spaces = new string(' ', Console.WindowWidth - 1);
+            Write($"\r{spaces}\r");
+        }
+
+        static private void ClearLineImmediate()
+        {
+            var spaces = new string(' ', Console.WindowWidth - 1);
+            Console.Write($"\r{spaces}\r");
+        }
+
         static private void RewriteInput()
         {
             //Prompt = $"{historyIndex} >> ";
-
-            var spaces = new string(' ', Console.WindowWidth - 1);
-            Write($"\r{spaces}\r{Prompt}{Command}");
+            ClearLine();
+            Write($"{Prompt}{Command}");
             Flush();
         }
     }

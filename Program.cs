@@ -18,7 +18,9 @@ namespace shift
                 return;
             }
 
-            var game = ShiftParser.CreateGame(args[0]);
+            var verbose = args.Length > 1 && (args[1] == "-v" || args[1] == "--verbose");
+
+            var game = ShiftParser.CreateGame(args[0], verbose);
             if (game == null)
             {
                 Console.WriteLine($"Failed to parse {args[0]}.");
