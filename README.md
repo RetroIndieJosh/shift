@@ -43,3 +43,7 @@ Underscores are printed as spaces. To write a literal underscore, write two cons
 
 - `hello_world` will render as `hello world`
 - `hello__world` will render as `hello_world`
+
+Newline (`\n`) and tab (`\t`) escape characters are supported in .shift files.
+
+The special escape sequence `\p` stands for "page" or "pause" and will prompt the user to press down before continuing to the next message.

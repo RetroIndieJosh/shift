@@ -20,25 +20,27 @@ namespace shift
 
         static private string Prompt { get; set; } = ">> ";
 
-        static public void Flush()
+        static private List<string> SplitPages(int pageLength, List<string> lines)
         {
-            // print underscorse as spaces, but double underscores as literal underscores
-            const int LinesPerPage = 12;
-            const string UnderscoreTag = "**UNDERSCORE**";
-            text = text.Replace("__", UnderscoreTag).Replace('_', ' ').Replace(UnderscoreTag, "_");
-
-            var lines = text.Split('\n');
             var pages = new List<string>();
-            while (lines.Length > 0)
+            while (lines.Count > 0)
             {
-                var pageLines = lines.Length > LinesPerPage ?
-                    lines.Take(LinesPerPage).ToArray()
-                    : lines;
-                var page = string.Join('\n', pageLines);
-                pages.Add(page);
-                lines = lines.Skip(LinesPerPage).ToArray();
+                var page = "";
+                for (int i = 0; i < pageLength && lines.Count > 0; ++i)
+                {
+                    var line = lines[0];
+                    page += line.Replace("\\p", "") + "\n";
+                    lines = lines.Skip(1).ToList();
+                    if (line.EndsWith("\\p"))
+                        break;
+                }
+                pages.Add(page.TrimEnd());
             }
+            return pages;
+        }
 
+        static private void FlushPages(List<string> pages)
+        {
             var waitForKey = true;
             for (var i = 0; i < pages.Count - 1; ++i)
             {
@@ -69,6 +71,32 @@ namespace shift
                 ClearLineImmediate();
             }
             Console.Write(pages.Last());
+        }
+
+        static public void Flush()
+        {
+            // print underscorse as spaces, but double underscores as literal underscores
+            const int LinesPerPage = 12;
+            const string UnderscoreTag = "**UNDERSCORE**";
+
+            text = text.Replace("\\n", "\n")
+                .Replace("\\t", "\t")
+                .Replace("__", UnderscoreTag)
+                .Replace('_', ' ')
+                .Replace(UnderscoreTag, "_")
+                // end pages are also end lines, so we can process the next line appropritately
+                .Replace("\\p", "\\p\n");
+
+            var lines = text.Split('\n').ToList();
+            if (lines.Count > LinesPerPage)
+            {
+                var pages = SplitPages(LinesPerPage, lines);
+                FlushPages(pages);
+            }
+            else
+            {
+                Console.Write(text);
+            }
 
             text = "";
         }
