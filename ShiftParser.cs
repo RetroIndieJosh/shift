@@ -7,17 +7,40 @@ namespace shift
 {
     class ShiftParser
     {
-        static string itemName = null;
-        static string itemDesc = null;
-        static string itemTake = null;
-        static string itemUse = null;
+        class GameData
+        {
+            public string author = null;
+            public string startRoomName = null;
+            public string title = null;
+        }
 
-        static string roomName = null;
-        static string roomDesc = null;
+        class ItemData
+        {
+            public string name = null;
+            public string desc = null;
+            public string take = null;
+            public string use = null;
 
-        static string author = null;
-        static string title = null;
-        static string startRoomName = null;
+            public ItemData(string name)
+            {
+                this.name = name;
+            }
+        }
+
+        class RoomData
+        {
+            public string name = null;
+            public string desc = null;
+
+            public RoomData(string name)
+            {
+                this.name = name;
+            }
+        }
+
+        static private GameData gameData = new GameData();
+        static private ItemData itemData = null;
+        static private RoomData roomData = null;
 
         static string[] lines = null;
         static int curLineIndex = 0;
@@ -25,6 +48,7 @@ namespace shift
         static private int prevIndent = 0;
 
         static private List<string> errorMessages = new List<string>();
+        static private List<string> warnMessages = new List<string>();
 
         static string CurLine
         {
@@ -35,7 +59,7 @@ namespace shift
         {
             if (!File.Exists(filename))
             {
-                Console.WriteLine($"No file by name {filename}");
+                Console.WriteLine($"No file by name `{filename}`");
                 return null;
             }
 
@@ -47,27 +71,33 @@ namespace shift
                 ++curLineIndex;
             }
 
+            if (warnMessages.Count > 0)
+            {
+                Console.WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
+                warnMessages.ForEach(error => Console.WriteLine($"\t{error}"));
+            }
+
             if (errorMessages.Count > 0)
             {
-                Console.WriteLine($"Interpretation of {filename} halted due to {errorMessages.Count} error(s):");
+                Console.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
                 errorMessages.ForEach(error => Console.WriteLine($"\t{error}"));
                 return null;
             }
 
-            var startRoom = Room.Find(startRoomName);
+            var startRoom = Room.Find(gameData.startRoomName);
             if (startRoom == null)
             {
-                Console.WriteLine($"Error: Could not find room `{startRoomName}` flagged as start.");
+                Console.WriteLine($"Error: Could not find room `{gameData.startRoomName}` flagged as start.");
                 return null;
             }
-            return new Game(author, title, startRoom);
+            return new Game(gameData.author, gameData.title, startRoom);
         }
 
         static private void EndIndent()
         {
-            if (itemName != null)
+            if (itemData != null)
                 EndItem();
-            else if (roomName != null)
+            else if (roomData != null)
                 EndRoom();
             else
                 Error("Messed up indentation (detected negative)");
@@ -75,71 +105,99 @@ namespace shift
 
         static private void EndItem()
         {
-            itemName = null;
+            itemData = null;
         }
 
         static private void EndRoom()
         {
-            new Room(roomName, roomDesc);
-            Display.WriteLine($"Loaded room {roomName}\n\t{roomDesc}");
-            roomName = null;
-            roomDesc = null;
+            new Room(roomData.name, roomData.desc);
+            Console.WriteLine($"Loaded room {roomData.name}\n\t{roomData.desc}");
+            roomData = null;
         }
 
-        private static void ParseLine()
+        static private void ParseLine()
         {
+            if (string.IsNullOrEmpty(CurLine))
+                return;
+
             var indent = CurLine.TakeWhile(Char.IsWhiteSpace).Count();
             if (indent < prevIndent)
                 EndIndent();
             prevIndent = indent;
 
             var trimmedLine = CurLine.Trim();
-            if (RoomKey(trimmedLine, "desc"))
-                roomDesc = Rest(trimmedLine);
-            else if (RoomKey(trimmedLine, "item"))
-                itemName = Rest(trimmedLine);
-            else if (RoomKey(trimmedLine, "start"))
-                startRoomName = roomName;
-            else if (TopKey(trimmedLine, "author"))
-                author = Rest(trimmedLine);
-            else if (trimmedLine.StartsWith("room"))
-                roomName = Rest(trimmedLine);
-            else if (TopKey(trimmedLine, "title"))
-                title = Rest(trimmedLine);
+            var key = trimmedLine.Contains(' ') ?
+                trimmedLine.Substring(0, trimmedLine.IndexOf(' ')) :
+                trimmedLine;
+            var rest = Rest(trimmedLine);
+            if (roomData == null)
+                ParseGame(key, rest);
+            else if (itemData == null)
+                ParseRoom(key, rest);
+            else
+                ParseItem(key, rest);
         }
 
-        private static string Rest(string line)
+        static private void ParseGame(string key, string rest)
         {
-            return string.Join(' ', line.Split(' ').Skip(1).ToList());
-        }
-
-        private static bool RoomKey(string line, string key)
-        {
-            if (!line.StartsWith(key))
-                return false;
-            if (roomName == null)
+            switch (key)
             {
-                Error($"Key `{key}` only valid in a room construction");
-                return false;
+                case "author":
+                    gameData.author = rest;
+                    return;
+                case "room":
+                    roomData = new RoomData(rest);
+                    return;
+                case "title":
+                    gameData.title = rest;
+                    return;
+                default:
+                    Error($"Key `{key}` not valid at Game level");
+                    return;
             }
-            return true;
         }
 
-        private static bool TopKey(string line, string key)
+        static private void ParseItem(string key, string rest)
         {
-            if (!line.StartsWith(key))
-                return false;
-            if (roomName != null)
+        }
+
+        static private void ParseRoom(string key, string rest)
+        {
+            switch (key)
             {
-                Error($"Key `{key}` only valid at top level");
-                return false;
+                case "desc":
+                    roomData.desc = rest;
+                    return;
+                case "exit":
+                    Warn("Key `exit` not yet implemented");
+                    return;
+                case "item":
+                    itemData = new ItemData(rest);
+                    return;
+                case "start":
+                    gameData.startRoomName = roomData.name;
+                    return;
+                default:
+                    Error($"Key `{key}` not valid at Room level");
+                    return;
             }
-            return true;
         }
 
-        private static void Error(string message)
+        static private string Rest(string line)
         {
-            errorMessages.Add($"[{curLineIndex}] {message}");
+            if (!line.Contains(' '))
+                return line;
+            return line.Substring(line.IndexOf(' ') + 1);
+        }
+
+        static private void Error(string message)
+        {
+            errorMessages.Add($"[{curLineIndex + 1}] ERROR {message}");
+        }
+
+        static private void Warn(string message)
+        {
+            warnMessages.Add($"[{curLineIndex + 1}] WARNING {message}");
         }
     }
 }
