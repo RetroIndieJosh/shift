@@ -59,6 +59,21 @@ namespace shift
             get => lines[curLineIndex];
         }
 
+        static private string[] StripComments(string[] lines)
+        {
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                var lineCommentLoc = lines[i].IndexOf("#");
+                if (lineCommentLoc >= 0)
+                {
+                    Log($"Clear line comment: {lines[i]}");
+                    lines[i] = lines[i].Substring(0, lineCommentLoc);
+                    continue;
+                }
+            }
+            return lines;
+        }
+
         public static Game CreateGame(string filename, bool verbose = false)
         {
             if (!File.Exists(filename))
@@ -69,7 +84,7 @@ namespace shift
 
             verboseMode = verbose;
 
-            lines = File.ReadAllLines(filename).ToArray();
+            lines = StripComments(File.ReadAllLines(filename).ToArray());
             curLineIndex = 0;
             while (curLineIndex < lines.Length)
             {
@@ -155,13 +170,6 @@ namespace shift
             prevIndent = indent;
 
             var trimmedLine = CurLine.Trim();
-
-            if (trimmedLine.StartsWith("//"))
-            {
-                Log($"Ignore comment {trimmedLine}");
-                return;
-            }
-
             var key = trimmedLine.Contains(' ') ?
                 trimmedLine.Substring(0, trimmedLine.IndexOf(' ')) :
                 trimmedLine;

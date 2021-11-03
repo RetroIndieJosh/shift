@@ -1,14 +1,14 @@
 title The Forest House
 author Joshua McLean
 
-// comments begin with a double slash
+# this is a comment
 
 room Bedroom
     desc Moonlight illuminates the room.
-    start
+    start # mark this room as the start
     item flashlight
         ex A standard battery-powered portable light.
-        take
+        take # empty take because it can be taken, but use defualt message
         use [if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
         state off, on
     item battery
