@@ -23,6 +23,7 @@ namespace shift
             var game = ShiftParser.CreateGame(args[0], verbose);
             if (game == null)
             {
+                Display.Flush();
                 Console.WriteLine($"Failed to parse {args[0]}.");
                 return;
             }

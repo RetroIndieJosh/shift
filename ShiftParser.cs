@@ -155,6 +155,13 @@ namespace shift
             prevIndent = indent;
 
             var trimmedLine = CurLine.Trim();
+
+            if (trimmedLine.StartsWith("//"))
+            {
+                Log($"Ignore comment {trimmedLine}");
+                return;
+            }
+
             var key = trimmedLine.Contains(' ') ?
                 trimmedLine.Substring(0, trimmedLine.IndexOf(' ')) :
                 trimmedLine;

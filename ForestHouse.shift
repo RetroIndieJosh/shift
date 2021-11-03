@@ -1,6 +1,8 @@
 title The Forest House
 author Joshua McLean
 
+// comments begin with a double slash
+
 room Bedroom
     desc Moonlight illuminates the room.
     start

@@ -8,7 +8,6 @@ Asterisk denotes items that may be delayed for minimum viable
 
 - customizable prompt (at least a few options)*
 - scrollable buffer (pgup/pgdown)*
-- `[pause]` in text to force "press down to continue"*
 - ctrl+backspace to clear words*
 - rename to something that suggests it's also handling input*
 - pretty presentation*
