@@ -17,8 +17,9 @@ namespace shift
 
         private string author;
         private string title;
+        private string intro;
 
-        public Game(string author, string title, Room startRoom)
+        public Game(string author, string title, string intro, Room startRoom)
         {
             if (instance != null)
                 throw new Exception("Attempted to create second Game instance");
@@ -30,6 +31,7 @@ namespace shift
 
             this.title = title;
             this.author = author;
+            this.intro = intro;
 
             CurRoom = startRoom;
         }
@@ -67,6 +69,8 @@ namespace shift
             title ??= "Untitled";
             author ??= "Anonymous";
             Display.WriteLine($"{title} by {author}\n");
+            if (intro != null)
+                Display.WriteLine($"\n{intro}\n");
 
             isRunning = true;
 

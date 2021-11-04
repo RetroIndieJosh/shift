@@ -1,0 +1,8 @@
+# Test: intro
+
+title Intro Test
+author Joshua McLean
+intro It was a dark and stormy night.
+
+room Dark and Stormy Night
+    start

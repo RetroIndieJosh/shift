@@ -10,6 +10,7 @@ namespace shift
         class GameData
         {
             public string author = null;
+            public string intro = null;
             public string startRoomName = null;
             public string title = null;
         }
@@ -139,7 +140,7 @@ namespace shift
                 Display.WriteLine($"Error: Could not find room `{gameData.startRoomName}` flagged as start.");
                 return null;
             }
-            return new Game(gameData.author, gameData.title, startRoom);
+            return new Game(gameData.author, gameData.title, gameData.intro, startRoom);
         }
 
         static private void EndIndent()
@@ -236,6 +237,10 @@ namespace shift
                 case "author":
                     gameData.author = rest;
                     Log($"Game author: {rest}");
+                    return;
+                case "intro":
+                    gameData.intro = rest;
+                    Log($"Game intro: {rest}");
                     return;
                 case "room":
                     roomData = new RoomData(rest);

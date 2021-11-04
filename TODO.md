@@ -4,7 +4,8 @@
 
 ## Critical / Major
 
-- BUG: Display.Flush() is inconsistent on final newline when flushing; sometimes too many, sometimes missing
+- BUG: Display.Flush() seems to be missing a final newline when the text ends on a blank line
+- BUG: Display.Flush() doesn't count lines correctly when one write with multiple \n's (i.e. "three\nlines\nlong" counts as one)
 - Game: intro text
 - Game: use (inventory)
 - Game: help per command
