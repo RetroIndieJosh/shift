@@ -23,8 +23,8 @@ room Bedroom
 
 room Hall
     desc A door east leads to your bedroom.
-    exit south broken
-    exit west closed Kitchen
+    exit s broken
+    exit w closed Kitchen
 
 room Kitchen
     desc A normal kitchen.

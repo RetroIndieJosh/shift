@@ -57,6 +57,8 @@ Asterisk denotes items that may be delayed for minimum viable
 
 ## Parser
 
+- implement comma handling as per spec
+- more test games to test parser errors and features
 - command scripting*
 - documentation (keywords, take and use empty means "use default")
 - exits
