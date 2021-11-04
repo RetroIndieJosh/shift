@@ -1,71 +1,60 @@
 # SHIFT To Do
 
-For a minimum viable prototype
+## Current
 
-Asterisk denotes items that may be delayed for minimum viable
+## Critical / Major
 
-## Display
+- BUG: Display.Flush() is inconsistent on final newline when flushing; sometimes too many, sometimes missing
+- Game: intro text
+- Game: use (inventory)
+- Game: help per command
+    str->str dict?
+- Items: aliases
+- Items: plurals
+- Items: info
+- Items: quantity (for ammo etc. gets combined with same-named, default 1 - this works because items never exist in multiple in a single area, and are combined on pickup)
+- Text: messages based on state
+        - `[if item name = state]response[else if item name = other state]other response[else]yet another response[end]`
+- Text: messages based on location
+        - `[if in room name]response[else if in other room name]other response[else]yet another response[end]`
+- Items: combine (inventory)
+- Meta: add stuff from [here](https://github.com/RetroIndieJosh/shift/community)
+- Parser: implement comma handling as per spec
+- Parser: more test games to test parser errors and features
+- Parser: exits
+- Parser: items (name, desc, use desc, take desc, states)
+- Parser: warn for empty or missing room descriptions
+- Parser: warn for empty or missing item descriptions
+- Rooms: doors (closed, broken, locked)
 
-- customizable prompt (at least a few options)*
-- scrollable buffer (pgup/pgdown)*
-- ctrl+backspace to clear words*
-- rename to something that suggests it's also handling input*
-- pretty presentation*
+## Quick / Minor
+
+- Game: complain and fail if extra args to input (i.e. `get flashlight lamp dresser` or `flashlight lamp`)
+- Display: move verbose mode (in ShiftParser) here
+- Display: implement Log/Warn/Error here (to allow runtime warnings/errors and logging)
+- Display: log to file
+- Game: TRANCSRIPT (enable log to file)
+- Items: default to "nothing interesting" message when no description
+
+## Optional for Minimum Viable
+
+- Display: customizable prompt (at least a few options)*
+- Display: scrollable buffer (pgup/pgdown)*
+- Display: ctrl+backspace to clear words*
+- Display: rename to something that suggests it's also handling input*
+- Display: pretty presentation*
         distinguish between output and input regions
         "title bar" (can we change console name? at the very least, draw as first line)
         mouse driven menus?
         clickable item names?
         ...or are those better not in the console?
         could make web version with ASP interface (maybe overkill for prototyping)
-
-## Game
-
-- CLEAR*
-- DEBUG (extra messages - or as arg to shift)*
-- SAVE/LOAD*
-- TRANCSRIPT*
-- complain and fail if extra args to input (i.e. `get flashlight lamp dresser` or `flashlight lamp`)
-- intro text
-- use (inventory)
-- help per command
-    str->str dict?
-
-## General
-
+- Game: CLEAR*
+- Game: DEBUG (extra messages - or as arg to shift)*
+- Game: SAVE/LOAD*
 - more LINQ*
-
-## Items
-
-- aliases
-- default to "nothing interesting" message when no description
-- disallow item names that match loaded commands or aliases*
-- plurals
-- info
-        quantity (for ammo etc. gets combined with same-named, default 1 - this works because items never exist in multiple in a single area, and are combined on pickup)
-        target item (null for no target, basic use)
-        destroy self (default false)
-        destroy target (default false)
-        self state set (null for no change)
-        target state set (null for no change)
-        unlock target (door, null for no change)
-- use messages based on state
-        "[if state A]state A response[else if state B]state B response[else]other response[end]"
-- combine (inventory)
-        combine target
-        new item created
-        (auto destroy both, place new item in inventory)
-
-## Parser
-
-- implement comma handling as per spec
-- more test games to test parser errors and features
-- flexible indentation*
-- command scripting*
-- exits
-- items (name, desc, use desc, take desc, states)
-- require room description in .shift files
-
-## Rooms
-
-- autokeys?*
-- doors (closed, broken, locked)
+- Items: disallow item names that match loaded commands or aliases*
+- Parser: variables?*
+- Parser: flexible indentation*
+- Parser: command scripting*
+- Rooms: autokeys?*

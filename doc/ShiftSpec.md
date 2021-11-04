@@ -4,6 +4,29 @@
 
 SHIFT is case sensitive. Unless otherwise specified, keywords are expected to be in lowercase.
 
+A SHIFT script must be in a file ending with `.shift` and must contain at least one room with exactly one room flagged as the start room.
+
+The minimum viable SHIFT script is as follows:
+
+```
+room a
+    start
+```
+
+This creates an empty, descriptionless room called `a` in a game with no title or author.
+
+## Text
+
+No symbols denote text. Rather, text is recognized on context.
+
+Text may include the following escape sequences:
+
+- `\n` for newline (text cannot include literal newlines, as a newline ends a command line)
+- `\p` for pause/page, which stops with a `[Press down]` message and waits for user input to continue
+- `\t` for tab (width determined by the output console)
+
+## Keywords and Arguments
+
 Each line consists of a keyword followed by an optional value that runs until the end of the line. Keywords may not contain spaces, but arguments may.
 
 A line with no arguments:
@@ -45,8 +68,8 @@ Three levels are indicated using indentation:
 - game block
     - room block
         - item block
-        - OR combine block
-        - OR use on block
+    - OR combine block
+    - OR use on block
 
 Blocks begin with special keywords (`room`, `item`, `combine`, or `useon`) and end when the whitespace returns to its previous position.
 
@@ -83,6 +106,7 @@ There are no multiline comments.
 The top level of the script defines game properties:
 
 - `author` the game author
+- `intro` text to display when the game begins
 - `room [name]` start a room block with given `name`
 - `title` the game title
 
@@ -136,26 +160,28 @@ When defined in an `exit`, the `description` is used as follows:
 
 ## Item Block
 
-An item block started by `item [name]` from the game block can have the following properties:
+Started by `item [name]` in a room block. Can have the following properties:
 
-- `ex [description]` defines the EXAMINE command description for the item
-- `give [item]` defines a special GET/TAKE that gives `item` instead of this item
+- `alias [name]` define an alias for the item
+    - all aliases and item names must be unique
+- `ex [description]` define the EXAMINE command description for the item
+- `give [item]` define a special GET/TAKE that gives `item` instead of this item
     - uses `take` description from `item`
     - flags `item` as canTake if not already
-- `key [room], [direction], [description]` indicates the item can unlock the door in `room` going `direction`
-    - if a description is provided, this is printed when walking through the door carrying this item (unlocking, opening, and stepping through the door)
-- `state [state1], [state2], ...` defines a new state machine for the item
-    - by default, the state of this machine is the first listed state
-    - all states in an item must be unique
+- `key [room], [direction], [description]` indicate item can unlock exit in `room` going `direction`
+    - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
+- `state [state1], [state2], ...` define a new state machine for the item
+    - by default, state is the first listed state
+    - all states must be unique per item
 - `take [description]` defines the GET/TAKE command 
-    - flags this item as canTake
+    - flag this item as canTake
 - `use [new state], [description]` defines the USE command
-    - flags this item as canUse
-    - when used, the item state is changed to `new state` and `description` is printed
+    - flag this item as canUse
+    - when used, change item state to `new state` and print `description`
 
 ## Combine Block
 
-A combine block started by `combine [item1], [item2]` defines a COMBINE command for one item on another:
+Started in the game block with `combine [item1], [item2]` to define a COMBINE command for one item on another:
 
 - `combinedesc [item], [description]` description for combining `item` with the other item
     - if only one defined, applies to reciprocal combination
@@ -166,7 +192,7 @@ A combine block started by `combine [item1], [item2]` defines a COMBINE command 
 
 ## Use On Block
 
-A use on block started by `useon [item0], [item1]` defines a USE command for one item ON another:
+Started in the game block with `useon [item0], [item1]` to define a USE `item0` ON `item1` command:
 
 - `destroy [#]` flag item `#` to be destroyed on the USE ON action
 - `state [#] [state]` set item `#` to given `state` on the USE ON action

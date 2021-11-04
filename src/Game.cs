@@ -61,9 +61,12 @@ namespace shift
 
         public void Run()
         {
-            Display.WriteLine("CSIF // A basic IF system in C#");
-            Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved\n");
-            Display.WriteLine($"{title} by {author}");
+            Display.WriteLine("SHIFT // Survival Horror Interactive Fiction Toolkit");
+            Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
+
+            title ??= "Untitled";
+            author ??= "Anonymous";
+            Display.WriteLine($"{title} by {author}\n");
 
             isRunning = true;
 
