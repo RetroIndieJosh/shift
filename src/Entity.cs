@@ -13,11 +13,11 @@ namespace shift
             this.desc = desc;
         }
 
-        public bool Matches(string[] args)
+        public bool Matches(string name)
         {
             var nameTokens = Name.Split(' ');
             if (nameTokens.Length == 1)
-                return this.Name == args[0];
+                return this.Name == name;
             throw new NotImplementedException("Matching multiword names not yet "
                 + "supported. Please only use a single word for item names.");
         }

@@ -2,7 +2,7 @@
 
 ## Basics
 
-SHIFT is case sensitive. Unless otherwise specified, keywords are expected to be in lowercase.
+SHIFT is case sensitive. Commands, item states, user-defined variable names must be lowercase. Built-in variables and special keywords are in SHOUTING_CAPS. Otherwise, any case is allowed.
 
 A SHIFT script must be in a file ending with `.shift` and must contain at least one room with exactly one room flagged as the start room.
 
@@ -25,26 +25,26 @@ Text may include the following escape sequences:
 - `\p` for pause/page, which stops with a `[Press down]` message and waits for user input to continue
 - `\t` for tab (width determined by the output console)
 
-## Keywords and Arguments
+## Commands and Arguments
 
-Each line consists of a keyword followed by an optional value that runs until the end of the line. Keywords may not contain spaces, but arguments may.
+Each line consists of a command followed by an optional value that runs until the end of the line. Keywords may not contain spaces, but arguments may.
 
 A line with no arguments:
 
 ```
-keyword
+command
 ```
 
 A line with one argument:
 
 ```
-keyword [value]
+command [value]
 ```
 
 A line with multiple arguments:
 
 ```
-keyword [value 1], [value 2], [value 3]
+command [value 1], [value 2], [value 3]
 ```
 
 Extended strings (i.e. descriptions) are always the final argument and may contain commas, i.e.:
@@ -55,7 +55,7 @@ exit west, closed, Living Room, A description of the living room, which can incl
 
 will split to:
 
-- `exit` (keyword)
+- `exit` (command)
 - `west` (arg 1)
 - `closed` (arg 2)
 - `Living Room` (arg 3)
@@ -68,10 +68,11 @@ Three levels are indicated using indentation:
 - game block
     - room block
         - item block
+            - use block (optional)
     - OR combine block
-    - OR use on block
+    - OR itemtype block
 
-Blocks begin with special keywords (`room`, `item`, `combine`, or `useon`) and end when the whitespace returns to its previous position.
+Blocks begin with special commands (`room`, `item`, `combine`, `itemtype`, or `use`) and end when the whitespace returns to its previous position.
 
 An indentation is four spaces. (In future, this will be more flexible.)
 
@@ -90,25 +91,42 @@ game block
         property
 ```
 
+### Built In Variables and Constants
+
+- `CURROOM` name of the current room
+- `HELDCOUNT` number of items currently held
+- `TARGET` name of the currently targeted item or "nothing" if null
+- `[room name].ITEMCOUNT` the number of items in `room name`
+- `[item name].FLOOR` count of the given `item name` in the current room
+- `[item name].HELD` count of the given `item name` carried by the player
+
 ### Comments
 
-Comments begin with a `#` and run to the end of the line. These can be started after the beginning of the line.
+Comments begin with `#` and run to the end of the line. These can be placed after commands.
 
 ```python
 # This is a full line comment
 room Kitchen # this is a comment about the kitchen
 ```
 
-There are no multiline comments.
+Multiline comments are not supported.
 
 ## Game Block
 
-The top level of the script defines game properties:
+The script's top level defines game properties:
 
 - `author` the game author
 - `intro` text to display when the game begins
+- `itemtype [name]` defines an item type, identical to item block except:
+    - `state` is invalid
+    - `take` is defined automatically (default null)
+    - `use` applies to the entire collection as a single item
+    - new key `plural` define name when referring to quantity > 1 of this itemtype 
+    - all instances combine in inventory, i.e. taking 5 bullets when carrying 7 results in one item `bullets (12)`
+    - all description entries apply to any collection of the `itemtype`
 - `room [name]` start a room block with given `name`
 - `title` the game title
+- `var [name] [#]` define a global integer variable with default value `#`
 
 ## Room Block
 
@@ -121,7 +139,16 @@ A room block started by `room [name]` from the game block can have the following
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
     - see Directions and Exits below 
 - `item [name]` start an item block with given `name`
-- `start` indiciate the game should start in the current room
+    - an item name cannot start with a number, otherwise it is interpreted as below
+    - name must be unique among all items including `itemtype` names
+- `item [number] [item name]` place `number` of `item name` in the room
+    - `item name` must be defined as an `itemtype` in the game block
+    - multiple of these declarations in a single room block is an error
+- `roomvar [name] [#]` create a variable with the given `name` and an initial value of `#`
+    - `name` cannot contain the period character
+    - attached to the room through name mangling (`room name.var name`)
+    - only integer variables supported
+- `start` game starts in this room
     - multiple `start` definitions is an error
 - `useon [item1], [item2]` start a use on block with specified items
 
@@ -170,14 +197,38 @@ Started by `item [name]` in a room block. Can have the following properties:
     - flags `item` as canTake if not already
 - `key [room], [direction], [description]` indicate item can unlock exit in `room` going `direction`
     - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
-- `state [state1], [state2], ...` define a new state machine for the item
+- `statemach [state1], [state2], ...` define a new state machine for the item
     - by default, state is the first listed state
     - all states must be unique per item
+    - states must be all lowercase
 - `take [description]` defines the GET/TAKE command 
     - flag this item as canTake
-- `use [new state], [description]` defines the USE command
+- `use` creates a use block to define the USE command on this item
     - flag this item as canUse
-    - when used, change item state to `new state` and print `description`
+- `itemvar [name] [#]` create a variable with the given `name` and an initial value of `#`
+    - `name` cannot contain the period character
+    - attached to the item through name mangling (`item name.var name`)
+    - only integer variables supported
+
+## Use Block
+
+Define what happens when the player USEs an item:
+
+- `add [var] [#]` add `#` to variable `var`
+- `destroy` destroy the used item (remove from the game)
+- `give [item]` place the named item in the player's inventory
+- `say [message]` print the given message
+    - multiple messages will be printed in sequence, separated by a newline
+- `set [var] [#]` set the `var` to the value `#`
+- `sub [var] [#]` subtract `#` from variable `var`
+- `state [state]` set the item state to `state`
+    - use multiple times for different state machines
+    - two or more `state` commands from the same state machine is an error
+- `target [item name]` require the named item to be currently targeted for a valid USE
+- `targetdestroy` as `destroy` but on `target`
+    - error if no `target` defined
+- `targetstate [state]` as `state` but on `target`
+    - error if no `target` defined
 
 ## Combine Block
 
@@ -190,13 +241,4 @@ Started in the game block with `combine [item1], [item2]` to define a COMBINE co
     - other items are destroyed (removed from the game)
     - if no result defined, combining simply destroys both items
 
-## Use On Block
-
-Started in the game block with `useon [item0], [item1]` to define a USE `item0` ON `item1` command:
-
-- `destroy [#]` flag item `#` to be destroyed on the USE ON action
-- `state [#] [state]` set item `#` to given `state` on the USE ON action
-- `usedesc [#] [description]` description for using `item#` on other item
-    - `#` must be 0 or 1
-    - if only one defined, applies to reciprocal combination
-    - if no `usedesc` defined, fall back to default description
+If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of that type and destroys one from the collection for each COMBINE command.

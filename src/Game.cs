@@ -93,10 +93,11 @@ namespace shift
                 return;
             }
 
-            var item = CurRoom.FindItem(args);
+            var itemName = string.Join(' ', args);
+            var item = CurRoom.FindItem(itemName);
             if (item == null)
             {
-                Display.WriteLine($"You see no {string.Join(' ', args)} here.");
+                Display.WriteLine($"You see no {itemName} here.");
                 return;
             }
 
@@ -209,7 +210,7 @@ namespace shift
 
         private void CommandWhere(string[] args)
         {
-            Item.Where(args);
+            Item.Where(string.Join(' ', args));
         }
 
         private void LoadCommands()
@@ -319,9 +320,10 @@ namespace shift
 
         private bool TryItem(string[] tokens)
         {
-            var targetItem = CurRoom.FindItem(tokens);
+            var name = string.Join(' ', tokens);
+            var targetItem = CurRoom.FindItem(name);
             if (targetItem == null)
-                targetItem = Item.FindInInventory(tokens);
+                targetItem = Item.FindInInventory(name);
             if (targetItem == null)
                 return false;
 

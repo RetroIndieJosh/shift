@@ -39,13 +39,13 @@ namespace shift
         // find an item loaded in the game
         public static Item Find(string name)
         {
-            return Find(new string[] { name }, items);
+            return Find(name, items);
         }
 
         // find an item in a specific list i.e. room contents
-        public static Item Find(string[] args, List<Item> items)
+        public static Item Find(string name, List<Item> items)
         {
-            var matches = items.Where(item => item.Matches(args)).ToList();
+            var matches = items.Where(item => item.Matches(name)).ToList();
             if (matches.Count == 0)
                 return null;
 
@@ -53,9 +53,9 @@ namespace shift
             return matches[0];
         }
 
-        public static Item FindInInventory(string[] args)
+        public static Item FindInInventory(string name)
         {
-            return Find(args, inventory);
+            return Find(name, inventory);
         }
 
         public static List<string> GetInventoryNames()
@@ -63,12 +63,12 @@ namespace shift
             return inventory.Select(item => item.Name).ToList();
         }
 
-        public static void Where(string[] args)
+        public static void Where(string name)
         {
-            var item = Item.Find(args, items);
+            var item = Item.Find(name, items);
             if (item == null)
             {
-                Display.WriteLine($"[no item by name {string.Join(' ', args)}]");
+                Display.WriteLine($"[no item by name {name}]");
                 return;
             }
 

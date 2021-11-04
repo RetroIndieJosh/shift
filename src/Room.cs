@@ -43,10 +43,9 @@ namespace shift
                 AddItem(item);
         }
 
-        // TODO ambiguity handling (multiple matching items)
-        public Item FindItem(string[] args)
+        public Item FindItem(string name)
         {
-            return Item.Find(args, items);
+            return Item.Find(name, items);
         }
 
         public Room GetExit(Direction direction)
