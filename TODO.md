@@ -58,7 +58,6 @@ Asterisk denotes items that may be delayed for minimum viable
 ## Parser
 
 - command scripting*
-- comments (start with // - multiline?)*
 - documentation (keywords, take and use empty means "use default")
 - exits
 - items (name, desc, use desc, take desc, states)

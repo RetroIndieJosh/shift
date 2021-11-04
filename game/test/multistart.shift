@@ -1,0 +1,9 @@
+# Test: error for defining multiple start rooms
+title Multi Start Test
+author Joshua McLean
+
+room A
+    start
+
+room B
+    start

@@ -76,6 +76,9 @@ namespace shift
 
         public static Game CreateGame(string filename, bool verbose = false)
         {
+            // NOTE this will break filenames with \\ in linux but that's a bad idea anyway
+            filename = filename.Replace("\\", "/");
+
             if (!File.Exists(filename))
             {
                 Display.WriteLine($"No file by name `{filename}`");
@@ -242,6 +245,12 @@ namespace shift
                     Log($"New item: {rest}");
                     return;
                 case "start":
+                    if (gameData.startRoomName != null)
+                    {
+                        Error($"Start room defined twice. Was `{gameData.startRoomName}`, redefined in `{roomData.name}`.");
+                        return;
+                    }
+
                     gameData.startRoomName = roomData.name;
                     Log($"Start room: {roomData.name}");
                     return;
