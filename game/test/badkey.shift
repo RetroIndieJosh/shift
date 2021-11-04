@@ -1,0 +1,7 @@
+# Test: using undefined keys
+
+bad game key
+room A
+    bad room key
+    item A
+        bad item key

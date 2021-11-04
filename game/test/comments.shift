@@ -1,0 +1,16 @@
+# Test: comments
+
+# full line comment
+
+title Comment Test # end of line comment
+author Joshua McLean
+
+room A # comment at start of room def
+    # comment inside room def
+    start # comment at end of line in room def
+    item A # comment at start of item def
+        # comment inside item def
+        ex An item. # comment at end of line in item def
+    # comment after item def
+
+# comment at end of file

@@ -50,55 +50,22 @@ Three levels are indicated using indentation:
 
 Blocks begin with special keywords (`room`, `item`, `combine`, or `useon`) and end when the whitespace returns to its previous position.
 
-Indentation can be any whitespace but must be consistent at the block level.
+An indentation is four spaces. (In future, this will be more flexible.)
 
 ```
 game block
     room block
         item block 1
         item block 2
-    room block 2
-        item block 1
-        item block 2
+    room block
+        item block
+            property
+        item block
+    combine block
+        property
+    use on block
+        property
 ```
-
-or
-
-```
-game block
-        room block
-                item block 1
-                item block 2
-        room block 2
-                item block 1
-                item block 2
-```
-
-or even (but not recommended)
-
-```
-game block
-        room block
-            item block 1
-            item block 2
-        room block 2
-            item block 1
-            item block 2
-```
-
-but not
-
-```
-game block
-        room block 1
-            item block 1
-          item block 2
-        room block 2
-            item block 1
-          item block 2
-```
-
-because the parser would see item block 2 as a room block and room block 2 as a game block, and will be terribly confused.
 
 ### Comments
 
@@ -172,34 +139,38 @@ When defined in an `exit`, the `description` is used as follows:
 An item block started by `item [name]` from the game block can have the following properties:
 
 - `ex [description]` defines the EXAMINE command description for the item
+- `give [item]` defines a special GET/TAKE that gives `item` instead of this item
+    - uses `take` description from `item`
+    - flags `item` as canTake if not already
 - `key [room], [direction], [description]` indicates the item can unlock the door in `room` going `direction`
     - if a description is provided, this is printed when walking through the door carrying this item (unlocking, opening, and stepping through the door)
 - `state [state1], [state2], ...` defines a new state machine for the item
     - by default, the state of this machine is the first listed state
     - all states in an item must be unique
 - `take [description]` defines the GET/TAKE command 
-    - flags the item as canTake
+    - flags this item as canTake
 - `use [new state], [description]` defines the USE command
-    - flags the item as canUse
+    - flags this item as canUse
     - when used, the item state is changed to `new state` and `description` is printed
 
 ## Combine Block
 
 A combine block started by `combine [item1], [item2]` defines a COMBINE command for one item on another:
 
-- `combinedesc [item], [description]` defines the description for combining `item` with the other item involved
-    - if only one is defined, the description applies to the reciprocal combination
-    - if no `combinedesc` is defined, the default description is used
-- `result [item]` defines the item resulting from the combination
-    - the other items are destroyed (removed from the game)
+- `combinedesc [item], [description]` description for combining `item` with the other item
+    - if only one defined, applies to reciprocal combination
+    - if no `combinedesc` defined, fall back to default description
+- `result [item]` the item resulting from the combination
+    - other items are destroyed (removed from the game)
+    - if no result defined, combining simply destroys both items
 
 ## Use On Block
 
 A use on block started by `useon [item0], [item1]` defines a USE command for one item ON another:
 
-- `destroy [#]` flags item `#` to be destroyed on the USE ON action
-- `state [#] [state]` sets item `#` to the given `state` on the USE ON action
-- `usedesc [#] [description]` defines the description for using `item#` on the other item
+- `destroy [#]` flag item `#` to be destroyed on the USE ON action
+- `state [#] [state]` set item `#` to given `state` on the USE ON action
+- `usedesc [#] [description]` description for using `item#` on other item
     - `#` must be 0 or 1
-    - if only one is defined, the description applies to the reciprocal combination
-    - if no `usedesc` is defined, the default description is used
+    - if only one defined, applies to reciprocal combination
+    - if no `usedesc` defined, fall back to default description

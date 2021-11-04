@@ -59,8 +59,8 @@ Asterisk denotes items that may be delayed for minimum viable
 
 - implement comma handling as per spec
 - more test games to test parser errors and features
+- flexible indentation*
 - command scripting*
-- documentation (keywords, take and use empty means "use default")
 - exits
 - items (name, desc, use desc, take desc, states)
 - require room description in .shift files

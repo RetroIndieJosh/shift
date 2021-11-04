@@ -1,0 +1,10 @@
+# Test: indentation
+
+# jump from item block to game block
+room A
+    start
+    item A
+        ex An item.
+
+title Indentation Test
+author Joshua McLean

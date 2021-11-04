@@ -40,11 +40,29 @@ namespace shift
             }
         }
 
+        class Line
+        {
+            const int SpacesPerIndent = 4;
+
+            public int IndentLevel { get; private set; }
+            public string Text { get; private set; }
+
+            public Line(string line)
+            {
+                var spaces = line.TakeWhile(c => c == ' ').Count();
+                if (spaces % SpacesPerIndent != 0)
+                    throw new Exception($"Invalid spacing in SHIFT file:\n{line}");
+
+                IndentLevel = spaces / SpacesPerIndent;
+                Text = line.Trim();
+            }
+        }
+
         static private GameData gameData = new GameData();
         static private ItemData itemData = null;
         static private RoomData roomData = null;
 
-        static string[] lines = null;
+        static List<Line> lines = null;
         static int curLineIndex = 0;
 
         static private int prevIndent = 0;
@@ -54,7 +72,7 @@ namespace shift
         static private List<string> errorMessages = new List<string>();
         static private List<string> warnMessages = new List<string>();
 
-        static string CurLine
+        static Line CurLine
         {
             get => lines[curLineIndex];
         }
@@ -87,13 +105,20 @@ namespace shift
 
             verboseMode = verbose;
 
-            lines = StripComments(File.ReadAllLines(filename).ToArray());
+            lines = new List<Line>();
+            StripComments(File.ReadAllLines(filename).ToArray())
+                .ToList().ForEach(line => lines.Add(new Line(line)));
+
             curLineIndex = 0;
-            while (curLineIndex < lines.Length)
+            while (curLineIndex < lines.Count)
             {
                 ParseLine();
                 ++curLineIndex;
             }
+            GoToIndentLevel(0);
+
+            if (gameData.startRoomName == null)
+                Error("No start room defined.");
 
             if (warnMessages.Count > 0)
             {
@@ -162,21 +187,40 @@ namespace shift
             roomData = null;
         }
 
+        static private void GoToIndentLevel(int targetIndentLevel)
+        {
+            Log($"Indent level {prevIndent} => {targetIndentLevel}");
+            if (targetIndentLevel < prevIndent)
+            {
+                var indentLevel = prevIndent;
+                var loops = 0;
+                while (indentLevel > targetIndentLevel)
+                {
+                    EndIndent();
+                    --indentLevel;
+                    ++loops;
+                    if (loops > 1000)
+                    {
+                        Error("Too many loops parsing block exit; skipping line");
+                        return;
+                    }
+                }
+            }
+            prevIndent = targetIndentLevel;
+        }
+
         static private void ParseLine()
         {
-            if (string.IsNullOrEmpty(CurLine))
+            if (string.IsNullOrEmpty(CurLine.Text))
                 return;
 
-            var indent = CurLine.TakeWhile(Char.IsWhiteSpace).Count();
-            if (indent < prevIndent)
-                EndIndent();
-            prevIndent = indent;
+            GoToIndentLevel(CurLine.IndentLevel);
 
-            var trimmedLine = CurLine.Trim();
-            var key = trimmedLine.Contains(' ') ?
-                trimmedLine.Substring(0, trimmedLine.IndexOf(' ')) :
-                trimmedLine;
-            var rest = Rest(trimmedLine);
+            var text = CurLine.Text;
+            var key = text.Contains(' ') ?
+                text.Substring(0, text.IndexOf(' ')) :
+                text;
+            var rest = Rest(text);
             if (roomData == null)
                 ParseGame(key, rest);
             else if (itemData == null)
