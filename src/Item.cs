@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    public class Item : Entity
+    public class Item : ScriptedEntity
     {
         const string DefaultTakeDesc = "You take {0}.";
         const string DefaultUseDesc = "You take {0}.";
@@ -167,9 +167,8 @@ namespace shift
                 CurTarget = this;
         }
 
-        public override void WriteDesc()
+        public void WriteDesc()
         {
-            base.WriteDesc();
             Display.Write($" [{stateMachine}]");
         }
 

@@ -6,20 +6,27 @@ author / Joshua McLean
 room/Bedroom
     desc / Moonlight illuminates the room.
     start # mark this room as the start
-    item/flashlight
-        ex/A standard battery-powered portable light.
-        take # empty take because it can be taken, but use defualt message
-        use/[if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
-        statemach/ off / on
-    item/battery
-        ex/A single D-cell battery.
-        take
-        combine flashlight
-    item/bronze lamp
-        ex/Doesn't seem to turn on.
-    item/dresser
-        ex/Contains clothes.
     exit/west/open/Hall
+item/flashlight
+    location/Bedroom
+    ex/A standard battery-powered portable light.
+    take # empty take because it can be taken, but use defualt message
+    use/[if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
+    statemach/ off / on
+    var/battery level/0
+item/battery
+    location/Bedroom
+    ex/A single D-cell battery.
+    take
+item/bronze lamp
+    location/Bedroom
+    ex/Doesn't seem to turn on.
+item/dresser
+    location/Bedroom
+    ex/Contains clothes.
+combine/battery/flashlight
+    replace/flashlight
+    inc/flashlight.battery level
 
 room/Hall
     desc/A door east leads to your bedroom.

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    public class Room : Entity
+    public class Room : ScriptedEntity
     {
         static List<Room> rooms = new List<Room>();
 
@@ -13,6 +13,8 @@ namespace shift
             East, North, Northeast, Northwest, South, Southeast, Southwest,
             West, Down, Up, Count
         }
+
+        public string Desc { get; private set; }
 
         private Room[] exits = new Room[(int)Direction.Count];
         private List<Item> items = new List<Item>();
@@ -26,9 +28,11 @@ namespace shift
             return matches[0];
         }
 
-        public Room(string name, string desc) : base(name, desc)
+        public Room(List<ScriptLine> lines)
         {
-            rooms.Add(this);
+            BindCommands();
+            foreach (var line in lines)
+                TryParse(line);
         }
 
         public void AddItem(Item item)
@@ -129,6 +133,38 @@ namespace shift
 
             var itemStr = string.Join(", ", items);
             Display.WriteLine("You also see {0}.", itemStr);
+        }
+
+        private void WriteDesc()
+        {
+            Display.WriteLine(Desc);
+        }
+
+        private void BindCommands()
+        {
+            commands = new List<ScriptCommand>()
+            {
+                new ScriptCommand("desc", 1, args => {
+                    this.Desc = args[0];
+                    return null;
+                }),
+                new ScriptCommand("exit", 1, args => CreateExit(args)),
+                new ScriptCommand("room", 1, args => {
+                    this.Name = args[0];
+                    return null;
+                }),
+                new ScriptCommand("start", 0, args => {
+                    if(ShiftParser.StartRoom != null)
+                        return new Problem(ProblemType.Error, "Multiple start rooms defined");
+                    ShiftParser.StartRoom = this;
+                    return null;
+                }),
+            };
+        }
+
+        private Problem CreateExit(List<string> args)
+        {
+            return new Problem(ProblemType.Warning, "Key `exit` not yet implemented");
         }
     }
 }

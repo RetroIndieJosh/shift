@@ -230,8 +230,10 @@ Started by `item [name]` in a room block. Can have the following properties:
 Define what happens when the player USEs an item:
 
 - `add [var] [#]` add `#` to variable `var`
+- `dec [var]` shortcut for `sub [var] 1`
 - `destroy` destroy the used item (remove from the game)
 - `give [item]` place the named item in the player's inventory
+- `inc [var]` shortcut for `add [var] 1`
 - `say [message]` print the given message
     - multiple messages will be printed in sequence, separated by a newline
 - `set [var] [#]` set the `var` to the value `#`
@@ -252,8 +254,9 @@ Started in the game block with `combine [item1] / [item2]` to define a COMBINE c
 - `combinedesc [item] / [description]` description for combining `item` with the other item
     - if only one defined, applies to reciprocal combination
     - if no `combinedesc` defined, fall back to default description
-- `result [item]` the item resulting from the combination
-    - other items are destroyed (removed from the game)
+- `replace [item]` the item replacing the combination
+    - other items are removed from the game
+    - this can be `item1` or `item2` which will be returned to the player after combination
     - if no result defined, combining simply destroys both items
 
 If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of that type and destroys one from the collection for each COMBINE command.
