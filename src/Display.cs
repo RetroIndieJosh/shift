@@ -76,7 +76,6 @@ namespace shift
         static public void Flush()
         {
             // print underscorse as spaces, but double underscores as literal underscores
-            const int LinesPerPage = 12;
             const string UnderscoreTag = "**UNDERSCORE**";
 
             text = text.Replace("\\n", "\n")
@@ -87,10 +86,12 @@ namespace shift
                 // end pages are also end lines, so we can process the next line appropritately
                 .Replace("\\p", "\\p\n");
 
+            // allow a little bit of overlap so the user can follow the text
+            var linesPerPage = Console.WindowHeight - 4;
             var lines = text.Split('\n').ToList();
-            if (lines.Count > LinesPerPage)
+            if (lines.Count > linesPerPage)
             {
-                var pages = SplitPages(LinesPerPage, lines);
+                var pages = SplitPages(linesPerPage, lines);
                 FlushPages(pages);
             }
             else

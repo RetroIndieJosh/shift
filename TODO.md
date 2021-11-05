@@ -6,6 +6,7 @@
 
 ## Critical / Major
 
+- Display: clean up code (alphabetize methods, split methods?, cleaner loops)
 - disambiguate between held quantity and in-room quantity
     - i.e. player carries 7 bullets and room contains 4 bullets, what does "bullet" refer to? we must ask: "held bullets or inventory bullets?"
     - what does this do to find? each grouping of bullets must have a unique identifier, perhaps a hidden ID in the name
