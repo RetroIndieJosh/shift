@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace shift
 {
@@ -109,6 +110,23 @@ namespace shift
             lines = new List<Line>();
             StripComments(File.ReadAllLines(filename).ToArray())
                 .ToList().ForEach(line => lines.Add(new Line(line)));
+
+            // syntax check
+            var rx = new Regex(@"\s*[^\/#]+\s*(\s*\/[^\/#]*\s*)*", RegexOptions.Compiled);
+            var syntaxErrorLines = new List<int>();
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                if (string.IsNullOrEmpty(lines[i].Text))
+                    continue;
+                if (!rx.IsMatch(lines[i].Text))
+                    syntaxErrorLines.Add(i);
+            }
+            if (syntaxErrorLines.Count > 0)
+            {
+                Display.WriteLine($"{syntaxErrorLines.Count} syntax errors:");
+                syntaxErrorLines.ForEach(i => Display.WriteLine($"[{i + 1}] {lines[i].Text}"));
+                return null;
+            }
 
             curLineIndex = 0;
             while (curLineIndex < lines.Count)

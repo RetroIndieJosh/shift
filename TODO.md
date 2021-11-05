@@ -61,7 +61,7 @@
 
 - Script: `inventory` block to define items initially in player inventory
 - Script: use a less common separator like / to split args to make parsing easier
-        - i.e. `exit / east / locked / The door is locked.`
+        - i.e. `exit east / locked / The door is locked.`
 - Script: print value of variable like `[var name]` or `[item name.var name]`
 - Script: include other script files to allow organization by region
 - Display: customizable prompt (at least a few options)

@@ -42,31 +42,39 @@ A line with no arguments:
 command
 ```
 
-A line with one argument:
+A line with one argument uses a slash to separate the argument:
 
 ```
-command [value]
+command / [value]
 ```
 
-A line with multiple arguments:
+A line with multiple arguments separates arguments with a forward slash:
 
 ```
-command [value 1], [value 2], [value 3]
+command / [value 1] / [value 2] / [value 3]
 ```
 
-Extended strings (i.e. descriptions) are always the final argument and may contain commas, i.e.:
+Leading and trailing whitespace is ignored. So the above could be written:
 
 ```
-exit west, closed, Living Room, A description of the living room, which can include commas, like this.
+command  /  [value 1]/[value 2]   /     [value 3]
 ```
 
-will split to:
+More technically, any non-comment line matchs the regex:
 
-- `exit` (command)
-- `west` (arg 1)
-- `closed` (arg 2)
-- `Living Room` (arg 3)
-- `A description of the living room, which can include commas, like this.` (description)
+```regex
+\s*[^\/#]+\s*(\s*\/[^\/#]*\s*)*
+```
+
+### Standards
+
+Current (experimental) standard is to put one space around a slash when the right hand side is a list, but otherwise put no spaces around slashes.
+
+```
+item/No Space
+    ex/No space with one arg.
+    statemach/ space before first state / and around slashes / between other states
+```
 
 ### Blocks and Indentation
 
@@ -141,8 +149,8 @@ A room block started by `room [name]` from the game block can have the following
 
 - `desc [description]` description for the room
     - empty `desc` is meaningless but not an error
-- `combine [item1], [item2]` start a combine block with specified items
-- `exit [direction], [type], [room], [move description]` define an exit
+- `combine [item1] / [item2]` start a combine block with specified items
+- `exit [direction] / [type] / [room] / [move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
     - see Directions and Exits below 
 - `item [name]` start an item block with given `name`
@@ -157,7 +165,7 @@ A room block started by `room [name]` from the game block can have the following
     - only integer variables supported
 - `start` game starts in this room
     - multiple `start` definitions is an error
-- `useon [item1], [item2]` start a use on block with specified items
+- `useon [item1] / [item2]` start a use on block with specified items
 
 ### Directions
 
@@ -183,7 +191,7 @@ An exit can be:
 - **closed**: a door blocks the exit (default message suggests opening, walking through, and closing the door behind)
 - **locked**: a door blocks the exit and requires a key
 - **broken**: a dead end that cannot be opened
-    - an exit definition may omit `room` when broken: `exit west, broken, , The lock is broken. You can't open it.`
+    - an exit definition may omit `room` when broken: `exit west / broken /  / The lock is broken. You can't open it.`
 
 When defined in an `exit`, the `description` is used as follows:
 
@@ -202,9 +210,9 @@ Started by `item [name]` in a room block. Can have the following properties:
 - `give [item]` define a special GET/TAKE that gives `item` instead of this item
     - uses `take` description from `item`
     - flags `item` as canTake if not already
-- `key [room], [direction], [description]` indicate item can unlock exit in `room` going `direction`
+- `key [room] / [direction] / [description]` indicate item can unlock exit in `room` going `direction`
     - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
-- `statemach [state1], [state2], ...` define a new state machine for the item
+- `statemach [state1] / [state2] / ...` define a new state machine for the item
     - by default, state is the first listed state
     - all states must be unique per item
     - states must be all lowercase
@@ -239,9 +247,9 @@ Define what happens when the player USEs an item:
 
 ## Combine Block
 
-Started in the game block with `combine [item1], [item2]` to define a COMBINE command for one item on another:
+Started in the game block with `combine [item1] / [item2]` to define a COMBINE command for one item on another:
 
-- `combinedesc [item], [description]` description for combining `item` with the other item
+- `combinedesc [item] / [description]` description for combining `item` with the other item
     - if only one defined, applies to reciprocal combination
     - if no `combinedesc` defined, fall back to default description
 - `result [item]` the item resulting from the combination
