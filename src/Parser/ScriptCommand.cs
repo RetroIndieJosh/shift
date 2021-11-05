@@ -27,7 +27,7 @@ namespace shift
         // returns whether invocation was attempted (matches key)
         public Problem TryInvoke(string line)
         {
-            var tokens = line.Split('/').ToList().Select(token => token.Trim()).ToList();
+            var tokens = ShiftParser.Tokenize(line);
             if (tokens.Count < minimumArgCount + 1)
                 return new Problem(ProblemType.Error, $"Not enough arguments to command `{key}`");
             return OnParse.Invoke(tokens.Skip(1).ToList());
