@@ -58,22 +58,27 @@
 
 ## Optional for Minimum Viable
 
-- Display: customizable prompt (at least a few options)*
-- Display: scrollable buffer (pgup/pgdown)*
-- Display: ctrl+backspace to clear words*
-- Display: rename to something that suggests it's also handling input*
-- Display: pretty presentation*
+- Script: `inventory` block to define items initially in player inventory
+- Script: use a less common separator like / to split args to make parsing easier
+        - i.e. `exit / east / locked / The door is locked.`
+- Script: print value of variable like `[var name]` or `[item name.var name]`
+- Script: include other script files to allow organization by region
+- Display: customizable prompt (at least a few options)
+- Display: scrollable buffer (pgup/pgdown)
+- Display: ctrl+backspace to clear words
+- Display: rename to something that suggests it's also handling input
+- Display: pretty presentation
         distinguish between output and input regions
         "title bar" (can we change console name? at the very least, draw as first line)
         mouse driven menus?
         clickable item names?
         ...or are those better not in the console?
         could make web version with ASP interface (maybe overkill for prototyping)
-- Game: CLEAR*
-- Game: DEBUG (extra messages - or as arg to shift)*
-- Game: SAVE/LOAD*
-- more LINQ*
-- Parser: variables?*
-- Parser: flexible indentation*
-- Parser: command scripting*
-- Rooms: autokeys?*
+- Game: CLEAR
+- Game: DEBUG (extra messages - or as arg to shift)
+- Game: SAVE/LOAD
+- more LINQ
+- Parser: variables
+- Parser: flexible indentation
+- Parser: command scripting
+- Rooms: autokeys?

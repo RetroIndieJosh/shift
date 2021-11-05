@@ -25,6 +25,13 @@ Text may include the following escape sequences:
 - `\p` for pause/page, which stops with a `[Press down]` message and waits for user input to continue
 - `\t` for tab (width determined by the output console)
 
+Underscores are printed as spaces. To write a literal underscore, write two consecutive underscores:
+
+- `hello_world` will render as `hello world`
+- `hello__world` will render as `hello_world`
+
+Spaces in identifiers (for rooms, items, and variables) convert to underscores at runtime. So, a variable called `bullet count` in the script will be redefined as `bullet_count`. Thus, you cannot have both a `bullet count` and `bullet_count` as they will become the same in the resulting game.
+
 ## Commands and Arguments
 
 Each line consists of a command followed by an optional value that runs until the end of the line. Keywords may not contain spaces, but arguments may.
