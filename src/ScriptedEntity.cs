@@ -45,10 +45,7 @@ namespace shift
                 var problem = command.TryInvoke(line.Text);
                 if (problem == null)
                     return true;
-                if (problem.Type == ProblemType.Error)
-                    ShiftParser.Error(problem.Message, line.LineNumber);
-                else if (problem.Type == ProblemType.Warning)
-                    ShiftParser.Warn(problem.Message, line.LineNumber);
+                problem.Report(line.LineNumber);
             }
             return false;
         }
