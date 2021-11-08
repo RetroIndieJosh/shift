@@ -95,17 +95,21 @@ namespace shift
             inventory.ForEach(item => Display.WriteLine($"\t{item}"));
         }
 
-        // item names use underscores internally for autocompletion
-        public Item(string name, string desc, string takeDesc = null, string useDesc = null)
-            : base(name.Replace(' ', '_'), desc)
-        {
-            this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
-            this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
+        public Item(List<ScriptLine> lines) : base(lines) { }
 
-            this.stateMachine = new ItemStateMachine(name);
+        /*
+                // item names use underscores internally for autocompletion
+                public Item(string name, string desc, string takeDesc = null, string useDesc = null)
+                    : base(name.Replace(' ', '_'), desc)
+                {
+                    this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
+                    this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
 
-            items.Add(this);
-        }
+                    this.stateMachine = new ItemStateMachine(name);
+
+                    items.Add(this);
+                }
+                */
 
         public void AddState(string[] stateNames, int defaultStateIndex = 0)
         {

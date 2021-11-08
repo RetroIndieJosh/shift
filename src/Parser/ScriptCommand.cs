@@ -8,7 +8,6 @@ namespace shift
     {
         private string key;
         private int minimumArgCount = 0;
-        private int expectedLevel = 0;
         private Func<List<string>, Problem> OnParse;
 
         // TODO max arg count?

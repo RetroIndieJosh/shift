@@ -28,12 +28,7 @@ namespace shift
             return matches[0];
         }
 
-        public Room(List<ScriptLine> lines)
-        {
-            BindCommands();
-            foreach (var line in lines)
-                TryParse(line);
-        }
+        public Room(List<ScriptLine> lines) : base(lines) { }
 
         public void AddItem(Item item)
         {
@@ -140,17 +135,17 @@ namespace shift
             Display.WriteLine(Desc);
         }
 
-        private void BindCommands()
+        protected override void BindScriptKeys()
         {
-            commands = new List<ScriptCommand>()
+            scriptKeys = new List<ScriptCommand>()
             {
                 new ScriptCommand("desc", 1, args => {
-                    this.Desc = args[0];
+                    Desc = args[0];
                     return null;
                 }),
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
                 new ScriptCommand("room", 1, args => {
-                    this.Name = args[0];
+                    Name = args[0];
                     return null;
                 }),
                 new ScriptCommand("start", 0, args => {

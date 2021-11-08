@@ -90,14 +90,9 @@ namespace shift
             var linesPerPage = Console.WindowHeight - 4;
             var lines = text.Split('\n').ToList();
             if (lines.Count > linesPerPage)
-            {
-                var pages = SplitPages(linesPerPage, lines);
-                FlushPages(pages);
-            }
+                FlushPages(SplitPages(linesPerPage, lines));
             else
-            {
                 Console.Write(text);
-            }
 
             text = "";
         }

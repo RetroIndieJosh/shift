@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    public class Game
+    public class Game : ScriptedEntity
     {
         public static Game instance = null;
 
@@ -19,22 +19,38 @@ namespace shift
         private string title;
         private string intro;
 
-        public Game(string author, string title, string intro, Room startRoom)
+        public Game(List<ScriptLine> lines, Room startRoom) : base(lines)
         {
             if (instance != null)
-                throw new Exception("Attempted to create second Game instance");
+                throw new Exception("Only one game instance is allowed (singleton)");
 
             instance = this;
 
             LoadCommands();
             Display.WriteLine();
 
-            this.title = title;
-            this.author = author;
-            this.intro = intro;
-
+            Name = "game";
             CurRoom = startRoom;
         }
+
+        /*
+                public Game(string author, string title, string intro, Room startRoom)
+                {
+                    if (instance != null)
+                        throw new Exception("Attempted to create second Game instance");
+
+                    instance = this;
+
+                    LoadCommands();
+                    Display.WriteLine();
+
+                    this.title = title;
+                    this.author = author;
+                    this.intro = intro;
+
+                    CurRoom = startRoom;
+                }
+                */
 
         public string AutoComplete(string start, int depth = 0)
         {
@@ -83,6 +99,21 @@ namespace shift
                 var input = Display.ReadLine();
                 Parse(input);
             }
+        }
+
+        protected override void BindScriptKeys()
+        {
+            scriptKeys = new List<ScriptCommand>()
+            {
+                new ScriptCommand("author", 1, args => {
+                    author = args[0];
+                    return null;
+                }),
+                new ScriptCommand("title", 1, args => {
+                    title = args[0];
+                    return null;
+                }),
+            };
         }
 
         private void CommandExamine(string[] args)

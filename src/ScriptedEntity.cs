@@ -5,15 +5,31 @@ namespace shift
 {
     public abstract class ScriptedEntity
     {
-        public string Name { get; protected set; }
-
-        protected List<ScriptCommand> commands;
-
-        public ScriptedEntity() : this("Nowhere", "An empty place.") { }
-
-        public ScriptedEntity(string name, string desc)
+        public string Name
         {
-            Name = name;
+            get => name;
+            protected set
+            {
+                name = value.Replace(' ', '_');
+            }
+        }
+
+        private string name;
+
+        protected List<ScriptCommand> scriptKeys;
+
+        public ScriptedEntity()
+        {
+            Name = "Anonymous";
+        }
+
+        public ScriptedEntity(List<ScriptLine> lines)
+        {
+            if (lines == null || lines.Count == 0)
+                throw new Exception("No script lines provided to scripted entity");
+            BindScriptKeys();
+            foreach (var line in lines)
+                TryParse(line);
         }
 
         public bool Matches(string name)
@@ -36,9 +52,13 @@ namespace shift
             Display.Write(Name);
         }
 
+        protected virtual void BindScriptKeys() { }
+
         protected virtual bool TryParse(ScriptLine line)
         {
-            foreach (var command in commands)
+            if (scriptKeys == null || scriptKeys.Count == 0)
+                throw new Exception("No commands set for scripted entity");
+            foreach (var command in scriptKeys)
             {
                 if (!command.IsMatch(line.Text))
                     continue;

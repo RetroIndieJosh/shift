@@ -165,7 +165,7 @@ namespace shift
             }
 
             //return new Game(gameData.author, gameData.title, gameData.intro, startRoom);
-            return new Game(null, null, null, StartRoom);
+            return new Game(gameLines, StartRoom);
         }
 
         static public List<string> Tokenize(string line)
