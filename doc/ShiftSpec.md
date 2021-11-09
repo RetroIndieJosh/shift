@@ -78,16 +78,16 @@ item/No Space
 
 ### Blocks and Indentation
 
-Three levels are indicated using indentation:
+Two levels are indicated using indentation:
 
 - game block
-    - room block
-        - item block
-            - use block (optional)
-    - OR combine block
+    - combine block
+    - OR item block
     - OR itemtype block
+    - OR room block
+    - OR use block 
 
-Blocks begin with special commands (`room`, `item`, `combine`, `itemtype`, or `use`) and end when the whitespace returns to its previous position.
+Blocks begin with special commands and end when the whitespace returns to its previous position.
 
 An indentation is four spaces. (In future, this will be more flexible.)
 
@@ -130,42 +130,39 @@ Multiline comments are not supported.
 
 The script's top level defines game properties:
 
-- `author` the game author
-- `intro` text to display when the game begins
-- `itemtype [name]` defines an item type, identical to item block except:
-    - `state` is invalid
+- `author/[name]` the game author
+- `intro/[text]` text to display when the game begins
+- `item/[name]` start an item block with given `name`
+- `itemtype [name]` define an item type (an item that can be manipulated in quantity) identical to `item` except:
+    - `state` and `loc` are invalid
     - `take` is defined automatically (default null)
     - `use` applies to the entire collection as a single item
     - new key `plural` define name when referring to quantity > 1 of this itemtype 
     - all instances combine in inventory, i.e. taking 5 bullets when carrying 7 results in one item `bullets (12)`
     - all description entries apply to any collection of the `itemtype`
-- `room [name]` start a room block with given `name`
-- `title` the game title
-- `var [name] [#]` define a global integer variable with default value `#`
+- `room/[name]` start a room block with given `name`
+- `title/[name]` the game title
+- `use/[item]` or `use/[item]/[target]` define a USE command for the given item (optionally with the given target)
+- `var/[name]/[#]` define a global integer variable with initial value `#`
 
 ## Room Block
 
 A room block started by `room [name]` from the game block can have the following properties:
 
-- `desc [description]` description for the room
+- `desc/[description]` description for the room
     - empty `desc` is meaningless but not an error
-- `combine [item1] / [item2]` start a combine block with specified items
-- `exit [direction] / [type] / [room] / [move description]` define an exit
+- `exit/[direction]/[type]/[room]/[move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
     - see Directions and Exits below 
-- `item [name]` start an item block with given `name`
-    - an item name cannot start with a number, otherwise it is interpreted as below
-    - name must be unique among all items including `itemtype` names
-- `item [number] [item name]` place `number` of `item name` in the room
+- `item/[number]/[itemtype]` place `number` of `item name` in the room
     - `item name` must be defined as an `itemtype` in the game block
     - multiple of these declarations in a single room block is an error
-- `roomvar [name] [#]` create a variable with the given `name` and an initial value of `#`
+- `roomvar/[name]/[#]` create a variable with the given `name` and an initial value of `#`
     - `name` cannot contain the period character
     - attached to the room through name mangling (`room name.var name`)
     - only integer variables supported
 - `start` game starts in this room
     - multiple `start` definitions is an error
-- `useon [item1] / [item2]` start a use on block with specified items
 
 ### Directions
 
@@ -202,7 +199,7 @@ When defined in an `exit`, the `description` is used as follows:
 
 ## Item Block
 
-Started by `item [name]`. Can have the following properties:
+Started by `item/[name]`. Can have the following properties:
 
 - `alias/[name]` define an alias for the item
     - all aliases and item names must be unique
@@ -210,7 +207,7 @@ Started by `item [name]`. Can have the following properties:
 - `give/[item]` define a special GET/TAKE that gives `item` instead of this item
     - uses `take` description from `item`
     - flags `item` as canTake if not already
-- `key/[room] / [direction] / [description]` indicate item can unlock exit in `room` going `direction`
+- `key/[room]/[direction]/[description]` indicate item can unlock exit in `room` going `direction`
     - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
 - `loc/[room]` specify the item's location
     - if this entry is missing, the item starts "out of world"
@@ -221,16 +218,16 @@ Started by `item [name]`. Can have the following properties:
     - states must be all lowercase
 - `take/[description]` defines the GET/TAKE command 
     - flag this item as canTake
-- `itemvar [name] [#]` create a variable with the given `name` and an initial value of `#`
+- `itemvar/[name]/[#]` create a variable with the given `name` and an initial value of `#`
     - `name` cannot contain the period character
     - attached to the item through name mangling (`item name.var name`)
     - only integer variables supported
 
 ## Use Block
 
-Define what happens when the player USEs an item, started with `use/[item]`.
+Define what happens when the player USEs an item, started with `use/[item]/[target]`.
 
-- `add/[var] [#]` add `#` to variable `var`
+- `add/[var]/[#]` add `#` to variable `var`
 - `dec/[var]` shortcut for `sub [var] 1`
 - `destroy` destroy the used item (remove from the game)
 - `give/[item]` place the named item in the player's inventory
@@ -238,13 +235,11 @@ Define what happens when the player USEs an item, started with `use/[item]`.
 - `ifnot/[var]/[value]/[message]` or `ifnot/[state]/[message]` print the given message instead of executing the USE command if the given condition is false
 - `say/[message]` print the given message
     - multiple messages will be printed in sequence, separated by a newline
-- `sayfail/[message]` print message when an `if` or `ifstate` fails
 - `set/[var]/[#]` set the `var` to the value `#`
 - `sub/[var]/[#]` subtract `#` from variable `var`
 - `state/[state]` set the item state to `state`
     - use multiple times for different state machines
     - two or more `state` commands from the same state machine is an error
-- `target/[item name]` require the named item to be currently targeted for a valid USE
 - `targetdestroy` as `destroy` but on `target`
     - error if no `target` defined
 - `targetstate/[state]` as `state` but on `target`
@@ -254,7 +249,7 @@ Define what happens when the player USEs an item, started with `use/[item]`.
 
 Started in the game block with `combine [item1] / [item2]` to define a COMBINE command for one item on another:
 
-- `combinedesc/[item] / [description]` description for combining `item` with the other item
+- `combinedesc/[item]/[description]` description for combining `item` with the other item
     - if only one defined, applies to reciprocal combination
     - if no `combinedesc` defined, fall back to default description
 - `replace/[item]` the item replacing the combination
