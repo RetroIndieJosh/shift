@@ -15,9 +15,9 @@ namespace shift
 
         private bool isRunning = false;
 
-        private string author;
-        private string title;
-        private string intro;
+        private string author = null;
+        private string title = null;
+        private string intro = null;
 
         public Game(List<ScriptLine> lines, Room startRoom) : base(lines)
         {
@@ -27,30 +27,10 @@ namespace shift
             instance = this;
 
             LoadCommands();
-            Display.WriteLine();
 
             Name = "game";
             CurRoom = startRoom;
         }
-
-        /*
-                public Game(string author, string title, string intro, Room startRoom)
-                {
-                    if (instance != null)
-                        throw new Exception("Attempted to create second Game instance");
-
-                    instance = this;
-
-                    LoadCommands();
-                    Display.WriteLine();
-
-                    this.title = title;
-                    this.author = author;
-                    this.intro = intro;
-
-                    CurRoom = startRoom;
-                }
-                */
 
         public string AutoComplete(string start, int depth = 0)
         {
@@ -106,12 +86,27 @@ namespace shift
             scriptKeys = new List<ScriptCommand>()
             {
                 new ScriptCommand("author", 1, args => {
+                    Problem ret = null;
+                    if(author != null)
+                        ret = new OverwriteWarning("author");
                     author = args[0];
-                    return null;
+                    Console.WriteLine($"***author = {author}");
+                    return ret;
+                }),
+                new ScriptCommand("intro", 1, args => {
+                    Problem ret = null;
+                    if(intro != null)
+                        ret = new OverwriteWarning("intro");
+                    intro = args[0];
+                    Console.WriteLine($"***intro = {intro}");
+                    return ret;
                 }),
                 new ScriptCommand("title", 1, args => {
+                    Problem ret = null;
+                    if(title != null)
+                        ret = new OverwriteWarning("title");
                     title = args[0];
-                    return null;
+                    return ret;
                 }),
             };
         }
@@ -293,7 +288,7 @@ namespace shift
             aliasDict.Add("d", "down");
             aliasDict.Add("u", "up");
 
-            Display.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]");
+            Display.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]\n");
         }
 
         private void LoadMoveCommand(string direction)

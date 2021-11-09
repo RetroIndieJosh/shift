@@ -71,11 +71,18 @@ namespace shift
                     continue;
                 if (!rx.IsMatch(lineStrings[i]))
                     syntaxErrorLines.Add(i);
+
+                // TODO roll this into the regex (is it possible?)
+                var ignoreComments = lineStrings[i].Split('#')[0].Trim();
+                if (ignoreComments.Contains(' ') && !ignoreComments.Contains('/'))
+                    syntaxErrorLines.Add(i);
             }
             if (syntaxErrorLines.Count > 0)
             {
                 Display.WriteLine($"{syntaxErrorLines.Count} syntax errors:");
-                syntaxErrorLines.ForEach(i => Display.WriteLine($"[{i + 1}] {lineStrings[i]}"));
+                syntaxErrorLines.ForEach(i => Display.WriteLine($"\t[{i + 1}] {lineStrings[i]}"));
+                Display.WriteLine("Each line must be a single keyword (like `start`) or a keyword followed "
+                    + "by a slash / (like `room/Kitchen`).");
                 return null;
             }
 
@@ -165,6 +172,8 @@ namespace shift
             }
 
             //return new Game(gameData.author, gameData.title, gameData.intro, startRoom);
+            Log($"Game data defined in {gameLines.Count} lines", lines.Count);
+            gameLines.ForEach(line => Console.WriteLine($"\t{line.Text}"));
             return new Game(gameLines, StartRoom);
         }
 

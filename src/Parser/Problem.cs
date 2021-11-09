@@ -6,6 +6,11 @@ namespace shift
         Warning
     }
 
+    public class OverwriteWarning : Problem
+    {
+        public OverwriteWarning(string varName) : base(ProblemType.Warning, $"New value overwrites previous `{varName}`") { }
+    }
+
     public class Problem
     {
         public string Message { get; private set; }

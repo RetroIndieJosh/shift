@@ -3,6 +3,9 @@ author / Joshua McLean
 
 # this is a comment
 
+intro Game introduction.
+intro Error!
+
 room/Bedroom
     desc / Moonlight illuminates the room.
     start # mark this room as the start
