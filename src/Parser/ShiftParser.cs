@@ -21,9 +21,11 @@ namespace shift
         static private List<string> errorMessages = new List<string>();
         static private List<string> warnMessages = new List<string>();
 
+        static private int lineDigits = 2;
+
         static private string LineStr(int line)
         {
-            return line > 0 ? $"[{line}] " : "";
+            return line > 0 ? $"[{line.ToString().PadLeft(lineDigits, '0')}] " : "";
         }
 
         // TODO move to display?
@@ -61,6 +63,7 @@ namespace shift
             verboseMode = verbose;
 
             var lineStrings = File.ReadAllLines(filename).ToList();
+            lineDigits = lineStrings.Count.ToString().Length;
 
             // syntax check
             var rx = new Regex(@"\s*[^\/#]+\s*(\s*\/[^\/#]*\s*)*", RegexOptions.Compiled);
@@ -100,9 +103,6 @@ namespace shift
             var blockType = BlockType.Game;
             foreach (var line in lines)
             {
-                //Log($"Parse line {line.LineNumber}: ({line.IndentLevel}) {line.Text}");
-                //Log($"\tBlock Type: {blockType}");
-
                 // end block
                 if (line.IndentLevel < prevIndent)
                 {
@@ -113,12 +113,12 @@ namespace shift
                     }
 
                     if (blockType == BlockType.Combine)
-                        Console.WriteLine();
+                        Console.WriteLine("TODO new Combine");
                     else if (blockType == BlockType.Item)
-                        Console.WriteLine();
+                        Console.WriteLine("TODO new Item");
                     //new Item(blockLines);
                     else if (blockType == BlockType.ItemType)
-                        Console.WriteLine();
+                        Console.WriteLine("TODO new ItemType");
                     else if (blockType == BlockType.Room)
                         new Room(blockLines);
                     Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
@@ -158,23 +158,28 @@ namespace shift
             if (StartRoom == null)
                 Error("No start room defined.");
 
+            Log($"Game data defined in {gameLines.Count} lines", lines.Count);
+            var game = new Game(gameLines, StartRoom);
+            ReportProblems(filename);
+            return game;
+        }
+
+        static private bool ReportProblems(string filename)
+        {
             if (warnMessages.Count > 0)
             {
                 Display.WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
+                warnMessages.Sort();
                 warnMessages.ForEach(error => Display.WriteLine($"\t{error}"));
             }
 
-            if (errorMessages.Count > 0)
-            {
-                Display.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
-                errorMessages.ForEach(error => Display.WriteLine($"\t{error}"));
-                return null;
-            }
+            if (errorMessages.Count == 0)
+                return false;
 
-            //return new Game(gameData.author, gameData.title, gameData.intro, startRoom);
-            Log($"Game data defined in {gameLines.Count} lines", lines.Count);
-            gameLines.ForEach(line => Console.WriteLine($"\t{line.Text}"));
-            return new Game(gameLines, StartRoom);
+            Display.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
+            errorMessages.Sort();
+            errorMessages.ForEach(error => Display.WriteLine($"\t{error}"));
+            return true;
         }
 
         static public List<string> Tokenize(string line)

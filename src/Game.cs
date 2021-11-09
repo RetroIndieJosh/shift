@@ -90,7 +90,6 @@ namespace shift
                     if(author != null)
                         ret = new OverwriteWarning("author");
                     author = args[0];
-                    Console.WriteLine($"***author = {author}");
                     return ret;
                 }),
                 new ScriptCommand("intro", 1, args => {
@@ -98,7 +97,6 @@ namespace shift
                     if(intro != null)
                         ret = new OverwriteWarning("intro");
                     intro = args[0];
-                    Console.WriteLine($"***intro = {intro}");
                     return ret;
                 }),
                 new ScriptCommand("title", 1, args => {
