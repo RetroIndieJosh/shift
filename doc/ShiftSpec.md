@@ -202,24 +202,25 @@ When defined in an `exit`, the `description` is used as follows:
 
 ## Item Block
 
-Started by `item [name]` in a room block. Can have the following properties:
+Started by `item [name]`. Can have the following properties:
 
-- `alias [name]` define an alias for the item
+- `alias/[name]` define an alias for the item
     - all aliases and item names must be unique
-- `ex [description]` define the EXAMINE command description for the item
-- `give [item]` define a special GET/TAKE that gives `item` instead of this item
+- `ex/[description]` define the EXAMINE command description for the item
+- `give/[item]` define a special GET/TAKE that gives `item` instead of this item
     - uses `take` description from `item`
     - flags `item` as canTake if not already
-- `key [room] / [direction] / [description]` indicate item can unlock exit in `room` going `direction`
+- `key/[room] / [direction] / [description]` indicate item can unlock exit in `room` going `direction`
     - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
-- `statemach [state1] / [state2] / ...` define a new state machine for the item
+- `loc/[room]` specify the item's location
+    - if this entry is missing, the item starts "out of world"
+    - special statement `loc/INVENTORY` starts the item in the player's inventory
+- `statemach/[state1] / [state2] / ...` define a new state machine for the item
     - by default, state is the first listed state
     - all states must be unique per item
     - states must be all lowercase
-- `take [description]` defines the GET/TAKE command 
+- `take/[description]` defines the GET/TAKE command 
     - flag this item as canTake
-- `use` creates a use block to define the USE command on this item
-    - flag this item as canUse
 - `itemvar [name] [#]` create a variable with the given `name` and an initial value of `#`
     - `name` cannot contain the period character
     - attached to the item through name mangling (`item name.var name`)
@@ -227,34 +228,36 @@ Started by `item [name]` in a room block. Can have the following properties:
 
 ## Use Block
 
-Define what happens when the player USEs an item:
+Define what happens when the player USEs an item, started with `use/[item]`.
 
-- `add [var] [#]` add `#` to variable `var`
-- `dec [var]` shortcut for `sub [var] 1`
+- `add/[var] [#]` add `#` to variable `var`
+- `dec/[var]` shortcut for `sub [var] 1`
 - `destroy` destroy the used item (remove from the game)
-- `give [item]` place the named item in the player's inventory
-- `inc [var]` shortcut for `add [var] 1`
-- `say [message]` print the given message
+- `give/[item]` place the named item in the player's inventory
+- `inc/[var]` shortcut for `add [var] 1`
+- `ifnot/[var]/[value]/[message]` or `ifnot/[state]/[message]` print the given message instead of executing the USE command if the given condition is false
+- `say/[message]` print the given message
     - multiple messages will be printed in sequence, separated by a newline
-- `set [var] [#]` set the `var` to the value `#`
-- `sub [var] [#]` subtract `#` from variable `var`
-- `state [state]` set the item state to `state`
+- `sayfail/[message]` print message when an `if` or `ifstate` fails
+- `set/[var]/[#]` set the `var` to the value `#`
+- `sub/[var]/[#]` subtract `#` from variable `var`
+- `state/[state]` set the item state to `state`
     - use multiple times for different state machines
     - two or more `state` commands from the same state machine is an error
-- `target [item name]` require the named item to be currently targeted for a valid USE
+- `target/[item name]` require the named item to be currently targeted for a valid USE
 - `targetdestroy` as `destroy` but on `target`
     - error if no `target` defined
-- `targetstate [state]` as `state` but on `target`
+- `targetstate/[state]` as `state` but on `target`
     - error if no `target` defined
 
 ## Combine Block
 
 Started in the game block with `combine [item1] / [item2]` to define a COMBINE command for one item on another:
 
-- `combinedesc [item] / [description]` description for combining `item` with the other item
+- `combinedesc/[item] / [description]` description for combining `item` with the other item
     - if only one defined, applies to reciprocal combination
     - if no `combinedesc` defined, fall back to default description
-- `replace [item]` the item replacing the combination
+- `replace/[item]` the item replacing the combination
     - other items are removed from the game
     - this can be `item1` or `item2` which will be returned to the player after combination
     - if no result defined, combining simply destroys both items

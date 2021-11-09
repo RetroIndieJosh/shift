@@ -10,6 +10,29 @@ namespace shift
         private int minimumArgCount = 0;
         private Func<List<string>, Problem> OnParse;
 
+        public static Problem SetOnce(ref string target, string value, string varLabel)
+        {
+            Problem problem = null;
+            if (target != null)
+                problem = new OverwriteWarning(varLabel);
+            target = value;
+            return problem;
+        }
+
+        // this doesn't work because we can't pass the ref to lambda
+        /*
+                public ScriptCommand(string key, ref string target, bool allowOverwrite = false)
+                {
+                    OnParse = args => {
+                        Problem ret = null;
+                        if (target != null)
+                            ret = new OverwriteWarning("var");
+                        target = value;
+                        return ret;
+                    }
+                }
+                */
+
         // TODO max arg count?
         public ScriptCommand(string key, int minArgCount, Func<List<string>, Problem> OnParse)
         {

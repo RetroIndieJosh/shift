@@ -7,7 +7,6 @@ namespace shift
     public class Item : ScriptedEntity
     {
         const string DefaultTakeDesc = "You take {0}.";
-        const string DefaultUseDesc = "You take {0}.";
 
         static public Item CurTarget { get; private set; } = null;
 
@@ -27,11 +26,12 @@ namespace shift
         }
 
         private Room location;
+        private string examineDesc = null;
         private string takeDesc = null;
-        private string useDesc = null;
 
         private bool CanTake { get => takeDesc != null; }
-        private bool CanUse { get => useDesc != null; }
+        // TODO usable condition
+        private bool CanUse { get => false; }
         private bool isCarried = false;
 
         private ItemStateMachine stateMachine;
@@ -95,21 +95,10 @@ namespace shift
             inventory.ForEach(item => Display.WriteLine($"\t{item}"));
         }
 
-        public Item(List<ScriptLine> lines) : base(lines) { }
-
-        /*
-                // item names use underscores internally for autocompletion
-                public Item(string name, string desc, string takeDesc = null, string useDesc = null)
-                    : base(name.Replace(' ', '_'), desc)
-                {
-                    this.takeDesc = (takeDesc == "" ? DefaultTakeDesc : takeDesc);
-                    this.useDesc = (useDesc == "" ? DefaultUseDesc : useDesc);
-
-                    this.stateMachine = new ItemStateMachine(name);
-
-                    items.Add(this);
-                }
-                */
+        public Item(List<ScriptLine> lines) : base(lines)
+        {
+            items.Add(this);
+        }
 
         public void AddState(string[] stateNames, int defaultStateIndex = 0)
         {
@@ -144,7 +133,7 @@ namespace shift
                     }
                     else if (ch.KeyChar == 'u' || ch.KeyChar == 'U')
                     {
-                        Display.WriteLine(useDesc, this);
+                        Use();
                         return;
                     }
                     else if (ch.KeyChar == 'c' || ch.KeyChar == 'C')
@@ -174,6 +163,37 @@ namespace shift
         public void WriteDesc()
         {
             Display.Write($" [{stateMachine}]");
+        }
+
+        protected override void BindScriptKeys()
+        {
+            scriptKeys = new List<ScriptCommand>()
+            {
+                new ScriptCommand("ex", 1, args => {
+                    return ScriptCommand.SetOnce(ref examineDesc, args[0], "examine desc");
+                }),
+                new ScriptCommand("item", 1, args => {
+                    Problem problem = null;
+                    if(Name != null)
+                        problem =  new OverwriteWarning("name");
+                    Name = args[0];
+                    return problem;
+                }),
+                new ScriptCommand("loc", 1, args => {
+                    var room = Room.Find(args[0]);
+                    if(room == null)
+                        return new Problem(ProblemType.Error, $"Item `{Name}` location `{args[0]}` does not exist.");
+                    room.AddItem(this);
+                    return null;
+                }),
+                new ScriptCommand("take", 0, args => {
+                    if(args.Count == 0) {
+                        takeDesc = DefaultTakeDesc;
+                        return null;
+                    }
+                    return ScriptCommand.SetOnce(ref takeDesc, args[0], "take desc");
+                }),
+            };
         }
 
         private void Take()

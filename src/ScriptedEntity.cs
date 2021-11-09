@@ -54,6 +54,7 @@ namespace shift
 
         protected virtual void BindScriptKeys() { }
 
+        // returns whether the command was parsed (not whether there were problems)
         protected virtual bool TryParse(ScriptLine line)
         {
             if (scriptKeys == null || scriptKeys.Count == 0)
@@ -63,10 +64,12 @@ namespace shift
                 if (!command.IsMatch(line.Text))
                     continue;
                 var problem = command.TryInvoke(line.Text);
-                if (problem == null)
-                    return true;
-                problem.Report(line.LineNumber);
+                if (problem != null)
+                    problem.Report(line.LineNumber);
+                return true;
             }
+            var key = line.Text.Split('/')[0];
+            new Problem(ProblemType.Warning, $"No matching script key in `{this.GetType()}` for `{key}`").Report(line.LineNumber);
             return false;
         }
     }

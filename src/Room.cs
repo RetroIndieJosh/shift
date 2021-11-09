@@ -14,7 +14,13 @@ namespace shift
             West, Down, Up, Count
         }
 
-        public string Desc { get; private set; }
+        public string Desc
+        {
+            get => desc;
+            private set => desc = value;
+        }
+
+        private string desc = null;
 
         private Room[] exits = new Room[(int)Direction.Count];
         private List<Item> items = new List<Item>();
@@ -28,7 +34,10 @@ namespace shift
             return matches[0];
         }
 
-        public Room(List<ScriptLine> lines) : base(lines) { }
+        public Room(List<ScriptLine> lines) : base(lines)
+        {
+            rooms.Add(this);
+        }
 
         public void AddItem(Item item)
         {
@@ -140,17 +149,19 @@ namespace shift
             scriptKeys = new List<ScriptCommand>()
             {
                 new ScriptCommand("desc", 1, args => {
-                    Desc = args[0];
-                    return null;
+                    return ScriptCommand.SetOnce(ref desc, args[0], "author");
                 }),
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
                 new ScriptCommand("room", 1, args => {
+                    Problem problem = null;
+                    if(Name != null)
+                        problem =  new OverwriteWarning("name");
                     Name = args[0];
-                    return null;
+                    return problem;
                 }),
                 new ScriptCommand("start", 0, args => {
                     if(ShiftParser.StartRoom != null)
-                        return new Problem(ProblemType.Error, "Multiple start rooms defined");
+                        return new Problem(ProblemType.Warning, "Multiple start rooms. Using last defined.");
                     ShiftParser.StartRoom = this;
                     return null;
                 }),

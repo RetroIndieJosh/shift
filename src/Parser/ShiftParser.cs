@@ -10,7 +10,7 @@ namespace shift
     {
         private enum BlockType
         {
-            Combine, Game, Item, ItemType, Room
+            Combine, Game, Item, ItemType, Room, Use
         }
 
         static public Room StartRoom = null;
@@ -115,8 +115,7 @@ namespace shift
                     if (blockType == BlockType.Combine)
                         Console.WriteLine("TODO new Combine");
                     else if (blockType == BlockType.Item)
-                        Console.WriteLine("TODO new Item");
-                    //new Item(blockLines);
+                        new Item(blockLines);
                     else if (blockType == BlockType.ItemType)
                         Console.WriteLine("TODO new ItemType");
                     else if (blockType == BlockType.Room)
@@ -137,6 +136,9 @@ namespace shift
                     blockType = BlockType.ItemType;
                 else if (line.Text.StartsWith("room"))
                     blockType = BlockType.Room;
+                else if (line.Text.StartsWith("use"))
+                    blockType = BlockType.Room;
+
                 if (prevBlockType != BlockType.Game && prevBlockType != blockType)
                 {
                     Error("Illegal nested indentation detected", line.LineNumber);
@@ -160,11 +162,13 @@ namespace shift
 
             Log($"Game data defined in {gameLines.Count} lines", lines.Count);
             var game = new Game(gameLines, StartRoom);
-            ReportProblems(filename);
+            if (WriteProblems(filename))
+                return null;
             return game;
         }
 
-        static private bool ReportProblems(string filename)
+        // returns whether any errors were detected
+        static private bool WriteProblems(string filename)
         {
             if (warnMessages.Count > 0)
             {

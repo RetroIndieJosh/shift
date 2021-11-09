@@ -1,40 +1,47 @@
-title / The Forest House
-author / Joshua McLean
+title/The Forest House
+author/Joshua McLean
 
 # this is a comment
 
-intro/Game introduction.
-intro/Error!
+intro/Stuff happens.
 
 room/Bedroom
-    desc / Moonlight illuminates the room.
+    desc/Moonlight illuminates the room.
     start # mark this room as the start
-    exit/west/open/Hall
+    #exit/west/open/Hall
 item/flashlight
-    location/Bedroom
+    loc/Bedroom
     ex/A standard battery-powered portable light.
     take # empty take because it can be taken, but use defualt message
-    use/[if on]You turn off the flashlight.[else]You turn on the flashlight.[end]
-    statemach/ off / on
-    var/battery level/0
+    #statemach/ off / on
+    #var/battery level/0
+#use/flashlight
+    #ifnot/on
+    #ifnot/battery level/1/You try to turn on the flashlight, but it has no batteries.
+    #say/You turn on the flashlight.
+    #state/on
+#use/flashlight
+    #ifnot/off
+    #say/You turn off the flashlight.
+    #state/off
 item/battery
-    location/Bedroom
+    loc/Bedroom
     ex/A single D-cell battery.
     take
 item/bronze lamp
-    location/Bedroom
+    loc/Bedroom
     ex/Doesn't seem to turn on.
 item/dresser
-    location/Bedroom
+    loc/Bedroom
     ex/Contains clothes.
-combine/battery/flashlight
-    replace/flashlight
-    inc/flashlight.battery level
+#combine/battery/flashlight
+    #replace/flashlight
+    #inc/flashlight.battery level
 
 room/Hall
     desc/A door east leads to your bedroom.
-    exit/s/broken
-    exit/w/closed/Kitchen
+    #exit/s/broken
+    #exit/w/closed/Kitchen
 
 room/Kitchen
     desc/A normal kitchen.

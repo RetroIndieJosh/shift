@@ -86,25 +86,13 @@ namespace shift
             scriptKeys = new List<ScriptCommand>()
             {
                 new ScriptCommand("author", 1, args => {
-                    Problem ret = null;
-                    if(author != null)
-                        ret = new OverwriteWarning("author");
-                    author = args[0];
-                    return ret;
+                    return ScriptCommand.SetOnce(ref author, args[0], "author");
                 }),
                 new ScriptCommand("intro", 1, args => {
-                    Problem ret = null;
-                    if(intro != null)
-                        ret = new OverwriteWarning("intro");
-                    intro = args[0];
-                    return ret;
+                    return ScriptCommand.SetOnce(ref intro, args[0], "intro");
                 }),
                 new ScriptCommand("title", 1, args => {
-                    Problem ret = null;
-                    if(title != null)
-                        ret = new OverwriteWarning("title");
-                    title = args[0];
-                    return ret;
+                    return ScriptCommand.SetOnce(ref title, args[0], "title");
                 }),
             };
         }

@@ -2,7 +2,7 @@
 
 ## Current
 
-- Parser: implement comma handling as per spec
+- Parser: handle room created after item that references it (two passes?)
 
 ## Critical / Major
 
@@ -60,11 +60,7 @@
 
 ## Optional for Minimum Viable
 
-- Script: `inventory` block to define items initially in player inventory
-- Script: use a less common separator like / to split args to make parsing easier
-        - i.e. `exit east / locked / The door is locked.`
-- Script: print value of variable like `[var name]` or `[item name.var name]`
-- Script: include other script files to allow organization by region
+- Script: include other script files to allow organization by region (`include [filename]` ?)
 - Display: customizable prompt (at least a few options)
 - Display: scrollable buffer (pgup/pgdown)
 - Display: ctrl+backspace to clear words
