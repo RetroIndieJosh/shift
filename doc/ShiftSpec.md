@@ -204,7 +204,8 @@ A room block started by `room [name]` from the game block can have the following
     - empty `desc` is meaningless but not an error
 - `exit/[direction]/[type]/[room]/[move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
-    - see Directions and Exits below 
+    - `move description`: if blank, use the default description; otherwise this is written when moving in that direction
+    - see Directions and Exits below for more information
 - `items/[item type]/[number]` place `number` of `item type` in this room
     - `item type` must be defined before this room
     - if `number` omitted, place one of the item type in this room
@@ -230,7 +231,6 @@ A direction can be any cardinal or ordinal direction, up, or down. Directions ca
 - southwest / sw
 - up / u
 - west / w
-    - move description: if blank, use the default description; otherwise this is written when moving in that direction
 
 ### Exits
 

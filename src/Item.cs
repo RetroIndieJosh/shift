@@ -109,12 +109,7 @@ namespace shift
         {
             if (isCarried)
             {
-                if (!CanUse)
-                {
-                    Use();
-                    return;
-                }
-
+                // TODO remove use option if cannot be used
                 Display.WriteLine($"Select an option for {this}:"
                         + "\n\te(x)amine"
                         + "\n\t(c)ombine"
@@ -147,6 +142,7 @@ namespace shift
                     }
                 } while (true);
             }
+
             if (CanTake)
             {
                 Take();

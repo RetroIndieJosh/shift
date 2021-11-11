@@ -87,11 +87,15 @@ namespace shift
                 var varText = groups[0].Value;
                 if (StringComparer.OrdinalIgnoreCase.Equals(varName, "curroom"))
                 {
-                    text = text.Replace(varText, Game.instance.CurRoom.ToString());
+                    text = text.Replace(varText, Game.instance.CurRoom.DisplayName);
                 }
                 else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "heldcount"))
                 {
                     text = text.Replace(varText, $"{Item.GetInventoryNames().Count}");
+                }
+                else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "targitem"))
+                {
+                    text = text.Replace(varText, $"{(Item.CurTarget == null ? "nothing" : Item.CurTarget.DisplayName)}");
                 }
             }
             return text;

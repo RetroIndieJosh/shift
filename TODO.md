@@ -32,6 +32,7 @@ The following cannot be used as names. Remember names are *not* case sensitive.
 
 - `exit [direction] / [type] / [room] / [move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
+    - `move description`: if blank, use the default description; otherwise this is written when moving in that direction
     - see Directions and Exits in spec
 - `items/[item type]/[number]` place `number` of `item type` in this room
     - `item type` must be defined before this room

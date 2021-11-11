@@ -175,7 +175,7 @@ namespace shift
             if (Item.CurTarget == null)
                 return;
 
-            Display.WriteLine($"[Currently targeting: {DisplayName}]");
+            Display.WriteLine($"[Currently targeting: {Item.CurTarget.DisplayName}]");
         }
 
         private void CommandMove(string[] args)

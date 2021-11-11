@@ -11,13 +11,21 @@ item/PLAYER
 room/Testing Chamber
     start
     desc/You are in [CURROOM], holding [HELDCOUNT] items and targeting [TARGITEM].
+    
+item/statue
+    ex/An exquisite marble statue.
+    loc/Testing Chamber
 
-item/Potion
+item/painting
+    ex/A colorful painting, but not quite your taste.
+    loc/Testing Chamber
+
+item/potion
     ex/A green tinted bottle. It is [Potion.status].
     loc/Testing Chamber
     statemach/status/full/empty
     take/You get the potion.
 
-use/Potion/PLAYER
+use/potion/PLAYER
     destroy
     statetarget/Jekyll
