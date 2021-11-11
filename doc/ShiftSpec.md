@@ -1,5 +1,27 @@
 # SHIFT Scripting Specification
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Basics](#basics)
+- [Names and References](#names-and-references)
+- [Text](#text)
+- [Commands and Arguments](#commands-and-arguments)
+  - [Standards](#standards)
+  - [Blocks and Indentation](#blocks-and-indentation)
+  - [Built In Variables and Constants](#built-in-variables-and-constants)
+  - [Comments](#comments)
+- [Game Block](#game-block)
+- [Room Block](#room-block)
+  - [Directions](#directions)
+  - [Exits](#exits)
+- [Item Block](#item-block)
+- [Item Type Block](#item-type-block)
+- [Use Block](#use-block)
+- [Combine Block](#combine-block)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Basics
 
 SHIFT is case sensitive. Commands, item states, user-defined variable names must be lowercase. Built-in variables and special keywords are in SHOUTING_CAPS. Otherwise, any case is allowed.
@@ -118,10 +140,11 @@ game block
 
 - `CURROOM` name of the current room
 - `HELDCOUNT` number of items currently held
+- `PLAYER` the player (treated as an item for use, combine, etc.)
 - `TARGET` name of the currently targeted item or "nothing" if null
-- `[room name].ITEMCOUNT` the number of items in `room name`
 - `[item name].FLOOR` count of the given `item name` in the current room
 - `[item name].HELD` count of the given `item name` carried by the player
+- `[room name].ITEMCOUNT` the number of items in `room name`
 
 ### Comments
 
@@ -141,13 +164,7 @@ The script's top level defines game properties:
 - `author/[name]` the game author
 - `intro/[text]` text to display when the game begins
 - `item/[name]` start an item block with given `name`
-- `itemtype [name]` define an item type (an item that can be manipulated in quantity) identical to `item` except:
-    - `state` and `loc` are invalid
-    - `take` is defined automatically (default null)
-    - `use` applies to the entire collection as a single item
-    - new key `plural` define name when referring to quantity > 1 of this itemtype 
-    - all instances combine in inventory, i.e. taking 5 bullets when carrying 7 results in one item `bullets (12)`
-    - all description entries apply to any collection of the `itemtype`
+- `itemtype [name]` define an item type (an item that can be manipulated in quantity)
 - `room/[name]` start a room block with given `name`
 - `title/[name]` the game title
 - `use/[item]` or `use/[item]/[target]` define a USE command for the given item (optionally with the given target)
@@ -162,9 +179,10 @@ A room block started by `room [name]` from the game block can have the following
 - `exit/[direction]/[type]/[room]/[move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
     - see Directions and Exits below 
-- `item/[number]/[itemtype]` place `number` of `item name` in the room
-    - `item name` must be defined as an `itemtype` in the game block
-    - multiple of these declarations in a single room block is an error
+- `items/[item type]/[number]` place `number` of `item type` in this room
+    - `item type` must be defined before this room
+    - if `number` omitted, place one of the item type in this room
+    - multiple ddeclarations with the same type in a room block is an error
 - `roomvar/[name]/[#]` create a variable with the given `name` and an initial value of `#`
     - `name` cannot contain the period character
     - attached to the room through name mangling (`room name.var name`)
@@ -231,6 +249,17 @@ Started by `item/[name]`. Can have the following properties:
     - attached to the item through name mangling (`item name.var name`)
     - only integer variables supported
 
+## Item Type Block
+
+Identical to `item` except:
+
+- `state` and `loc` are invalid
+- `take` is defined automatically (default null)
+- `use` applies to the entire collection as a single item
+- new key `plural` define name when referring to quantity > 1 of this itemtype 
+- all instances combine in inventory, i.e. taking 5 bullets when carrying 7 results in one item `bullets (12)`
+- all description entries apply to any collection of the `itemtype`
+
 ## Use Block
 
 Define what happens when the player USEs an item, started with `use/[item]/[target]`.
@@ -238,6 +267,8 @@ Define what happens when the player USEs an item, started with `use/[item]/[targ
 - `add/[var]/[#]` add `#` to variable `var`
 - `dec/[var]` shortcut for `sub [var] 1`
 - `destroy` destroy the used item (remove from the game)
+- `destroytarget` as `destroy` but on `target`
+    - error if no `target` defined
 - `give/[item]` place the named item in the player's inventory
 - `inc/[var]` shortcut for `add [var] 1`
 - `ifnot/[var]/[value]/[message]` or `ifnot/[state]/[message]` print the given message instead of executing the USE command if the given condition is false
@@ -248,9 +279,7 @@ Define what happens when the player USEs an item, started with `use/[item]/[targ
 - `state/[state]` set the item state to `state`
     - use multiple times for different state machines
     - two or more `state` commands from the same state machine is an error
-- `targetdestroy` as `destroy` but on `target`
-    - error if no `target` defined
-- `targetstate/[state]` as `state` but on `target`
+- `statetarget/[state]` as `state` but on `target`
     - error if no `target` defined
 
 ## Combine Block

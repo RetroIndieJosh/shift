@@ -75,9 +75,7 @@ namespace shift
 
         static public Game CreateGame(string filename, bool verbose = false)
         {
-            //InitializeCommands();
-
-            // NOTE this will break filenames with \\ in linux but that's a bad idea anyway
+            // NOTE this will break filenames with \ in linux but that's a bad idea anyway
             filename = filename.Replace("\\", "/");
 
             if (!File.Exists(filename))
