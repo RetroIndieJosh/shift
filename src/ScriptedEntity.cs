@@ -34,11 +34,7 @@ namespace shift
 
         public bool Matches(string name)
         {
-            var nameTokens = Name.Split(' ');
-            if (nameTokens.Length == 1)
-                return this.Name == name;
-            throw new NotImplementedException("Matching multiword names not yet "
-                + "supported. Please only use a single word for item names.");
+            return StringComparer.OrdinalIgnoreCase.Equals(this.Name, name.Replace(' ', '_'));
         }
 
         public override string ToString()

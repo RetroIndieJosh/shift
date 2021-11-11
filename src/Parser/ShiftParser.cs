@@ -47,22 +47,29 @@ namespace shift
             warnMessages.Add($"{LineStr(line)}WARNING {message}");
         }
 
-        static private void EndBlock(BlockType type, List<ScriptLine> lines)
+        static private Problem EndBlock(BlockType type, List<ScriptLine> lines)
         {
             switch (type)
             {
                 case BlockType.Combine:
                     Console.WriteLine("TODO new Combine");
-                    return;
+                    return null;
+                case BlockType.Game:
+                    return new Problem(ProblemType.Error, "Tried to end game block early.");
                 case BlockType.Item:
                     new Item(lines);
-                    return;
+                    return null;
                 case BlockType.ItemType:
                     Console.WriteLine("TODO new ItemType");
-                    return;
+                    return null;
                 case BlockType.Room:
                     new Room(lines);
-                    return;
+                    return null;
+                case BlockType.Use:
+                    Console.WriteLine("TODO new Use");
+                    return null;
+                default:
+                    throw new Exception($"Invalid BlockType {type}.");
             }
         }
 
@@ -131,7 +138,9 @@ namespace shift
                         continue;
                     }
 
-                    EndBlock(blockType, blockLines);
+                    var problem = EndBlock(blockType, blockLines);
+                    if (problem != null)
+                        problem.Report(line.LineNumber);
                     Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
                     blockType = BlockType.Game;
                     blockLines.Clear();

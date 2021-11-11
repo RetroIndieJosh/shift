@@ -1,0 +1,14 @@
+# Test: entity names are case insensitive but print as defined
+
+title/Entity Case Test
+author/Joshua McLean
+
+room/tHe LaNd oF cHaOs
+    start
+    desc/You should see a ChAoS sCePtEr and PORTAL here.
+
+item/ChAoS sCePtEr
+    loc/the land of chaos
+
+item/PORTAL
+    loc/The Land of Chaos
