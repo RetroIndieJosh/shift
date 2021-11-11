@@ -2,8 +2,6 @@
 
 ## Current
 
-- Parser: handle room created after item that references it (two passes?)
-
 ## Parser
 
 - update spec (and this todo) to use slashes where necessary

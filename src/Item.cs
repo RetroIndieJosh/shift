@@ -182,7 +182,8 @@ namespace shift
                 new ScriptCommand("loc", 1, args => {
                     var room = Room.Find(args[0]);
                     if(room == null)
-                        return new Problem(ProblemType.Error, $"Item `{Name}` location `{args[0]}` does not exist.");
+                        return new Problem(ProblemType.Error, $"Location for `{Name}` (`{args[0]}`) not found. "
+                            + $"Define `room {args[0]}` before `item {Name}`.");
                     room.AddItem(this);
                     return null;
                 }),

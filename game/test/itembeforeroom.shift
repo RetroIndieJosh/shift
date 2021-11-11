@@ -1,0 +1,10 @@
+# Test: item defined before containing room 
+
+title/Item Before Room
+author/Joshua McLean
+
+item/teapot
+    loc/Kitchen
+
+room/Kitchen
+    start

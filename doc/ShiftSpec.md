@@ -13,7 +13,15 @@ room a
     start
 ```
 
-This creates an empty, descriptionless room called `a` in a game with no title or author.
+This creates a descriptionless room called `a` in a game with no title, author, intro, or items.
+
+## Names and References
+
+Rooms and items are collectively called **entities**. Each entity must have a *unique* name. This name may not clash with any commands in the parser or item types in the script. Spaces and underscores are interchangeable in entity names, so `blue book` and `blue_book` refer to the same entity.
+
+Names are not case sensitive, but will be printed the way they are defined. So an `item Blue Book` will print as `Blue Book` but can be referred to as `blue book` or `Blue book` in the script.
+
+References can only be made to previously defined entities. For instance, if an item is placed in a room called `Kitchen`, then `room Kitchen` must exist in the script *before* the item definition.
 
 ## Text
 
@@ -25,7 +33,7 @@ Text may include the following escape sequences:
 - `\p` for pause/page, which stops with a `[Press down]` message and waits for user input to continue
 - `\t` for tab (width determined by the output console)
 
-Underscores are printed as spaces. To write a literal underscore, write two consecutive underscores:
+Underscores are printed in the game as spaces. To write a literal underscore, write two consecutive underscores:
 
 - `hello_world` will render as `hello world`
 - `hello__world` will render as `hello_world`

@@ -47,6 +47,25 @@ namespace shift
             warnMessages.Add($"{LineStr(line)}WARNING {message}");
         }
 
+        static private void EndBlock(BlockType type, List<ScriptLine> lines)
+        {
+            switch (type)
+            {
+                case BlockType.Combine:
+                    Console.WriteLine("TODO new Combine");
+                    return;
+                case BlockType.Item:
+                    new Item(lines);
+                    return;
+                case BlockType.ItemType:
+                    Console.WriteLine("TODO new ItemType");
+                    return;
+                case BlockType.Room:
+                    new Room(lines);
+                    return;
+            }
+        }
+
         static public Game CreateGame(string filename, bool verbose = false)
         {
             //InitializeCommands();
@@ -112,14 +131,7 @@ namespace shift
                         continue;
                     }
 
-                    if (blockType == BlockType.Combine)
-                        Console.WriteLine("TODO new Combine");
-                    else if (blockType == BlockType.Item)
-                        new Item(blockLines);
-                    else if (blockType == BlockType.ItemType)
-                        Console.WriteLine("TODO new ItemType");
-                    else if (blockType == BlockType.Room)
-                        new Room(blockLines);
+                    EndBlock(blockType, blockLines);
                     Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
                     blockType = BlockType.Game;
                     blockLines.Clear();
@@ -155,7 +167,10 @@ namespace shift
                 // add to block
                 blockLines.Add(line);
             }
-            //GoToIndentLevel(0);
+
+            // end the final block if we're still in one at script end
+            if (blockType != BlockType.Game)
+                EndBlock(blockType, blockLines);
 
             if (StartRoom == null)
                 Error("No start room defined.");
