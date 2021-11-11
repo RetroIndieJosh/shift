@@ -23,7 +23,10 @@ namespace shift
 
             var spaces = line.TakeWhile(c => c == ' ').Count();
             if (spaces % SpacesPerIndent != 0)
-                throw new Exception($"Invalid spacing in SHIFT file:\n{line}");
+            {
+                ShiftParser.Error($"Invalid spacing: expected mult of 4, got {spaces}", number);
+                return;
+            }
 
             IndentLevel = spaces / SpacesPerIndent;
             Text = line.Trim();

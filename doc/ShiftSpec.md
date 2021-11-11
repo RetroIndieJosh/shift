@@ -39,11 +39,13 @@ This creates a descriptionless room called `a` in a game with no title, author, 
 
 ## Names and References
 
-Rooms and items are collectively called **entities**. Each entity must have a *unique* name. This name may not clash with any commands in the parser or item types in the script. Spaces and underscores are interchangeable in entity names, so `blue book` and `blue_book` refer to the same entity.
+Commands, items, item types, rooms, and variables are uniquely named objects. Names may also not clash with any commands in the parser. Spaces and underscores are interchangeable in object names, so `blue book` and `blue_book` refer to the same object.
+
+State machines and states are uniquely named within their containing object. For instance, in an item called `test`, a state machine `status` with states `passed` and `failed` would define `test.status`, `test.passed`, and `test.failed`. No other states or state machines in `test` can use the named `status`, `passed`, or `failed`.
 
 Names are not case sensitive, but will be printed the way they are defined. So an `item Blue Book` will print as `Blue Book` but can be referred to as `blue book` or `Blue book` in the script.
 
-References can only be made to previously defined entities. For instance, if an item is placed in a room called `Kitchen`, then `room Kitchen` must exist in the script *before* the item definition.
+References can only be made to previously defined objects. For instance, if an item is placed in a room called `Kitchen`, then `room Kitchen` must exist in the script *before* the item definition.
 
 ## Text
 
@@ -61,6 +63,27 @@ Underscores are printed in the game as spaces. To write a literal underscore, wr
 - `hello__world` will render as `hello_world`
 
 Spaces in identifiers (for rooms, items, and variables) convert to underscores at runtime. So, a variable called `bullet count` in the script will be redefined as `bullet_count`. Thus, you cannot have both a `bullet count` and `bullet_count` as they will become the same in the resulting game.
+
+Variables can be placed in text using square brackets.
+
+Script 1:
+```
+room/Kitchen
+    desc/You are in [CURROOM].
+```
+
+Output 1: `You are in Kitchen.`
+
+Script 2:
+```
+item/Light
+    desc "The light is [Light.toggled]."
+    statemach/toggled/on/off
+```
+
+Output 2: `The light is on.`
+
+These replacements are made at runtime, so an item or state machine may be referenced before it is defined in the script.
 
 ## Commands and Arguments
 
@@ -136,14 +159,17 @@ game block
         property
 ```
 
-### Built In Variables and Constants
+### Built In Variables 
+
+The following variables exist in all scripts and their names cannot be used. Remember names are *not* case sensitive but by convention these are written in SCREAMINGCAPS. These names are designed to be unlikely for the script writer to use.
 
 - `CURROOM` name of the current room
 - `HELDCOUNT` number of items currently held
-- `PLAYER` the player (treated as an item for use, combine, etc.)
-- `TARGET` name of the currently targeted item or "nothing" if null
-- `[item name].FLOOR` count of the given `item name` in the current room
-- `[item name].HELD` count of the given `item name` carried by the player
+- `HELD` a pseudo-room representing the player's inventory which can be used in `item` block `loc` commands
+- `PLAYER` a psedo-item representing the player as an item
+- `TARGITEM` name of the currently targeted item or "nothing" if null
+- `[item name].ONFLOOR` count of the given `item name` in the current room
+- `[item name].NUMHELD` count of the given `item name` carried by the player
 - `[room name].ITEMCOUNT` the number of items in `room name`
 
 ### Comments
@@ -168,7 +194,7 @@ The script's top level defines game properties:
 - `room/[name]` start a room block with given `name`
 - `title/[name]` the game title
 - `use/[item]` or `use/[item]/[target]` define a USE command for the given item (optionally with the given target)
-- `var/[name]/[#]` define a global integer variable with initial value `#`
+- `var/[name]/[value]` define a global integer variable with initial value `value`
 
 ## Room Block
 
@@ -225,7 +251,7 @@ When defined in an `exit`, the `description` is used as follows:
 
 ## Item Block
 
-Started by `item/[name]`. Can have the following properties:
+Started by `item/[name]`. A special item `item/PLAYER` defines player properties. An item block can include the following properties:
 
 - `alias/[name]` define an alias for the item
     - all aliases and item names must be unique
@@ -238,13 +264,12 @@ Started by `item/[name]`. Can have the following properties:
 - `loc/[room]` specify the item's location
     - if this entry is missing, the item starts "out of world"
     - special statement `loc/INVENTORY` starts the item in the player's inventory
-- `statemach/[state1] / [state2] / ...` define a new state machine for the item
+- `statemach/[name]/[state1]/[state2]/...` define a new state machine for the item
     - by default, state is the first listed state
     - all states must be unique per item
-    - states must be all lowercase
 - `take/[description]` defines the GET/TAKE command 
     - flag this item as canTake
-- `itemvar/[name]/[#]` create a variable with the given `name` and an initial value of `#`
+- `itemvar/[name]/[value]` create a variable with the given `name` and an initial value of `#`
     - `name` cannot contain the period character
     - attached to the item through name mangling (`item name.var name`)
     - only integer variables supported
@@ -264,18 +289,19 @@ Identical to `item` except:
 
 Define what happens when the player USEs an item, started with `use/[item]/[target]`.
 
-- `add/[var]/[#]` add `#` to variable `var`
+- `add/[var]/[value]` add `value` to variable `var`
 - `dec/[var]` shortcut for `sub [var] 1`
 - `destroy` destroy the used item (remove from the game)
 - `destroytarget` as `destroy` but on `target`
     - error if no `target` defined
+- `endgame/[message]` end the game with the given message
 - `give/[item]` place the named item in the player's inventory
 - `inc/[var]` shortcut for `add [var] 1`
 - `ifnot/[var]/[value]/[message]` or `ifnot/[state]/[message]` print the given message instead of executing the USE command if the given condition is false
 - `say/[message]` print the given message
     - multiple messages will be printed in sequence, separated by a newline
-- `set/[var]/[#]` set the `var` to the value `#`
-- `sub/[var]/[#]` subtract `#` from variable `var`
+- `set/[var]/[value]` set the `var` to `value`
+- `sub/[var]/[value]` subtract `value` from variable `var`
 - `state/[state]` set the item state to `state`
     - use multiple times for different state machines
     - two or more `state` commands from the same state machine is an error

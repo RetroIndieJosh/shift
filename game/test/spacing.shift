@@ -1,0 +1,16 @@
+# Test: invalid spacing
+
+title/Invalid Spacing Test
+author/Joshua McLean
+
+room/Ship
+    start
+    desc/This spacing is okay. Expected errors on lines 11 and 14.
+
+room/Space
+  desc/This is bad spacing and should be ignored.
+    desc/This is okay though.
+
+item/Star
+   ex/This is also bad spacing we ignore.
+    ex/But again, we fix it here.

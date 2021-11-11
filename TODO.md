@@ -2,12 +2,7 @@
 
 ## Current
 
-## Parser
-
-- update spec (and this todo) to use slashes where necessary
-- update spec of item and use to match top-level item and use definitions
-- how to do this one? can define in room but only based on itemtype
-    - `item [number] [item name]` place `number` of `item name` in the room
+- warn on `room` block empty `desc`
 
 ### Variables
 
@@ -15,9 +10,16 @@
 - `HELDCOUNT` number of items currently held
 - `PLAYER` the player (treated as an item for use, combine, etc.)
 - `TARGET` name of the currently targeted item or "nothing" if null
-- `[item name].FLOOR` count of the given `item name` in the current room
-- `[item name].HELD` count of the given `item name` carried by the player
+- `[item type].FLOOR` count of the given `item name` in the current room
+- `[item type].HELD` count of the given `item name` carried by the player
 - `[room name].ITEMCOUNT` the number of items in `room name`
+
+## Reserved Words
+
+The following cannot be used as names. Remember names are *not* case sensitive.
+
+- `HELD` is a pseudo-room representing the player's inventory which can be used in `item` block `loc` commands
+- `PLAYER` is a psedo-item representing the player as an item
 
 ### Game
 
@@ -28,7 +30,6 @@
 
 ### Room
 
-- empty `desc` is meaningless but not an error (TODO WARN)
 - `exit [direction] / [type] / [room] / [move description]` define an exit
     - create a reciprocal exit with same description unless already defined (can also be later overwritten by script)
     - see Directions and Exits in spec
@@ -52,7 +53,7 @@
 - `key/[room] / [direction] / [description]` indicate item can unlock exit in `room` going `direction`
     - if description is provided, print when walking through the door carrying this item (unlocking, opening, and stepping through the door)
 - special statement `loc/HELD` starts this item in player's inventory
-- `statemach/[state1] / [state2] / ...` define a new state machine for the item
+- `statemach/[name]/[state1]/[state2]/...` define a new state machine for the item
     - by default, state is the first listed state
     - all states must be unique per item
     - states must be all lowercase
@@ -81,6 +82,7 @@ Identical to `item` except:
 - `destroy` destroy the used item (remove from the game)
 - `destroytarget` as `destroy` but on `target`
     - error if no `target` defined
+- `endgame/[message]` end the game with the given message
 - `give/[item]` place the named item in the player's inventory
 - `inc/[var]` shortcut for `add [var] 1`
 - `ifnot/[var]/[value]/[message]` or `ifnot/[state]/[message]` print the given message instead of executing the USE command if the given condition is false

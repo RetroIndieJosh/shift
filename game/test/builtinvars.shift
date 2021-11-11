@@ -1,0 +1,22 @@
+# Test: built-in variables
+# TODO test PLAYER as target for using an item
+
+title/Built-In Variables Test
+author/Joshua McLean
+
+item/PLAYER
+    desc/You are [PLAYER.who].
+    statemach/who/Jekyll/Hyde
+
+room/Testing Chamber
+    start
+    desc/You are in [CURROOM], holding [HELDCOUNT] items and targeting [TARGITEM].
+
+item/Potion
+    ex/A green tinted bottle. It is [Potion.status].
+    loc/Testing Chamber
+    statemach/status/full/empty
+
+use/Potion/PLAYER
+ destroy
+   statetarget/Jekyll
