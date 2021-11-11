@@ -133,7 +133,6 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 - Text: messages based on held items
         - `[if has item name]response[else if has other item name]other response[else]yet another response[end]`
 - Items: combine (inventory)
-- Meta: add stuff from [here](https://github.com/RetroIndieJosh/shift/community)
 
 ## Quick / Minor
 

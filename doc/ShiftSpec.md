@@ -24,8 +24,6 @@
 
 ## Basics
 
-SHIFT is case sensitive. Commands, item states, user-defined variable names must be lowercase. Built-in variables and special keywords are in SHOUTING_CAPS. Otherwise, any case is allowed.
-
 A SHIFT script must be in a file ending with `.shift` and must contain at least one room with exactly one room flagged as the start room.
 
 The minimum viable SHIFT script is as follows:
