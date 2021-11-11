@@ -255,6 +255,7 @@ Started by `item/[name]`. A special item `item/PLAYER` defines player properties
 
 - `alias/[name]` define an alias for the item
     - all aliases and item names must be unique
+    - multiple aliases are allowed, one per `alias` command
 - `ex/[description]` define the EXAMINE command description for the item
 - `give/[item]` define a special GET/TAKE that gives `item` instead of this item
     - uses `take` description from `item`

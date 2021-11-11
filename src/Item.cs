@@ -42,17 +42,6 @@ namespace shift
             return Find(name, items);
         }
 
-        // find an item in a specific list i.e. room contents
-        public static Item Find(string name, List<Item> items)
-        {
-            var matches = items.Where(item => item.Matches(name)).ToList();
-            if (matches.Count == 0)
-                return null;
-
-            // TODO disambiguation
-            return matches[0];
-        }
-
         public static Item FindInInventory(string name)
         {
             return Find(name, inventory);

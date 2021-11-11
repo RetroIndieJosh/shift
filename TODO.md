@@ -2,9 +2,9 @@
 
 ## Current
 
-- warn on `room` block empty `desc`
-
 ### Variables
+
+(test these in `builtinvars.shift`)
 
 - `PLAYER` the player (treated as an item for use, combine, etc.)
 - `[item type].FLOOR` count of the given `item name` in the current room
@@ -108,11 +108,17 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Critical / Major
 
+- automatic testing that runs through all scripts in `game/test` and asks if the test was passed on quit
+    - then print test results with pass/fail and percentage
 - disambiguate between held quantity and in-room quantity
-    - i.e. player carries 7 bullets and room contains 4 bullets, what does "bullet" refer to? we must ask: "held bullets or inventory bullets?"
+    - i.e. player carries 7 bullets and room contains 4 bullets, what does "bullet" refer to? we must ask: "held bullets or  bullets in room?"
+        - or by context: 
+            examine gives the same message for each
+            use/combine has the same result whether held or not
+            take refers to bullets on the ground (all of them? probably)
     - what does this do to find? each grouping of bullets must have a unique identifier, perhaps a hidden ID in the name
-- BUG: Display.Flush() seems to be missing a final newline when the text ends on a blank line
-- BUG: Display.Flush() doesn't count lines correctly when one write with multiple \n's (i.e. "three\nlines\nlong" counts as one)
+- BUG: Display.Flush() might miss final newline when text ends on blank line
+- BUG: Display.Flush() counts incorrectly on write with multiple `\n`s (i.e. "three\nlines\nlong" counts as one line)
 - Game: use (inventory)
 - Items: aliases
 - Items: plurals
@@ -120,9 +126,10 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
         - `[if item name = state]response[else if item name = other state]other response[else]yet another response[end]`
 - Text: messages based on location
         - `[if in room name]response[else if in other room name]other response[else]yet another response[end]`
+- Text: messages based on held items
+        - `[if has item name]response[else if has other item name]other response[else]yet another response[end]`
 - Items: combine (inventory)
 - Meta: add stuff from [here](https://github.com/RetroIndieJosh/shift/community)
-- Parser: more test games to test parser errors and features
 
 ## Quick / Minor
 

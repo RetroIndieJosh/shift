@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace shift
 {
@@ -36,6 +37,16 @@ namespace shift
             BindScriptKeys();
             foreach (var line in lines)
                 TryParse(line);
+        }
+
+        public static T Find<T>(string name, List<T> list) where T : ScriptedEntity
+        {
+            var matches = list.Where(e => e.Matches(name)).ToList();
+            if (matches.Count == 0)
+                return null;
+
+            // TODO disambiguation
+            return matches[0];
         }
 
         public bool Matches(string name)

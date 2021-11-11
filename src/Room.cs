@@ -27,11 +27,7 @@ namespace shift
 
         public static Room Find(string name)
         {
-            var matches = rooms.Where(room => room.Matches(name)).ToList();
-            if (matches.Count == 0)
-                return null;
-
-            return matches[0];
+            return Find(name, rooms);
         }
 
         public Room(List<ScriptLine> lines) : base(lines)
