@@ -1,0 +1,24 @@
+# Test: bad names
+
+title/Bad Names Test
+author/Joshua McLean
+
+intro/Illegal names on lines 8, 12, 16, 20, and 23. Error on 13 and 17 because room not created.
+
+room/Look
+    start
+    desc/That's a command.
+
+item/Examine
+    loc/look
+    ex/That's a command.
+
+item/Ex
+    loc/look
+    ex/That's an alias.
+
+room/west
+    desc/That's a direction command.
+
+room/player
+    desc/That's a built-in variable name.

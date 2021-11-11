@@ -2,6 +2,9 @@
 
 ## Current
 
+- variables checked as keywords (PLAYER, CURROOM, etc.) on naming
+    - store a list of built-in variable names for lookup
+
 ### Variables
 
 (test these in `builtinvars.shift`)
@@ -110,6 +113,7 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 - automatic testing that runs through all scripts in `game/test` and asks if the test was passed on quit
     - then print test results with pass/fail and percentage
+    - problem: intro description doesn't print on fail (could print in test mode?)
 - disambiguate between held quantity and in-room quantity
     - i.e. player carries 7 bullets and room contains 4 bullets, what does "bullet" refer to? we must ask: "held bullets or  bullets in room?"
         - or by context: 

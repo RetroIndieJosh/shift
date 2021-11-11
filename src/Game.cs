@@ -10,16 +10,15 @@ namespace shift
 
         public Room CurRoom { get; protected set; } = null;
 
-        private Dictionary<string, Action<string[]>> commandDict = new Dictionary<string, Action<string[]>>();
-        private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
+        private Dictionary<string, Action<string[]>> commandDict = null;
+        private Dictionary<string, string> aliasDict = null;
 
         private bool isRunning = false;
 
         private string author = null;
-        private string title = null;
         private string intro = null;
 
-        public Game(List<ScriptLine> lines, Room startRoom) : base(lines)
+        public Game() : base()
         {
             if (instance != null)
                 throw new Exception("Only one game instance is allowed (singleton)");
@@ -27,9 +26,6 @@ namespace shift
             instance = this;
 
             LoadCommands();
-
-            Name = "game";
-            CurRoom = startRoom;
         }
 
         public string AutoComplete(string start, int depth = 0)
@@ -39,12 +35,9 @@ namespace shift
             if (tokens.Length > 1)
                 key = tokens.Last();
 
-            var potentialMatches = commandDict.Keys
-                .Concat(aliasDict.Keys)
+            var matches = CommandMatches(key)
                 .Concat(CurRoom.GetItemNames())
-                .Concat(Item.GetInventoryNames());
-            var matches = potentialMatches
-                .Where(m => m.StartsWith(key))
+                .Concat(Item.GetInventoryNames())
                 .ToList();
 
             if (matches.Count == 0)
@@ -57,14 +50,31 @@ namespace shift
             return string.Join(' ', tokens.SkipLast(1)) + ' ' + completed;
         }
 
+        public bool IsCommand(string key)
+        {
+            return CommandMatches(key).Count > 0;
+        }
+
+        public void LoadScript(List<ScriptLine> lines, Room start)
+        {
+            LoadScript(lines);
+            CurRoom = start;
+        }
+
         public void Run()
         {
+            if (!isLoaded)
+                throw new Exception("Tried to run game but it's not loaded.");
+            if (isRunning)
+                throw new Exception("Tried to run game but it's already running.");
+
             Display.WriteLine("SHIFT // Survival Horror Interactive Fiction Toolkit");
             Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
 
-            title ??= "Untitled";
+            if (Name == null)
+                SetName("Untitled");
             author ??= "Anonymous";
-            Display.WriteLine($"{title} by {author}\n");
+            Display.WriteLine($"{DisplayName} by {author}\n");
             if (intro != null)
                 Display.WriteLine($"\n{intro}\n");
 
@@ -92,7 +102,7 @@ namespace shift
                     return ScriptCommand.SetOnce(ref intro, args[0], "intro");
                 }),
                 new ScriptCommand("title", 1, args => {
-                    return ScriptCommand.SetOnce(ref title, args[0], "title");
+                    return SetName(args[0]);
                 }),
             };
         }
@@ -118,7 +128,7 @@ namespace shift
 
         private void CommandCredits(string[] args)
         {
-            Display.WriteLine($"You are currently playing {title} by {author}.");
+            Display.WriteLine($"You are currently playing {DisplayName} by {author}.");
         }
 
         private void CommandHelp(string[] args)
@@ -178,6 +188,13 @@ namespace shift
             Display.WriteLine($"[Currently targeting: {Item.CurTarget.DisplayName}]");
         }
 
+        private List<string> CommandMatches(string key)
+        {
+            return commandDict.Keys
+                .Concat(aliasDict.Keys)
+                .Where(m => m.ToLower().StartsWith(key.ToLower())).ToList();
+        }
+
         private void CommandMove(string[] args)
         {
             if (args.Length == 0)
@@ -225,6 +242,11 @@ namespace shift
 
         private void LoadCommands()
         {
+            if (commandDict != null || aliasDict != null)
+                throw new Exception("Loading game commands but command/alias dict not null. Loaded twice?");
+
+            commandDict = new Dictionary<string, Action<string[]>>();
+
             commandDict.Add("credits", CommandCredits);
             commandDict.Add("examine", CommandExamine);
             commandDict.Add("inventory", CommandInventory);
@@ -243,6 +265,8 @@ namespace shift
                 var dirstr = ((Room.Direction)i).ToString();
                 LoadMoveCommand(dirstr);
             }
+
+            aliasDict = new Dictionary<string, string>();
 
             aliasDict.Add("?", "help");
             aliasDict.Add("what", "help");

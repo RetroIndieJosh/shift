@@ -75,6 +75,8 @@ namespace shift
 
         static public Game CreateGame(string filename, bool verbose = false)
         {
+            var game = new Game();
+
             // NOTE this will break filenames with \ in linux but that's a bad idea anyway
             filename = filename.Replace("\\", "/");
 
@@ -184,9 +186,9 @@ namespace shift
                 Error("No start room defined.");
 
             Log($"Game data defined in {gameLines.Count} lines", lines.Count);
-            var game = new Game(gameLines, StartRoom);
             if (WriteProblems(filename))
                 return null;
+            game.LoadScript(gameLines, StartRoom);
             return game;
         }
 

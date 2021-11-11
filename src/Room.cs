@@ -144,11 +144,7 @@ namespace shift
                 }),
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
                 new ScriptCommand("room", 1, args => {
-                    Problem problem = null;
-                    if(Name != null)
-                        problem =  new OverwriteWarning("name");
-                    Name = args[0];
-                    return problem;
+                    return SetName(args[0]);
                 }),
                 new ScriptCommand("start", 0, args => {
                     if(ShiftParser.StartRoom != null)

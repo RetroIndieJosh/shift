@@ -12,7 +12,7 @@ namespace shift
         public string Name
         {
             get => name;
-            protected set
+            private set
             {
                 name = value.Replace(' ', '_');
             }
@@ -23,24 +23,32 @@ namespace shift
             get => name.Replace('_', ' ');
         }
 
-        private string name;
+        private string name = null;
 
         protected List<ScriptCommand> scriptKeys;
 
         public ScriptedEntity()
         {
-            Name = "Anonymous";
+            store.Add((EntityType)this);
         }
 
-        public ScriptedEntity(List<ScriptLine> lines)
+        public ScriptedEntity(List<ScriptLine> lines) : this()
+        {
+            LoadScript(lines);
+        }
+
+        protected bool isLoaded = false;
+
+        protected void LoadScript(List<ScriptLine> lines)
         {
             if (lines == null || lines.Count == 0)
-                throw new Exception("No script lines provided to scripted entity");
+                throw new Exception("No script lines provided to scripted entity.");
+            if (isLoaded)
+                throw new Exception($"Tried to load {name} multiple times.");
             BindScriptKeys();
             foreach (var line in lines)
                 TryParse(line);
-
-            store.Add((EntityType)this);
+            isLoaded = true;
         }
 
         public static EntityType Find(string name)
@@ -69,6 +77,23 @@ namespace shift
         }
 
         protected virtual void BindScriptKeys() { }
+
+        protected Problem SetName(string name)
+        {
+            Problem problem = null;
+            if (Name != null)
+                problem = new OverwriteWarning("name");
+            if (Game.instance.IsCommand(name))
+                problem = new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
+            else if (Item.Find(name) != null)
+                problem = new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
+            else if (Room.Find(name) != null)
+                problem = new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");
+            // TODO check item types
+            else
+                Name = name;
+            return problem;
+        }
 
         // returns whether the command was parsed (not whether there were problems)
         protected virtual bool TryParse(ScriptLine line)

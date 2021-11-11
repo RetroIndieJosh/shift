@@ -150,11 +150,7 @@ namespace shift
                     return ScriptCommand.SetOnce(ref examineDesc, args[0], "examine desc");
                 }),
                 new ScriptCommand("item", 1, args => {
-                    Problem problem = null;
-                    if(Name != null)
-                        problem =  new OverwriteWarning("name");
-                    Name = args[0];
-                    return problem;
+                    return SetName(args[0]);
                 }),
                 new ScriptCommand("loc", 1, args => {
                     var room = Room.Find(args[0]);
