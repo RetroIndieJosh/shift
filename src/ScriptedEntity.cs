@@ -4,8 +4,10 @@ using System.Linq;
 
 namespace shift
 {
-    public abstract class ScriptedEntity
+    public abstract class ScriptedEntity<EntityType> where EntityType : ScriptedEntity<EntityType>
     {
+        private static List<EntityType> store = new List<EntityType>();
+
         // the internal name of the entity (using underscores instead of spaces)
         public string Name
         {
@@ -37,9 +39,16 @@ namespace shift
             BindScriptKeys();
             foreach (var line in lines)
                 TryParse(line);
+
+            store.Add((EntityType)this);
         }
 
-        public static T Find<T>(string name, List<T> list) where T : ScriptedEntity
+        public static EntityType Find(string name)
+        {
+            return Find(name, store);
+        }
+
+        public static EntityType Find(string name, List<EntityType> list)
         {
             var matches = list.Where(e => e.Matches(name)).ToList();
             if (matches.Count == 0)

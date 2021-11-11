@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    public class Room : ScriptedEntity
+    public class Room : ScriptedEntity<Room>
     {
         static List<Room> rooms = new List<Room>();
 
@@ -24,11 +24,6 @@ namespace shift
 
         private Room[] exits = new Room[(int)Direction.Count];
         private List<Item> items = new List<Item>();
-
-        public static Room Find(string name)
-        {
-            return Find(name, rooms);
-        }
 
         public Room(List<ScriptLine> lines) : base(lines)
         {

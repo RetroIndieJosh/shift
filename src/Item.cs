@@ -4,14 +4,13 @@ using System.Linq;
 
 namespace shift
 {
-    public class Item : ScriptedEntity
+    public class Item : ScriptedEntity<Item>
     {
         const string DefaultTakeDesc = "You take {0}.";
 
         static public Item CurTarget { get; private set; } = null;
 
         static private List<Item> inventory = new List<Item>();
-        static List<Item> items = new List<Item>();
 
         public Room Location
         {
@@ -36,12 +35,6 @@ namespace shift
 
         private ItemStateMachine stateMachine;
 
-        // find an item loaded in the game
-        public static Item Find(string name)
-        {
-            return Find(name, items);
-        }
-
         public static Item FindInInventory(string name)
         {
             return Find(name, inventory);
@@ -54,7 +47,7 @@ namespace shift
 
         public static void Where(string name)
         {
-            var item = Item.Find(name, items);
+            var item = Item.Find(name);
             if (item == null)
             {
                 Display.WriteLine($"[no item by name {name}]");
@@ -86,7 +79,6 @@ namespace shift
 
         public Item(List<ScriptLine> lines) : base(lines)
         {
-            items.Add(this);
         }
 
         public void AddState(string[] stateNames, int defaultStateIndex = 0)

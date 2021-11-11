@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace shift
 {
-    public class Game : ScriptedEntity
+    public class Game : ScriptedEntity<Game>
     {
         public static Game instance = null;
 
