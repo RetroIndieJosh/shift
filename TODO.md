@@ -6,10 +6,7 @@
 
 ### Variables
 
-- `CURROOM` name of the current room
-- `HELDCOUNT` number of items currently held
 - `PLAYER` the player (treated as an item for use, combine, etc.)
-- `TARGET` name of the currently targeted item or "nothing" if null
 - `[item type].FLOOR` count of the given `item name` in the current room
 - `[item type].HELD` count of the given `item name` carried by the player
 - `[room name].ITEMCOUNT` the number of items in `room name`

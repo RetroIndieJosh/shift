@@ -146,8 +146,10 @@ namespace shift
         {
             scriptKeys = new List<ScriptCommand>()
             {
-                new ScriptCommand("desc", 1, args => {
-                    return ScriptCommand.SetOnce(ref desc, args[0], "author");
+                new ScriptCommand("desc", 0, args => {
+                    if(args.Count == 0)
+                        return new Problem(ProblemType.Warning, $"Empty desc for room `{Name}`");
+                    return ScriptCommand.SetOnce(ref desc, args[0], "desc");
                 }),
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
                 new ScriptCommand("room", 1, args => {
@@ -159,7 +161,7 @@ namespace shift
                 }),
                 new ScriptCommand("start", 0, args => {
                     if(ShiftParser.StartRoom != null)
-                        return new Problem(ProblemType.Warning, "Multiple start rooms. Using last defined.");
+                        return new Problem(ProblemType.Warning, $"Multiple start rooms. Using last defined ({Name}).");
                     ShiftParser.StartRoom = this;
                     return null;
                 }),

@@ -1,0 +1,9 @@
+# Test: empty room description
+
+title/Empty Room Description Test
+author/Joshua McLean
+intro/Expected: warning about empty room description in "Nowhere".
+
+room/Nowhere
+    desc
+    start
