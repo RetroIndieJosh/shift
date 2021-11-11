@@ -1,5 +1,17 @@
 # Contributing to SHIFT
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Creating a Pull Request](#creating-a-pull-request)
+- [Bug Reporting](#bug-reporting)
+- [Use a Consistent Coding Style](#use-a-consistent-coding-style)
+- [License](#license)
+- [Maintainer (Contact)](#maintainer-contact)
+- [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 I want to make contributing to this project as easy and transparent as
 possible, whether it's:
 
@@ -24,9 +36,14 @@ Use [Github
 Flow](https://docs.github.com/en/get-started/quickstart/github-flow). All
 external code changes happen through pull requests:
 
-1. Fork the repo and create your branch from `master`.  2. If you've added code
-that should be tested, add tests.  3. If you've changed APIs, update the
-documentation.  4. Ensure the test suite passes.  5. Make sure your code lints.
+1. Fork the repo and create your branch from `master`.  
+2. If you've added code that should be tested, add test scripts to `game/test`.
+3. If you've changed APIs, update the documentation.  
+4. Ensure the test suite passes. (No automated testing yet, but run through the
+tests in `game/test` and verify that the results match the `intro` defined in
+the `.shift` file.)
+5. Make sure your code compiles and runs. If possible, check multiple
+environments.
 6. Issue that pull request!
 
 ## Bug Reporting
@@ -53,18 +70,18 @@ I *love* thorough bug reports.
 
 ## Use a Consistent Coding Style
 
-* If you use VS Code, you can use the included .editorconfig file to get
-* started A code style guide is forthcoming For now, try to match the style of
-* existing code
+- If you use VS Code, use the included .editorconfig file to get started 
+- A code style guide is forthcoming 
+- For now, try to match the style of existing code
 
 ## License
 
 Any contributions you make will be under the GPL v3 software license. When you
 submit code changes, your submissions are understood to be under the same [GPL
-v3 License](LICENSE.md) that covers the project. Please contact the maintainer
+v3 License](LICENSE.txt) that covers the project. Please contact the maintainer
 if this is a concern.
 
-## Maintainer
+## Maintainer (Contact)
 
 I (Joshua McLean) am the sole maintainer of SHIFT and you can reach me at
 `mrjoshuamclean@gmail.com` with any concerns you feel do not belong in the

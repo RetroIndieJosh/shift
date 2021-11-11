@@ -9,7 +9,7 @@
 - [Commands and Arguments](#commands-and-arguments)
   - [Standards](#standards)
   - [Blocks and Indentation](#blocks-and-indentation)
-  - [Built In Variables and Constants](#built-in-variables-and-constants)
+  - [Built In Variables](#built-in-variables)
   - [Comments](#comments)
 - [Game Block](#game-block)
 - [Room Block](#room-block)

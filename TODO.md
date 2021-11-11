@@ -1,5 +1,24 @@
 # SHIFT To Do
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Current](#current)
+  - [Variables](#variables)
+- [Reserved Words](#reserved-words)
+  - [Game](#game)
+  - [Room](#room)
+  - [Item](#item)
+- [Item Type Block](#item-type-block)
+  - [Use](#use)
+  - [Combine](#combine)
+- [Critical / Major](#critical--major)
+- [Quick / Minor](#quick--minor)
+- [Cleanup](#cleanup)
+- [Optional for Minimum Viable](#optional-for-minimum-viable)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Current
 
 - variables checked as keywords (PLAYER, CURROOM, etc.) on naming
