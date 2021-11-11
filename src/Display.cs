@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace shift
 {
@@ -73,6 +74,29 @@ namespace shift
             Console.Write(pages.Last());
         }
 
+        static Regex varRegex = new Regex(@"\[([^]]*)\]", RegexOptions.Compiled);
+
+        static private string ProcessVars(string text)
+        {
+            // TODO store this 
+            var matches = varRegex.Matches(text);
+            foreach (Match match in matches)
+            {
+                var groups = match.Groups;
+                var varName = groups[1].Value;
+                var varText = groups[0].Value;
+                if (StringComparer.OrdinalIgnoreCase.Equals(varName, "curroom"))
+                {
+                    text = text.Replace(varText, Game.instance.CurRoom.ToString());
+                }
+                else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "heldcount"))
+                {
+                    text = text.Replace(varText, $"{Item.GetInventoryNames().Count}");
+                }
+            }
+            return text;
+        }
+
         static public void Flush()
         {
             // print underscorse as spaces, but double underscores as literal underscores
@@ -85,6 +109,8 @@ namespace shift
                 .Replace(UnderscoreTag, "_")
                 // end pages are also end lines, so we can process the next line appropritately
                 .Replace("\\p", "\\p\n");
+
+            text = ProcessVars(text);
 
             // allow a little bit of overlap so the user can follow the text
             var linesPerPage = Console.WindowHeight - 4;

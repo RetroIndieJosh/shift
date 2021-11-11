@@ -89,6 +89,7 @@ namespace shift
             var lineStrings = File.ReadAllLines(filename).ToList();
             lineDigits = lineStrings.Count.ToString().Length;
 
+            // TODO use this to filter lines (groups)?
             // syntax check
             var rx = new Regex(@"\s*[^\/#]+\s*(\s*\/[^\/#]*\s*)*", RegexOptions.Compiled);
             var syntaxErrorLines = new List<int>();

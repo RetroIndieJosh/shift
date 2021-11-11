@@ -8,7 +8,7 @@ namespace shift
     {
         public static Game instance = null;
 
-        protected Room CurRoom { get; set; } = null;
+        public Room CurRoom { get; protected set; } = null;
 
         private Dictionary<string, Action<string[]>> commandDict = new Dictionary<string, Action<string[]>>();
         private Dictionary<string, string> aliasDict = new Dictionary<string, string>();
@@ -175,9 +175,7 @@ namespace shift
             if (Item.CurTarget == null)
                 return;
 
-            Display.Write("[Currently targeting: ");
-            Item.CurTarget.WriteName();
-            Display.WriteLine("]");
+            Display.WriteLine($"[Currently targeting: {DisplayName}]");
         }
 
         private void CommandMove(string[] args)

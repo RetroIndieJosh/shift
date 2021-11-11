@@ -5,6 +5,7 @@ namespace shift
 {
     public abstract class ScriptedEntity
     {
+        // the internal name of the entity (using underscores instead of spaces)
         public string Name
         {
             get => name;
@@ -12,6 +13,11 @@ namespace shift
             {
                 name = value.Replace(' ', '_');
             }
+        }
+
+        public string DisplayName
+        {
+            get => name.Replace('_', ' ');
         }
 
         private string name;
@@ -39,13 +45,7 @@ namespace shift
 
         public override string ToString()
         {
-            return Name;
-        }
-
-        // TODO get rid of this and access Name directly
-        public void WriteName()
-        {
-            Display.Write(Name);
+            return DisplayName;
         }
 
         protected virtual void BindScriptKeys() { }

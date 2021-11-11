@@ -5,7 +5,7 @@ title/Built-In Variables Test
 author/Joshua McLean
 
 item/PLAYER
-    desc/You are [PLAYER.who].
+    ex/You are [PLAYER.who].
     statemach/who/Jekyll/Hyde
 
 room/Testing Chamber
@@ -16,7 +16,8 @@ item/Potion
     ex/A green tinted bottle. It is [Potion.status].
     loc/Testing Chamber
     statemach/status/full/empty
+    take/You get the potion.
 
 use/Potion/PLAYER
- destroy
-   statetarget/Jekyll
+    destroy
+    statetarget/Jekyll

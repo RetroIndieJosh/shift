@@ -128,6 +128,7 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Quick / Minor
 
+- fail message on taking item which can't be taken
 - Game: help per command
     str->str dict?
 - Parser: warn for empty or missing room descriptions

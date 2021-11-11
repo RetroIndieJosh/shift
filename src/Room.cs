@@ -125,9 +125,7 @@ namespace shift
 
         public void WriteAll()
         {
-            Display.Write("--= ");
-            WriteName();
-            Display.WriteLine(" =--");
+            Display.WriteLine($"--= {DisplayName} =--");
             Display.WriteLine($"[{items.Count} items]");
             WriteDesc();
             Display.WriteLine();

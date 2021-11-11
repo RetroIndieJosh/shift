@@ -1,9 +1,34 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace shift
 {
     class Program
     {
+        static void RegexTest()
+        {
+            while (true)
+            {
+                Console.Write(">> ");
+                var input = Console.ReadLine();
+                var rx = new Regex(@"\[([^]]*)\]", RegexOptions.Compiled);
+                var matches = rx.Matches(input);
+                foreach (Match match in matches)
+                {
+                    var groups = match.Groups;
+                    if (groups[1].Value == "foo")
+                        input = input.Replace(match.Groups[0].Value, "bar");
+                    var i = 0;
+                    foreach (Group g in groups)
+                    {
+                        Console.WriteLine($"Group {i}: {g.Value}");
+                        ++i;
+                    }
+                }
+
+                Console.WriteLine($"Result: {input}");
+            }
+        }
         static void Main(string[] args)
         {
             if (args.Length == 0)
