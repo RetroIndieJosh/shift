@@ -25,7 +25,7 @@ namespace shift
 
         static private string LineStr(int line)
         {
-            return line > 0 ? $"[{line.ToString().PadLeft(lineDigits, '0')}] " : "";
+            return line > 0 ? $"[{line.ToString().PadLeft(lineDigits, '0')}] " : "[runtime] ";
         }
 
         // TODO move to display?

@@ -14,18 +14,16 @@ namespace shift
             West, Down, Up, Count
         }
 
-        public string Desc
-        {
-            get => desc;
-            private set => desc = value;
-        }
+        public string Desc => desc.Value;
 
-        private string desc = null;
+        #region Script Fields
+        private ScriptField<string> desc = new ScriptField<string>("desc", 0);
+        #endregion
 
         private Room[] exits = new Room[(int)Direction.Count];
         private List<Item> items = new List<Item>();
 
-        public Room(List<ScriptLine> lines) : base(lines)
+        public Room(List<ScriptLine> lines) : base(lines, "room")
         {
             rooms.Add(this);
         }
@@ -109,11 +107,6 @@ namespace shift
             item.Location = null;
         }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
         public void WriteAll()
         {
             Display.WriteLine($"--= {DisplayName} =--");
@@ -137,15 +130,8 @@ namespace shift
         {
             scriptKeys = new List<ScriptCommand>()
             {
-                new ScriptCommand("desc", 0, args => {
-                    if(args.Count == 0)
-                        return new Problem(ProblemType.Warning, $"Empty desc for room `{Name}`");
-                    return ScriptCommand.SetOnce(ref desc, args[0], "desc");
-                }),
+                desc,
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
-                new ScriptCommand("room", 1, args => {
-                    return SetName(args[0]);
-                }),
                 new ScriptCommand("start", 0, args => {
                     if(ShiftParser.StartRoom != null)
                         return new Problem(ProblemType.Warning, $"Multiple start rooms. Using last defined ({Name}).");
@@ -153,6 +139,8 @@ namespace shift
                     return null;
                 }),
             };
+
+            base.BindScriptKeys();
         }
 
         private Problem CreateExit(List<string> args)

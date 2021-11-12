@@ -8,22 +8,28 @@ namespace shift
     {
         private static List<EntityType> store = new List<EntityType>();
 
-        // the internal name of the entity (using underscores instead of spaces)
+        // internal name (no spaces, only underscores)
         public string Name
         {
-            get => name;
-            private set
-            {
-                name = value.Replace(' ', '_');
-            }
+            get => (name == null || name.Value == null)
+                ? "(null)"
+                : name.Value.Replace(' ', '_');
         }
 
+        // display name (double underscore becomes underscore, underscore becomes space)
         public string DisplayName
         {
-            get => name.Replace('_', ' ');
+            get => (name == null || name.Value == null)
+                ? "Unknown"
+                : name.Value
+                    .Replace("__", "~UNDERSCORE~")
+                    .Replace('_', ' ')
+                    .Replace("~UNDERSCORE~", "_");
         }
 
-        private string name = null;
+        #region Script Fields
+        private ScriptField<string> name = new ScriptField<string>("name", 1);
+        #endregion
 
         protected List<ScriptCommand> scriptKeys;
 
@@ -32,8 +38,14 @@ namespace shift
             store.Add((EntityType)this);
         }
 
-        public ScriptedEntity(List<ScriptLine> lines) : this()
+        public ScriptedEntity(List<ScriptLine> lines, string nameKey = null) : this()
         {
+            if (nameKey != null)
+            {
+                if (!lines[0].Text.StartsWith(nameKey))
+                    throw new Exception($"Illegal name key `{nameKey}` for line: `{lines[0].Text}.");
+                lines[0].ReplaceFirst(nameKey, "name");
+            }
             LoadScript(lines);
         }
 
@@ -76,23 +88,25 @@ namespace shift
             return DisplayName;
         }
 
-        protected virtual void BindScriptKeys() { }
-
-        protected Problem SetName(string name)
+        protected virtual void BindScriptKeys()
         {
-            Problem problem = null;
+            if (scriptKeys == null)
+                throw new Exception("Null scriptKeys. You must create scriptKeys before calling "
+                    + "ScriptedEntity.BindScriptKeys().");
+            scriptKeys.Add(name);
+        }
+
+        protected Problem CheckName(string name)
+        {
             if (Name != null)
-                problem = new OverwriteWarning("name");
+                return new OverwriteWarning("name");
             if (Game.instance.IsCommand(name))
-                problem = new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
+                return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
             else if (Item.Find(name) != null)
-                problem = new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
+                return new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
             else if (Room.Find(name) != null)
-                problem = new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");
-            // TODO check item types
-            else
-                Name = name;
-            return problem;
+                return new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");
+            return null;
         }
 
         // returns whether the command was parsed (not whether there were problems)
@@ -102,15 +116,26 @@ namespace shift
                 throw new Exception("No commands set for scripted entity");
             foreach (var command in scriptKeys)
             {
+                if (command == null)
+                {
+                    new Problem(ProblemType.Warning,
+                        $"Null command in `{this.GetType()}`")
+                        .Report(line.LineNumber);
+                    continue;
+                }
+
                 if (!command.IsMatch(line.Text))
                     continue;
+
                 var problem = command.TryInvoke(line.Text);
                 if (problem != null)
                     problem.Report(line.LineNumber);
                 return true;
             }
             var key = line.Text.Split('/')[0];
-            new Problem(ProblemType.Warning, $"No matching script key in `{this.GetType()}` for `{key}`").Report(line.LineNumber);
+            new Problem(ProblemType.Warning,
+                $"No matching script key in `{this.GetType()}` for `{key}`")
+                .Report(line.LineNumber);
             return false;
         }
     }

@@ -31,6 +31,16 @@ namespace shift
             IndentLevel = spaces / SpacesPerIndent;
             Text = line.Trim();
         }
+
+        public void Replace(string oldStr, string newStr)
+        {
+            Text = Text.Replace(oldStr, newStr);
+        }
+
+        public void ReplaceFirst(string oldStr, string newStr)
+        {
+            Text = Text.ReplaceFirst(oldStr, newStr);
+        }
     }
 
 }

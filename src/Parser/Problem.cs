@@ -2,8 +2,7 @@ namespace shift
 {
     public enum ProblemType
     {
-        Error,
-        Warning
+        Error, Warning, None
     }
 
     public class OverwriteWarning : Problem

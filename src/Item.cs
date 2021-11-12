@@ -77,7 +77,7 @@ namespace shift
             inventory.ForEach(item => Display.WriteLine($"\t{item}"));
         }
 
-        public Item(List<ScriptLine> lines) : base(lines)
+        public Item(List<ScriptLine> lines) : base(lines, "item")
         {
         }
 
@@ -149,9 +149,6 @@ namespace shift
                 new ScriptCommand("ex", 1, args => {
                     return ScriptCommand.SetOnce(ref examineDesc, args[0], "examine desc");
                 }),
-                new ScriptCommand("item", 1, args => {
-                    return SetName(args[0]);
-                }),
                 new ScriptCommand("loc", 1, args => {
                     var room = Room.Find(args[0]);
                     if(room == null)
@@ -168,6 +165,8 @@ namespace shift
                     return ScriptCommand.SetOnce(ref takeDesc, args[0], "take desc");
                 }),
             };
+
+            base.BindScriptKeys();
         }
 
         private void Take()

@@ -15,6 +15,7 @@ namespace shift
 
         private bool isRunning = false;
 
+        // TODO add title
         private string author = null;
         private string intro = null;
 
@@ -71,9 +72,6 @@ namespace shift
             Display.WriteLine("SHIFT // Survival Horror Interactive Fiction Toolkit");
             Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
 
-            if (Name == null)
-                SetName("Untitled");
-            author ??= "Anonymous";
             Display.WriteLine($"{DisplayName} by {author}\n");
             if (intro != null)
                 Display.WriteLine($"\n{intro}\n");
@@ -100,9 +98,6 @@ namespace shift
                 }),
                 new ScriptCommand("intro", 1, args => {
                     return ScriptCommand.SetOnce(ref intro, args[0], "intro");
-                }),
-                new ScriptCommand("title", 1, args => {
-                    return SetName(args[0]);
                 }),
             };
         }
