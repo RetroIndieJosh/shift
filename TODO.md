@@ -21,8 +21,14 @@
 
 ## Current
 
+- escape sequences `\\` `\s`
+- warn for unrecognized key in script (wasn't this working before?)
+- also convert names as if being displayed
+- remove `ScriptedEntity.DisplayName` in favor of `Name` (display does conversion of underscores)
 - variables checked as keywords (PLAYER, CURROOM, etc.) on naming
     - store a list of built-in variable names for lookup
+- update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate
+    - check that ScriptReference works correctly
 
 ### Variables
 
@@ -130,6 +136,8 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Critical / Major
 
+- implement `ScriptReferenceList` for state lists
+- implement `ItemState` as a `ScriptableObject` so it can use `ScriptReference<ItemState>` to parse
 - automatic testing that runs through all scripts in `game/test` and asks if the test was passed on quit
     - then print test results with pass/fail and percentage
     - problem: intro description doesn't print on fail (could print in test mode?)
@@ -197,3 +205,25 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 - Parser: flexible indentation
 - Parser: command scripting
 - Rooms: autokeys?
+
+## Ideas
+
+Line endings to allow multiline text (semicolon would require escaping `\;` or could use different symbol like `)
+
+```
+desc/This is a really long room description.
+    It goes on forever.
+    But then it ends.;
+```
+
+Or use backticks for multiline (where backticks are optional for single lines):
+
+```
+desc/`This is a really long room description.
+    It goes on forever.
+    But then it ends.`
+```
+
+would print as (notice the indentation on each subsequent line collapsed to a single space)
+
+`This is a really long room description.  It goes on forever. But then it ends.`

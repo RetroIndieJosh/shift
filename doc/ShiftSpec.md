@@ -53,7 +53,9 @@ Text may include the following escape sequences:
 
 - `\n` for newline (text cannot include literal newlines, as a newline ends a command line)
 - `\p` for pause/page, which stops with a `[Press down]` message and waits for user input to continue
+- `\s` for a literal forward slash: `this\sthat` becomes `this/that`
 - `\t` for tab (width determined by the output console)
+- `\\` for a literal backslash: `this\\that` becomes `this\that`
 
 Underscores are printed in the game as spaces. To write a literal underscore, write two consecutive underscores:
 
@@ -119,12 +121,12 @@ More technically, any non-comment line matchs the regex:
 
 ### Standards
 
-Current (experimental) standard is to put one space around a slash when the right hand side is a list, but otherwise put no spaces around slashes.
+I find that it's most readable and writable to avoid spaces around slashes.
 
 ```
 item/No Space
-    ex/No space with one arg.
-    statemach/ space before first state / and around slashes / between other states
+    ex/No space before description.
+    statemach/title/first state/second state
 ```
 
 ### Blocks and Indentation

@@ -9,6 +9,10 @@ namespace shift
     // (also potential speedup by limiting console writes, but needs profiling to verify)
     public class Display
     {
+        const string UnderscoreTag = "*&UNDERSCORE^~";
+        const string BackslashTag = "*&BACKSLASH^~";
+        const string PageTag = "*&PAGEBREAK^~";
+
         static List<string> commandHistory = new List<string>();
         static private string text = "";
         static private int historyIndex = 0;
@@ -30,9 +34,9 @@ namespace shift
                 for (int i = 0; i < pageLength && lines.Count > 0; ++i)
                 {
                     var line = lines[0];
-                    page += line.Replace("\\p", "") + "\n";
+                    page += line.Replace(PageTag, "") + "\n";
                     lines = lines.Skip(1).ToList();
-                    if (line.EndsWith("\\p"))
+                    if (line.EndsWith(PageTag))
                         break;
                 }
                 pages.Add(page.TrimEnd());
@@ -103,23 +107,24 @@ namespace shift
 
         static public void Flush()
         {
-            // print underscorse as spaces, but double underscores as literal underscores
-            const string UnderscoreTag = "**UNDERSCORE**";
-
-            text = text.Replace("\\n", "\n")
-                .Replace("\\t", "\t")
+            text = text
+                .Replace("\\p", $"{PageTag}\n") // end pages are also end lines for processing
+                .Replace(@"\\", BackslashTag)
+                .Replace(@"\n", "\n")
+                .Replace(@"\s", "/")
+                .Replace(@"\t", "\t")
+                .Replace(@"\", "") // clear isolated backslashes
+                .Replace(BackslashTag, @"\")
                 .Replace("__", UnderscoreTag)
                 .Replace('_', ' ')
-                .Replace(UnderscoreTag, "_")
-                // end pages are also end lines, so we can process the next line appropritately
-                .Replace("\\p", "\\p\n");
+                .Replace(UnderscoreTag, "_");
 
             text = ProcessVars(text);
 
             // allow a little bit of overlap so the user can follow the text
             var linesPerPage = Console.WindowHeight - 4;
             var lines = text.Split('\n').ToList();
-            if (lines.Count > linesPerPage)
+            if (lines.Count > linesPerPage || text.Contains(PageTag))
                 FlushPages(SplitPages(linesPerPage, lines));
             else
                 Console.Write(text);

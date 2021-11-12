@@ -19,12 +19,7 @@ namespace shift
         // display name (double underscore becomes underscore, underscore becomes space)
         public string DisplayName
         {
-            get => (name == null || name.Value == null)
-                ? "Unknown"
-                : name.Value
-                    .Replace("__", "~UNDERSCORE~")
-                    .Replace('_', ' ')
-                    .Replace("~UNDERSCORE~", "_");
+            get => Name;
         }
 
         #region Script Fields

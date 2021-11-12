@@ -1,0 +1,12 @@
+# Test: escape sequences
+
+title/Escape Sequence Test
+author/Joshua McLean
+intro/This is the first line\nand the second line.\n\tThis line is indented and should now prompt to continue.\pAnd we have this\sthat with a slash, or this\\that with a backslash.
+
+room/Here\sThere
+    desc/This room is called Here(slash)There.
+    start
+
+item/C:\\\\Windows
+    ex/This item is named after a popular directory.
