@@ -22,6 +22,7 @@
 ## Current
 
 - escape sequences `\\` `\s`
+- allow typing symbols
 - warn for unrecognized key in script (wasn't this working before?)
 - also convert names as if being displayed
 - remove `ScriptedEntity.DisplayName` in favor of `Name` (display does conversion of underscores)

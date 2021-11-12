@@ -95,6 +95,7 @@ namespace shift
         {
             if (Name != null)
                 return new OverwriteWarning("name");
+
             if (Game.instance.IsCommand(name))
                 return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
             else if (Item.Find(name) != null)

@@ -6,7 +6,9 @@ namespace shift
 {
     public class Item : ScriptedEntity<Item>
     {
+        #region Default Strings
         const string DefaultTakeDesc = "You take {0}.";
+        #endregion
 
         static public Item CurTarget { get; private set; } = null;
 
@@ -14,21 +16,28 @@ namespace shift
 
         public Room Location
         {
-            get => location;
+            get => curLocation;
             set
             {
-                if (value != null && location != null)
-                    throw new Exception($"Set item {this} to new location "
-                        + $"{value} before removing from previous room {location}");
-                location = value;
+                if (curLocation != null)
+                    curLocation.RemoveItem(this);
+                curLocation = value;
+                curLocation.AddItem(this);
             }
         }
 
-        private Room location;
-        private string examineDesc = null;
-        private string takeDesc = null;
+        private Room curLocation = null;
 
-        private bool CanTake { get => takeDesc != null; }
+        #region Script Fields and References
+        //private Room location;
+        //private string examineDesc = null;
+        //private string takeDesc = null;
+        private ScriptReference<Room> startLocation = new ScriptReference<Room>("loc", 1);
+        private ScriptField<string> examineDesc = new ScriptField<string>("ex", 1);
+        private ScriptField<string> takeDesc = new ScriptField<string>("take", 1);
+        #endregion
+
+        private bool CanTake { get => takeDesc.Value != null; }
         // TODO usable condition
         private bool CanUse { get => false; }
         private bool isCarried = false;
@@ -57,10 +66,10 @@ namespace shift
             string where = "";
             if (item.isCarried)
                 where = "inventory";
-            else if (item.location == null)
+            else if (item.Location == null)
                 where = "limbo";
             else
-                where = item.location.ToString();
+                where = item.Location.ToString();
 
             Display.WriteLine($"[{item} is in {where}]");
         }
@@ -79,6 +88,7 @@ namespace shift
 
         public Item(List<ScriptLine> lines) : base(lines, "item")
         {
+            Location = startLocation.Value;
         }
 
         public void AddState(string[] stateNames, int defaultStateIndex = 0)
@@ -103,7 +113,7 @@ namespace shift
                     var ch = Display.ReadKey(true);
                     if (ch.KeyChar == 'x' || ch.KeyChar == 'X')
                     {
-                        WriteDesc();
+                        WriteExamine();
                         Display.WriteLine();
                         return;
                     }
@@ -130,40 +140,25 @@ namespace shift
                 return;
             }
 
-            WriteDesc();
+            WriteExamine();
             Display.WriteLine();
 
             if (!isCarried)
                 CurTarget = this;
         }
 
-        public void WriteDesc()
+        public void WriteExamine()
         {
-            Display.Write($" [{stateMachine}]");
+            Display.Write($"{examineDesc.Value} [{stateMachine}]");
         }
 
         protected override void BindScriptKeys()
         {
             scriptKeys = new List<ScriptCommand>()
             {
-                new ScriptCommand("ex", 1, args => {
-                    return ScriptCommand.SetOnce(ref examineDesc, args[0], "examine desc");
-                }),
-                new ScriptCommand("loc", 1, args => {
-                    var room = Room.Find(args[0]);
-                    if(room == null)
-                        return new Problem(ProblemType.Error, $"Location for `{Name}` (`{args[0]}`) not found. "
-                            + $"Define `room {args[0]}` before `item {Name}`.");
-                    room.AddItem(this);
-                    return null;
-                }),
-                new ScriptCommand("take", 0, args => {
-                    if(args.Count == 0) {
-                        takeDesc = DefaultTakeDesc;
-                        return null;
-                    }
-                    return ScriptCommand.SetOnce(ref takeDesc, args[0], "take desc");
-                }),
+                examineDesc,
+                startLocation,
+                takeDesc
             };
 
             base.BindScriptKeys();
@@ -171,17 +166,20 @@ namespace shift
 
         private void Take()
         {
-            Location.RemoveItem(this);
+            Location = null;
             inventory.Add(this);
             isCarried = true;
-            Display.WriteLine(takeDesc, this);
+            if (takeDesc == null)
+                Display.WriteLine(DefaultTakeDesc, this);
+            else
+                Display.WriteLine(takeDesc.Value, this);
             Display.WriteLine("[taken]");
             return;
         }
 
         private void Use()
         {
-            WriteDesc();
+            WriteExamine();
             Display.WriteLine();
         }
     }

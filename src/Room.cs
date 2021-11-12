@@ -30,7 +30,6 @@ namespace shift
 
         public void AddItem(Item item)
         {
-            item.Location = this;
             items.Add(item);
         }
 
