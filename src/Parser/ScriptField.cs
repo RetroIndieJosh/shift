@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace shift
 {
@@ -10,7 +10,7 @@ namespace shift
         public override Problem Parse(List<string> args)
         {
             var problem = base.Parse(args);
-            if (problem != null)
+            if (problem is not null)
                 return problem;
 
             if (typeof(FieldType).IsPrimitive || typeof(FieldType) == typeof(string))

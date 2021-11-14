@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "shift": {
+      "commandName": "Project",
+      "workingDirectory": "."
+    }
+  }
+}

@@ -99,7 +99,7 @@ namespace shift
                 }
                 else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "targitem"))
                 {
-                    text = text.Replace(varText, $"{(Item.CurTarget == null ? "nothing" : Item.CurTarget.DisplayName)}");
+                    text = text.Replace(varText, $"{(Item.CurTarget?.DisplayName ?? "nothing")}");
                 }
             }
             return text;

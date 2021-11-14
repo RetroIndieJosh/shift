@@ -143,7 +143,7 @@ namespace shift
                     }
 
                     var problem = EndBlock(blockType, blockLines);
-                    if (problem != null)
+                    if (problem is not null)
                         problem.Report(line.LineNumber);
                     Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
                     blockType = BlockType.Game;
@@ -162,7 +162,7 @@ namespace shift
                 else if (line.Text.StartsWith("room"))
                     blockType = BlockType.Room;
                 else if (line.Text.StartsWith("use"))
-                    blockType = BlockType.Room;
+                    blockType = BlockType.Use;
 
                 if (prevBlockType != BlockType.Game && prevBlockType != blockType)
                 {

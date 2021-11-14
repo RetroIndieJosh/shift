@@ -7,7 +7,6 @@ namespace shift
     public class Item : ScriptedEntity<Item>
     {
         #region Default Strings
-        const string DefaultTakeDesc = "You take {0}.";
         #endregion
 
         public static Item CurTarget { get; private set; } = null;
@@ -19,10 +18,11 @@ namespace shift
             get => curLocation;
             set
             {
-                if (curLocation != null)
+                if (curLocation is not null)
                     curLocation.RemoveItem(this);
                 curLocation = value;
-                curLocation.AddItem(this);
+                if(curLocation is not null)
+                    curLocation.AddItem(this);
             }
         }
 
@@ -36,13 +36,12 @@ namespace shift
         private readonly ScriptField<string> examineDesc = new("ex", 1);
         private readonly ScriptField<string> takeDesc = new("take", 0);
         #endregion
+        private readonly ItemStateMachine stateMachine;
 
-        private bool CanTake { get => takeDesc.Value != null; }
+        private bool CanTake { get => takeDesc.Value is not null; }
         // TODO usable condition
         private bool CanUse { get => false; }
         private bool isCarried = false;
-
-        private ItemStateMachine stateMachine;
 
         public static Item FindInInventory(string name)
         {
@@ -57,7 +56,7 @@ namespace shift
         public static void Where(string name)
         {
             var item = Find(name);
-            if (item == null)
+            if (item is null)
             {
                 Display.WriteLine($"[no item by name {name}]");
                 return;
@@ -66,7 +65,7 @@ namespace shift
             string where;
             if (item.isCarried)
                 where = "inventory";
-            else if (item.Location == null)
+            else if (item.Location is null)
                 where = "limbo";
             else
                 where = item.Location.ToString();
@@ -169,8 +168,8 @@ namespace shift
             Location = null;
             inventory.Add(this);
             isCarried = true;
-            if (takeDesc == null)
-                Display.WriteLine(DefaultTakeDesc, this);
+            if (takeDesc is null)
+                Display.WriteLine(Properties.Resources.DefaultTakeDesc, this);
             else
                 Display.WriteLine(takeDesc.Value, this);
             Display.WriteLine("[taken]");

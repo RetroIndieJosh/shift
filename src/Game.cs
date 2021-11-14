@@ -21,7 +21,7 @@ namespace shift
 
         public Game() : base()
         {
-            if (instance != null)
+            if (instance is not null)
                 throw new Exception("Only one game instance is allowed (singleton)");
 
             instance = this;
@@ -73,7 +73,7 @@ namespace shift
             Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
 
             Display.WriteLine($"{DisplayName} by {author}\n");
-            if (intro != null)
+            if (intro is not null)
                 Display.WriteLine($"\n{intro}\n");
 
             isRunning = true;
@@ -108,7 +108,7 @@ namespace shift
 
             var itemName = string.Join(' ', args);
             var item = CurRoom.FindItem(itemName);
-            if (item == null)
+            if (item is null)
             {
                 Display.WriteLine($"You see no {itemName} here.");
                 return;
@@ -168,12 +168,12 @@ namespace shift
 
         private void CommandLook(string[] args)
         {
-            if (CurRoom == null)
+            if (CurRoom is null)
                 Display.WriteLine("You are nowhere.");
             else
                 CurRoom.WriteAll();
 
-            if (Item.CurTarget == null)
+            if (Item.CurTarget is null)
                 return;
 
             Display.WriteLine($"[Currently targeting: {Item.CurTarget.DisplayName}]");
@@ -208,7 +208,7 @@ namespace shift
 
             var direction = (Room.Direction)result;
             var newRoom = CurRoom.GetExit(direction);
-            if (newRoom == null)
+            if (newRoom is null)
             {
                 Display.WriteLine($"You see no exit {direction.ToString().ToLower()} from here.");
                 return;
@@ -233,7 +233,7 @@ namespace shift
 
         private void LoadCommands()
         {
-            if (commandDict != null || aliasDict != null)
+            if (commandDict is not null || aliasDict is not null)
                 throw new Exception("Loading game commands but command/alias dict not null. Loaded twice?");
 
             commandDict = new Dictionary<string, Action<string[]>>
@@ -348,9 +348,9 @@ namespace shift
         {
             var name = string.Join(' ', tokens);
             var targetItem = CurRoom.FindItem(name);
-            if (targetItem == null)
+            if (targetItem is null)
                 targetItem = Item.FindInInventory(name);
-            if (targetItem == null)
+            if (targetItem is null)
                 return false;
 
             targetItem.Target();

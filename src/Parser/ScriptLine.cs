@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 
 namespace shift
@@ -15,7 +15,7 @@ namespace shift
         {
             LineNumber = number;
 
-            if (line == null)
+            if (line is null)
             {
                 IndentLevel = 0;
                 return;

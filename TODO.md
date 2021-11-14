@@ -21,10 +21,13 @@
 
 ## Current
 
-- escape sequences `\\` `\s`
+- replaced == null with is null and != null with is not null and everything is broken
+    - tab completion ignores initial letter(s)
+    - take crashes
+    - to recreate: run builtinvars.shift, use tab completion, `potion`
+
 - allow typing symbols
 - warn for unrecognized key in script (wasn't this working before?)
-- also convert names as if being displayed
 - remove `ScriptedEntity.DisplayName` in favor of `Name` (display does conversion of underscores)
 - variables checked as keywords (PLAYER, CURROOM, etc.) on naming
     - store a list of built-in variable names for lookup

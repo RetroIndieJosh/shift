@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace shift
 {
@@ -10,11 +10,11 @@ namespace shift
         public override Problem Parse(List<string> args)
         {
             var problem = base.Parse(args);
-            if (problem != null)
+            if (problem is not null)
                 return problem;
 
             Value = ScriptedEntity<RefType>.Find(args[0]);
-            if (Value == null)
+            if (Value is null)
                 return new Problem(ProblemType.Error,
                     $"Parsing ScriptRef: No {typeof(RefType)} found by name {args[0]}.");
             return null;

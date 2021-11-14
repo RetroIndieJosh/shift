@@ -86,7 +86,7 @@ namespace shift
         public void SetExit(Direction direction, Room targetRoom, bool oneway = false)
         {
             int dirint = (int)direction;
-            if (exits[dirint] != null)
+            if (exits[dirint] is not null)
                 Display.WriteLine($"WARNING: overwriting {direction} exit from "
                     + $"{this} (orignally to {exits[dirint]} but now to {targetRoom})");
             exits[dirint] = targetRoom;
@@ -133,7 +133,7 @@ namespace shift
                 desc,
                 new ScriptCommand("exit", 1, args => CreateExit(args)),
                 new ScriptCommand("start", 0, args => {
-                    if(ShiftParser.StartRoom != null)
+                    if(ShiftParser.StartRoom is not null)
                         return new Problem(ProblemType.Warning, $"Multiple start rooms. Using last defined ({Name}).");
                     ShiftParser.StartRoom = this;
                     return null;

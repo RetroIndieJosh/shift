@@ -11,7 +11,8 @@ namespace shift
         // internal name (no spaces, only underscores)
         public string Name
         {
-            get => (name == null || name.Value == null)
+            // TODO null coalesce
+            get => (name is null || name.Value is null)
                 ? "(null)"
                 : name.Value.Replace(' ', '_');
         }
@@ -36,10 +37,10 @@ namespace shift
 
         public ScriptedEntity(List<ScriptLine> lines, string nameKey = null) : this()
         {
-            if (nameKey != null)
+            if (nameKey is not null)
             {
                 if (!lines[0].Text.StartsWith(nameKey))
-                    throw new Exception($"Illegal name key `{nameKey}` for line: `{lines[0].Text}.");
+                    throw new Exception($"Illegal name key `{nameKey}` for line: {lines[0].Text}.");
                 lines[0].ReplaceFirst(nameKey, "name");
             }
             LoadScript(lines);
@@ -47,8 +48,11 @@ namespace shift
 
         protected void LoadScript(List<ScriptLine> lines)
         {
-            if (lines == null || lines.Count == 0)
+            if (lines is null || lines.Count == 0)
+            {
                 throw new Exception("No script lines provided to scripted entity.");
+            }
+
             if (isLoaded)
                 throw new Exception($"Tried to load {name} multiple times.");
             BindScriptKeys();
@@ -88,7 +92,7 @@ namespace shift
 
         protected virtual void BindScriptKeys()
         {
-            if (scriptKeys == null)
+            if (scriptKeys is null)
                 throw new Exception("Null scriptKeys. You must create scriptKeys before calling "
                     + "ScriptedEntity.BindScriptKeys().");
             scriptKeys.Add(name);
@@ -96,14 +100,14 @@ namespace shift
 
         protected Problem CheckName(string name)
         {
-            if (Name != null)
+            if (Name is not null)
                 return new OverwriteWarning("name");
 
             if (Game.instance.IsCommand(name))
                 return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
-            else if (Item.Find(name) != null)
+            else if (Item.Find(name) is not null)
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
-            else if (Room.Find(name) != null)
+            else if (Room.Find(name) is not null)
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");
             return null;
         }
@@ -111,11 +115,14 @@ namespace shift
         // returns whether the command was parsed (not whether there were problems)
         protected virtual bool TryParse(ScriptLine line)
         {
-            if (scriptKeys == null || scriptKeys.Count == 0)
+            if (scriptKeys is null || scriptKeys.Count == 0)
+            {
                 throw new Exception("No commands set for scripted entity");
+            }
+
             foreach (var command in scriptKeys)
             {
-                if (command == null)
+                if (command is null)
                 {
                     new Problem(ProblemType.Warning,
                         $"Null command in `{this.GetType()}`")
@@ -127,7 +134,7 @@ namespace shift
                     continue;
 
                 var problem = command.TryInvoke(line.Text);
-                if (problem != null)
+                if (problem is not null)
                     problem.Report(line.LineNumber);
                 return true;
             }

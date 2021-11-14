@@ -17,7 +17,7 @@ namespace shift
 
         public virtual Problem Parse(List<string> args)
         {
-            if (Value != null)
+            if (Value is not null)
                 return new OverwriteWarning(Key);
             if (args.Count == 0)
                 return new Problem(EmptyProblemType, $"No value provided to field `{Key}`.");

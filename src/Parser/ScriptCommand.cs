@@ -14,7 +14,7 @@ namespace shift
         public static Problem SetOnce(ref string target, string value, string varLabel)
         {
             Problem problem = null;
-            if (target != null)
+            if (target is not null)
                 problem = new OverwriteWarning(varLabel);
             target = value;
             return problem;
@@ -35,7 +35,7 @@ namespace shift
 
         public Problem TryInvoke(string line)
         {
-            if (OnParse == null)
+            if (OnParse is null)
                 return new Problem(ProblemType.Warning, $"Command `{key}` not implemented (no OnParse)");
 
             var tokens = ShiftParser.Tokenize(line);
