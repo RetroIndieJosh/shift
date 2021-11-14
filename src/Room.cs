@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,11 +17,11 @@ namespace shift
         public string Desc => desc.Value;
 
         #region Script Fields
-        private ScriptField<string> desc = new ScriptField<string>("desc", 0);
+        private readonly ScriptField<string> desc = new("desc", 0);
         #endregion
 
-        private Room[] exits = new Room[(int)Direction.Count];
-        private List<Item> items = new List<Item>();
+        private readonly Room[] exits = new Room[(int)Direction.Count];
+        private readonly List<Item> items = new();
 
         public Room(List<ScriptLine> lines) : base(lines, "room")
         {
@@ -102,7 +102,8 @@ namespace shift
         {
             if (!items.Contains(item))
                 throw new Exception($"Tried to remove item {item} not in room {this}");
-            items.Remove(item);
+            if (!items.Remove(item))
+                throw new Exception($"Failed to remove item {item} (unknown error)");
             item.Location = null;
         }
 
@@ -142,8 +143,11 @@ namespace shift
             base.BindScriptKeys();
         }
 
-        private Problem CreateExit(List<string> args)
+        private static Problem CreateExit(List<string> args)
         {
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             return new Problem(ProblemType.Warning, "Key `exit` not yet implemented");
         }
     }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,41 +13,41 @@ namespace shift
             Combine, Game, Item, ItemType, Room, Use
         }
 
-        static public Room StartRoom = null;
+        public static Room StartRoom;
 
         // TODO move to Display
-        static private bool verboseMode = false;
+        private static bool verboseMode = false;
 
-        static private List<string> errorMessages = new List<string>();
-        static private List<string> warnMessages = new List<string>();
+        private static readonly List<string> errorMessages = new();
+        private static readonly List<string> warnMessages = new();
 
-        static private int lineDigits = 2;
+        private static int lineDigits = 2;
 
-        static private string LineStr(int line)
+        private static string LineStr(int line)
         {
             return line > 0 ? $"[{line.ToString().PadLeft(lineDigits, '0')}] " : "[runtime] ";
         }
 
         // TODO move to display?
-        static public void Error(string message, int line = 0)
+        public static void Error(string message, int line = 0)
         {
             errorMessages.Add($"{LineStr(line)}ERROR {message}");
         }
 
         // TODO move to display
-        static public void Log(string message, int line = 0)
+        public static void Log(string message, int line = 0)
         {
             if (verboseMode)
                 Display.WriteLine($"{LineStr(line)}{message}");
         }
 
         // TODO move to display?
-        static public void Warn(string message, int line = -1)
+        public static void Warn(string message, int line = -1)
         {
             warnMessages.Add($"{LineStr(line)}WARNING {message}");
         }
 
-        static private Problem EndBlock(BlockType type, List<ScriptLine> lines)
+        private static Problem EndBlock(BlockType type, List<ScriptLine> lines)
         {
             switch (type)
             {
@@ -57,13 +57,15 @@ namespace shift
                 case BlockType.Game:
                     return new Problem(ProblemType.Error, "Tried to end game block early.");
                 case BlockType.Item:
-                    new Item(lines);
+                    // TODO is it kosher for a constructor to add itself to the game? or should we do it here?
+                    _ = new Item(lines);
                     return null;
                 case BlockType.ItemType:
                     Console.WriteLine("TODO new ItemType");
                     return null;
                 case BlockType.Room:
-                    new Room(lines);
+                    // TODO is it kosher for a constructor to add itself to the game? or should we do it here?
+                    _ = new Room(lines);
                     return null;
                 case BlockType.Use:
                     Console.WriteLine("TODO new Use");
@@ -73,7 +75,7 @@ namespace shift
             }
         }
 
-        static public Game CreateGame(string filename, bool verbose = false)
+        public static Game CreateGame(string filename, bool verbose = false)
         {
             var game = new Game();
 
@@ -122,7 +124,8 @@ namespace shift
                 var noCommentText = StripComments(lineStrings[i]);
                 lines.Add(new ScriptLine(noCommentText, i + 1));
             }
-            lines.RemoveAll(line => string.IsNullOrEmpty(line.Text));
+            var removeCount = lines.RemoveAll(line => string.IsNullOrEmpty(line.Text));
+            Log($"Removed {removeCount} blank lines.", lines.Count);
 
             var prevIndent = 0;
             var blockLines = new List<ScriptLine>();
@@ -180,9 +183,13 @@ namespace shift
 
             // end the final block if we're still in one at script end
             if (blockType != BlockType.Game)
-                EndBlock(blockType, blockLines);
+            {
+                var problem = EndBlock(blockType, blockLines);
+                if (problem is not null)
+                    problem.Report();
+            }
 
-            if (StartRoom == null)
+            if (StartRoom is null)
                 Error("No start room defined.");
 
             Log($"Game data defined in {gameLines.Count} lines", lines.Count);
@@ -193,7 +200,7 @@ namespace shift
         }
 
         // returns whether any errors were detected
-        static private bool WriteProblems(string filename)
+        private static bool WriteProblems(string filename)
         {
             if (warnMessages.Count > 0)
             {
@@ -211,14 +218,14 @@ namespace shift
             return true;
         }
 
-        static public List<string> Tokenize(string line)
+        public static List<string> Tokenize(string line)
         {
             return line.Split('/').ToList()
                 .Select(token => token.Trim())
                 .ToList();
         }
 
-        static private string StripComments(string line)
+        private static string StripComments(string line)
         {
             var lineCommentLoc = line.IndexOf("#");
             if (lineCommentLoc < 0)
@@ -226,7 +233,7 @@ namespace shift
             if (lineCommentLoc == 0)
                 return null;
 
-            return line.Substring(0, lineCommentLoc);
+            return line[..lineCommentLoc];
         }
     }
 }

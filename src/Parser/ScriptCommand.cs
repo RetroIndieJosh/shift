@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,8 +6,9 @@ namespace shift
 {
     public class ScriptCommand
     {
-        private string key;
-        private int minimumArgCount = 0;
+        private readonly string key;
+        private readonly int minArgCount = 0;
+
         protected Func<List<string>, Problem> OnParse;
 
         public static Problem SetOnce(ref string target, string value, string varLabel)
@@ -23,7 +24,7 @@ namespace shift
         public ScriptCommand(string key, int minArgCount, Func<List<string>, Problem> OnParse = null)
         {
             this.key = key;
-            this.minimumArgCount = minArgCount;
+            this.minArgCount = minArgCount;
             this.OnParse = OnParse;
         }
 
@@ -38,7 +39,7 @@ namespace shift
                 return new Problem(ProblemType.Warning, $"Command `{key}` not implemented (no OnParse)");
 
             var tokens = ShiftParser.Tokenize(line);
-            if (tokens.Count < minimumArgCount + 1)
+            if (tokens.Count < minArgCount + 1)
                 return new Problem(ProblemType.Error, $"Not enough arguments to command `{key}`");
 
             return OnParse.Invoke(tokens.Skip(1).ToList());

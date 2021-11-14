@@ -1,4 +1,4 @@
-namespace shift
+﻿namespace shift
 {
     public enum ProblemType
     {
@@ -18,8 +18,8 @@ namespace shift
 
         public Problem(ProblemType type, string message)
         {
-            this.Message = message;
-            this.Type = type;
+            Message = message;
+            Type = type;
         }
 
         public void Report(int lineNumber = 0)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,25 +7,27 @@ namespace shift
 {
     // A wrapper for the C# console to allow easy modification for other interfaces
     // (also potential speedup by limiting console writes, but needs profiling to verify)
-    public class Display
+    public static class Display
     {
         const string UnderscoreTag = "*&UNDERSCORE^~";
         const string BackslashTag = "*&BACKSLASH^~";
         const string PageTag = "*&PAGEBREAK^~";
 
-        static List<string> commandHistory = new List<string>();
-        static private string text = "";
-        static private int historyIndex = 0;
+        private static readonly Regex varRegex = new(@"\[([^]]*)\]", RegexOptions.Compiled);
+        private static readonly List<string> commandHistory = new();
 
-        static private string Command
+        private static string text = "";
+        private static int historyIndex = 0;
+
+        private static string Command
         {
             get => commandHistory[historyIndex];
             set => commandHistory[historyIndex] = value;
         }
 
-        static private string Prompt { get; set; } = ">> ";
+        private static string Prompt { get; set; } = ">> ";
 
-        static private List<string> SplitPages(int pageLength, List<string> lines)
+        private static List<string> SplitPages(int pageLength, List<string> lines)
         {
             var pages = new List<string>();
             while (lines.Count > 0)
@@ -44,7 +46,7 @@ namespace shift
             return pages;
         }
 
-        static private void FlushPages(List<string> pages)
+        private static void FlushPages(List<string> pages)
         {
             var waitForKey = true;
             for (var i = 0; i < pages.Count - 1; ++i)
@@ -78,9 +80,7 @@ namespace shift
             Console.Write(pages.Last());
         }
 
-        static Regex varRegex = new Regex(@"\[([^]]*)\]", RegexOptions.Compiled);
-
-        static private string ProcessVars(string text)
+        private static string ProcessVars(string text)
         {
             // TODO store this 
             var matches = varRegex.Matches(text);
@@ -105,7 +105,7 @@ namespace shift
             return text;
         }
 
-        static public void Flush()
+        public static void Flush()
         {
             text = text
                 .Replace("\\p", $"{PageTag}\n") // end pages are also end lines for processing
@@ -132,13 +132,13 @@ namespace shift
             text = "";
         }
 
-        static public ConsoleKeyInfo ReadKey(bool capture = false)
+        public static ConsoleKeyInfo ReadKey(bool capture = false)
         {
             Flush();
             return Console.ReadKey(capture);
         }
 
-        static public string ReadLine()
+        public static string ReadLine()
         {
             commandHistory.Add("");
             RewriteInput();
@@ -211,34 +211,34 @@ namespace shift
             return command;
         }
 
-        static public void Write(string s, params object[] args)
+        public static void Write(string s, params object[] args)
         {
             if (args.Length == 0)
                 text += s;
             else
-                text += String.Format(s, args);
+                text += string.Format(s, args);
         }
 
-        static public void WriteLine(string s = "", params object[] args)
+        public static void WriteLine(string s = "", params object[] args)
         {
             if (!string.IsNullOrEmpty(s))
                 Write(s, args);
             Write("\n");
         }
 
-        static private void ClearLine()
+        private static void ClearLine()
         {
             var spaces = new string(' ', Console.WindowWidth - 1);
             Write($"\r{spaces}\r");
         }
 
-        static private void ClearLineImmediate()
+        private static void ClearLineImmediate()
         {
             var spaces = new string(' ', Console.WindowWidth - 1);
             Console.Write($"\r{spaces}\r");
         }
 
-        static private void RewriteInput()
+        private static void RewriteInput()
         {
             //Prompt = $"{historyIndex} >> ";
             ClearLine();

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,9 +23,10 @@ namespace shift
         }
 
         #region Script Fields
-        private ScriptField<string> name = new ScriptField<string>("name", 1);
+        private readonly ScriptField<string> name = new("name", 1);
         #endregion
 
+        protected bool isLoaded = false;
         protected List<ScriptCommand> scriptKeys;
 
         public ScriptedEntity()
@@ -44,8 +45,6 @@ namespace shift
             LoadScript(lines);
         }
 
-        protected bool isLoaded = false;
-
         protected void LoadScript(List<ScriptLine> lines)
         {
             if (lines == null || lines.Count == 0)
@@ -54,7 +53,11 @@ namespace shift
                 throw new Exception($"Tried to load {name} multiple times.");
             BindScriptKeys();
             foreach (var line in lines)
-                TryParse(line);
+            {
+                // TODO do something about the return? false means the line didn't match anything
+                // otherwise make TryParse void
+                _ = TryParse(line);
+            }
             isLoaded = true;
         }
 

@@ -7,7 +7,7 @@ namespace shift
         public ScriptField(string key, int minArgCount) : base(key, minArgCount)
         { }
 
-        override public Problem Parse(List<string> args)
+        public override Problem Parse(List<string> args)
         {
             var problem = base.Parse(args);
             if (problem != null)

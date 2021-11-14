@@ -137,6 +137,13 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Critical / Major
 
+- parser/compiler object constructors should read only name
+    - then parse vars
+    - then parse everything else
+    - this allows cross-referencing for object references and variables
+- implement --compile option to build `.shift` file into `.sb` binary file (string mangling + serilization)
+    - still allow loading `.shift` scripts without compile step for testing (`.sb` is for release)
+- implement --verify option to check if valid `.shift` script
 - implement `ScriptReferenceList` for state lists
 - implement `ItemState` as a `ScriptableObject` so it can use `ScriptReference<ItemState>` to parse
 - automatic testing that runs through all scripts in `game/test` and asks if the test was passed on quit

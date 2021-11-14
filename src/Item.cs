@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,9 +10,9 @@ namespace shift
         const string DefaultTakeDesc = "You take {0}.";
         #endregion
 
-        static public Item CurTarget { get; private set; } = null;
+        public static Item CurTarget { get; private set; } = null;
 
-        static private List<Item> inventory = new List<Item>();
+        private static readonly List<Item> inventory = new();
 
         public Room Location
         {
@@ -32,9 +32,9 @@ namespace shift
         //private Room location;
         //private string examineDesc = null;
         //private string takeDesc = null;
-        private ScriptReference<Room> startLocation = new ScriptReference<Room>("loc", 1);
-        private ScriptField<string> examineDesc = new ScriptField<string>("ex", 1);
-        private ScriptField<string> takeDesc = new ScriptField<string>("take", 1);
+        private readonly ScriptReference<Room> startLocation = new("loc", 1);
+        private readonly ScriptField<string> examineDesc = new("ex", 1);
+        private readonly ScriptField<string> takeDesc = new("take", 0);
         #endregion
 
         private bool CanTake { get => takeDesc.Value != null; }
@@ -56,14 +56,14 @@ namespace shift
 
         public static void Where(string name)
         {
-            var item = Item.Find(name);
+            var item = Find(name);
             if (item == null)
             {
                 Display.WriteLine($"[no item by name {name}]");
                 return;
             }
 
-            string where = "";
+            string where;
             if (item.isCarried)
                 where = "inventory";
             else if (item.Location == null)
@@ -74,7 +74,7 @@ namespace shift
             Display.WriteLine($"[{item} is in {where}]");
         }
 
-        static public void WriteInventory()
+        public static void WriteInventory()
         {
             if (inventory.Count == 0)
             {

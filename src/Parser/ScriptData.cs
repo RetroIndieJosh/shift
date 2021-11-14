@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace shift
 {
@@ -11,7 +11,7 @@ namespace shift
 
         public ScriptData(string key, int minArgCount) : base(key, minArgCount)
         {
-            this.Key = key;
+            Key = key;
             OnParse = Parse;
         }
 

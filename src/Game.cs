@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -93,12 +93,8 @@ namespace shift
         {
             scriptKeys = new List<ScriptCommand>()
             {
-                new ScriptCommand("author", 1, args => {
-                    return ScriptCommand.SetOnce(ref author, args[0], "author");
-                }),
-                new ScriptCommand("intro", 1, args => {
-                    return ScriptCommand.SetOnce(ref intro, args[0], "intro");
-                }),
+                new ScriptCommand("author", 1, args => ScriptCommand.SetOnce(ref author, args[0], "author")),
+                new ScriptCommand("intro", 1, args => ScriptCommand.SetOnce(ref intro, args[0], "intro")),
             };
         }
 
@@ -240,19 +236,20 @@ namespace shift
             if (commandDict != null || aliasDict != null)
                 throw new Exception("Loading game commands but command/alias dict not null. Loaded twice?");
 
-            commandDict = new Dictionary<string, Action<string[]>>();
-
-            commandDict.Add("credits", CommandCredits);
-            commandDict.Add("examine", CommandExamine);
-            commandDict.Add("inventory", CommandInventory);
-            commandDict.Add("move", CommandMove);
-            commandDict.Add("look", CommandLook);
-            commandDict.Add("help", CommandHelp);
-            commandDict.Add("quit", CommandQuit);
-            commandDict.Add("where", CommandWhere);
-
-            commandDict.Add("drop",
-                (string[] args) => { Display.WriteLine("You need not drop anything."); });
+            commandDict = new Dictionary<string, Action<string[]>>
+            {
+                { "credits", CommandCredits },
+                { "examine", CommandExamine },
+                { "inventory", CommandInventory },
+                { "move", CommandMove },
+                { "look", CommandLook },
+                { "help", CommandHelp },
+                { "quit", CommandQuit },
+                { "where", CommandWhere },
+                {
+                    "drop", (string[] args) => Display.WriteLine("You need not drop anything.")                
+                }
+            };
 
             // movement commands
             for (int i = 0; i < (int)Room.Direction.Count; ++i)
@@ -261,35 +258,36 @@ namespace shift
                 LoadMoveCommand(dirstr);
             }
 
-            aliasDict = new Dictionary<string, string>();
+            aliasDict = new Dictionary<string, string>
+            {
+                { "?", "help" },
+                { "what", "help" },
+                { "how", "help" },
+                { "who", "help" },
+                { "why", "help" },
+                { "pick", "help" },
 
-            aliasDict.Add("?", "help");
-            aliasDict.Add("what", "help");
-            aliasDict.Add("how", "help");
-            aliasDict.Add("who", "help");
-            aliasDict.Add("why", "help");
-            aliasDict.Add("pick", "help");
+                { "bye", "quit" },
+                { "ex", "examine" },
+                { "exit", "quit" },
+                { "get", "examine" },
+                { "i", "inventory" },
+                { "l", "look" },
+                { "take", "examine" },
+                { "x", "examine" },
 
-            aliasDict.Add("bye", "quit");
-            aliasDict.Add("ex", "examine");
-            aliasDict.Add("exit", "quit");
-            aliasDict.Add("get", "examine");
-            aliasDict.Add("i", "inventory");
-            aliasDict.Add("l", "look");
-            aliasDict.Add("take", "examine");
-            aliasDict.Add("x", "examine");
-
-            // movement aliases
-            aliasDict.Add("e", "east");
-            aliasDict.Add("n", "north");
-            aliasDict.Add("s", "south");
-            aliasDict.Add("w", "west");
-            aliasDict.Add("ne", "northeast");
-            aliasDict.Add("nw", "northwest");
-            aliasDict.Add("se", "southeast");
-            aliasDict.Add("sw", "southwest");
-            aliasDict.Add("d", "down");
-            aliasDict.Add("u", "up");
+                // movement aliases
+                { "e", "east" },
+                { "n", "north" },
+                { "s", "south" },
+                { "w", "west" },
+                { "ne", "northeast" },
+                { "nw", "northwest" },
+                { "se", "southeast" },
+                { "sw", "southwest" },
+                { "d", "down" },
+                { "u", "up" }
+            };
 
             Display.WriteLine($"[Loaded {commandDict.Count} commands and {aliasDict.Count} aliases]\n");
         }
@@ -297,8 +295,7 @@ namespace shift
         private void LoadMoveCommand(string direction)
         {
             var lowerDir = direction.ToLower();
-            commandDict.Add(lowerDir,
-                (string[] args) => { CommandMove(new string[] { lowerDir }); });
+            commandDict.Add(lowerDir, (string[] args) => CommandMove(new string[] { lowerDir }));
         }
 
         private void Parse(string input)
