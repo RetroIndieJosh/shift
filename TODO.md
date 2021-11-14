@@ -23,8 +23,6 @@
 
 - replaced == null with is null and != null with is not null and everything is broken
     - tab completion ignores initial letter(s)
-    - take crashes
-    - to recreate: run builtinvars.shift, use tab completion, `potion`
 
 - allow typing symbols
 - warn for unrecognized key in script (wasn't this working before?)

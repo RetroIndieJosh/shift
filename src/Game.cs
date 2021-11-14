@@ -36,10 +36,12 @@ namespace shift
             if (tokens.Length > 1)
                 key = tokens.Last();
 
-            var matches = CommandMatches(key)
+            var potentialMatches = commandDict.Keys
+                .Concat(aliasDict.Keys)
                 .Concat(CurRoom.GetItemNames())
                 .Concat(Item.GetInventoryNames())
                 .ToList();
+            var matches = potentialMatches.Where(m => m.StartsWith(start)).ToList();
 
             if (matches.Count == 0)
                 return start;
@@ -53,7 +55,7 @@ namespace shift
 
         public bool IsCommand(string key)
         {
-            return CommandMatches(key).Count > 0;
+            return MatchingCommands(key).Count > 0;
         }
 
         public void LoadScript(List<ScriptLine> lines, Room start)
@@ -179,13 +181,6 @@ namespace shift
             Display.WriteLine($"[Currently targeting: {Item.CurTarget.DisplayName}]");
         }
 
-        private List<string> CommandMatches(string key)
-        {
-            return commandDict.Keys
-                .Concat(aliasDict.Keys)
-                .Where(m => m.ToLower().StartsWith(key.ToLower())).ToList();
-        }
-
         private void CommandMove(string[] args)
         {
             if (args.Length == 0)
@@ -298,6 +293,20 @@ namespace shift
             commandDict.Add(lowerDir, (string[] args) => CommandMove(new string[] { lowerDir }));
         }
 
+        private List<string> MatchingCommands(string key)
+        {
+            return commandDict.Keys
+                .Concat(aliasDict.Keys)
+                .Where(m => m.ToLower().StartsWith(key.ToLower())).ToList();
+        }
+        private Item MatchingItem(string key)
+        {
+            var targetItem = CurRoom.FindItem(key);
+            if (targetItem is null)
+                return Item.FindInInventory(key);
+            return targetItem;
+        }
+
         private void Parse(string input)
         {
             var tokens = input.Split(' ');
@@ -334,26 +343,19 @@ namespace shift
 
         private bool TryCommand(string userCommand, string[] args)
         {
-            foreach (var command in commandDict.Keys)
-            {
-                if (command != userCommand)
-                    continue;
-                RunCommand(command, args);
-                return true;
-            }
-            return false;
+            var commands = MatchingCommands(userCommand);
+
+            if (commands.Count == 0)
+                return false;
+
+            RunCommand(commands[0], args);
+            return true;
         }
 
         private bool TryItem(string[] tokens)
         {
             var name = string.Join(' ', tokens);
-            var targetItem = CurRoom.FindItem(name);
-            if (targetItem is null)
-                targetItem = Item.FindInInventory(name);
-            if (targetItem is null)
-                return false;
-
-            targetItem.Target();
+            MatchingItem(name).Target();
             return true;
         }
     }
