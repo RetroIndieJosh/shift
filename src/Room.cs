@@ -104,7 +104,6 @@ namespace shift
                 throw new Exception($"Tried to remove item {item} not in room {this}");
             if (!items.Remove(item))
                 throw new Exception($"Failed to remove item {item} (unknown error)");
-            item.Location = null;
         }
 
         public void WriteAll()
