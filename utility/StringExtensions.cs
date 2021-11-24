@@ -1,4 +1,4 @@
-namespace shift
+﻿namespace shift
 {
     public static class StringExtensions
     {
@@ -7,7 +7,7 @@ namespace shift
             var start = str.IndexOf(oldStr);
             if (start < 0)
                 return str;
-            return str.Substring(0, start) + newStr + str.Substring(start + oldStr.Length);
+            return $"{str[..start]}{newStr}{str[(start + oldStr.Length)..]}";
         }
     }
 }

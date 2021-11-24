@@ -184,7 +184,7 @@ namespace shift
                 {
                     if (Command.Length == 0)
                         continue;
-                    Command = Command.Substring(0, Command.Length - 1);
+                    Command = Command[0..^1];
                     RewriteInput();
                 }
 

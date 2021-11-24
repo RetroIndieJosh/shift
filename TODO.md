@@ -21,9 +21,6 @@
 
 ## Current
 
-- replaced == null with is null and != null with is not null and everything is broken
-    - tab completion ignores initial letter(s)
-
 - allow typing symbols
 - warn for unrecognized key in script (wasn't this working before?)
 - remove `ScriptedEntity.DisplayName` in favor of `Name` (display does conversion of underscores)
