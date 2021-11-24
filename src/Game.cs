@@ -348,14 +348,19 @@ namespace shift
             if (commands.Count == 0)
                 return false;
 
-            RunCommand(commands[0], args);
+            if(!TryAlias(commands[0], args))
+                RunCommand(commands[0], args);
             return true;
         }
 
         private bool TryItem(string[] tokens)
         {
             var name = string.Join(' ', tokens);
-            MatchingItem(name).Target();
+            var target = MatchingItem(name);
+            if (target == null)
+                return false;
+
+            target.Target();
             return true;
         }
     }

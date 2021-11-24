@@ -189,7 +189,7 @@ namespace shift
                 }
 
                 // normal input
-                else if (input.KeyChar == ' ' || char.IsLetterOrDigit(input.KeyChar))
+                else if (input.KeyChar == ' ' || input.KeyChar == '\'' || char.IsLetterOrDigit(input.KeyChar))
                 {
                     Command += input.KeyChar;
                     Write($"{input.KeyChar}");
