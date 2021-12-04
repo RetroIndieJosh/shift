@@ -29,9 +29,6 @@ namespace shift
         private Room curLocation = null;
 
         #region Script Fields and References
-        //private Room location;
-        //private string examineDesc = null;
-        //private string takeDesc = null;
         private readonly ScriptReference<Room> startLocation = new("loc", 1);
         private readonly ScriptField<string> examineDesc = new("ex", 1);
         private readonly ScriptField<string> takeDesc = new("take", 0);

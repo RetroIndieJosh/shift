@@ -62,6 +62,9 @@ namespace shift
                 // otherwise make TryParse void
                 _ = TryParse(line);
             }
+
+            var problem = CheckName(Name);
+            problem?.Report();
             isLoaded = true;
         }
 
@@ -100,9 +103,6 @@ namespace shift
 
         protected Problem CheckName(string name)
         {
-            if (Name is not null)
-                return new OverwriteWarning("name");
-
             if (Game.instance.IsCommand(name))
                 return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
             else if (Item.Find(name) is not null)
