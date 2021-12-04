@@ -74,7 +74,7 @@ namespace shift
             Display.WriteLine("SHIFT // Survival Horror Interactive Fiction Toolkit");
             Display.WriteLine("(c)2021 Joshua McLean, All Rights Reserved");
 
-            Display.WriteLine($"{DisplayName} by {author}\n");
+            Display.WriteLine($"{Name} by {author}\n");
             if (intro is not null)
                 Display.WriteLine($"\n{intro}\n");
 
@@ -121,7 +121,7 @@ namespace shift
 
         private void CommandCredits(string[] args)
         {
-            Display.WriteLine($"You are currently playing {DisplayName} by {author}.");
+            Display.WriteLine($"You are currently playing {Name} by {author}.");
         }
 
         private void CommandHelp(string[] args)
@@ -178,7 +178,7 @@ namespace shift
             if (Item.CurTarget is null)
                 return;
 
-            Display.WriteLine($"[Currently targeting: {Item.CurTarget.DisplayName}]");
+            Display.WriteLine($"[Currently targeting: {Item.CurTarget.Name}]");
         }
 
         private void CommandMove(string[] args)

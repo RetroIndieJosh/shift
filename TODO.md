@@ -21,8 +21,6 @@
 
 ## Current
 
-- warn for unrecognized key in script (wasn't this working before?)
-- remove `ScriptedEntity.DisplayName` in favor of `Name` (display does conversion of underscores)
 - variables checked as keywords (PLAYER, CURROOM, etc.) on naming
     - store a list of built-in variable names for lookup
 - update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate

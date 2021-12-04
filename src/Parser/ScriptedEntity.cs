@@ -17,12 +17,6 @@ namespace shift
                 : name.Value.Replace(' ', '_');
         }
 
-        // display name (double underscore becomes underscore, underscore becomes space)
-        public string DisplayName
-        {
-            get => Name;
-        }
-
         #region Script Fields
         private readonly ScriptField<string> name = new("name", 1);
         #endregion
@@ -68,19 +62,40 @@ namespace shift
             isLoaded = true;
         }
 
-        public static EntityType Find(string name)
-        {
-            return Find(name, store);
-        }
-
-        public static EntityType Find(string name, List<EntityType> list)
+        public static EntityType Find(string name, List<EntityType> list, int skip=0)
         {
             var matches = list.Where(e => e.Matches(name)).ToList();
             if (matches.Count == 0)
                 return null;
 
             // TODO disambiguation
-            return matches[0];
+            if (matches.Count <= skip)
+                return null;
+            return matches[skip];
+        }
+
+        public static EntityType Find(string name)
+        {
+            return Find(name, store);
+        }
+
+        public static EntityType FindExclude(string name, List<EntityType> ignoreList)
+        {
+            for (int skip = 0; ; ++skip)
+            {
+                var found = Find(name, store, skip);
+                if (!ignoreList.Contains(found))
+                    return found;
+                if (skip > 100000)
+                {
+                    throw new Exception("Infinite loop detected");
+                }
+            }
+        }
+
+        public static EntityType FindExclude(string name, EntityType ignore)
+        {
+            return FindExclude(name, new List<EntityType>() { ignore });
         }
 
         public bool Matches(string name)
@@ -90,7 +105,7 @@ namespace shift
 
         public override string ToString()
         {
-            return DisplayName;
+            return Name;
         }
 
         protected virtual void BindScriptKeys()
@@ -104,11 +119,22 @@ namespace shift
         protected Problem CheckName(string name)
         {
             if (Game.instance.IsCommand(name))
+            {
                 return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
-            else if (Item.Find(name) is not null)
+            }
+
+            if((this is Item && Item.FindExclude(name, this as Item) is not null)
+                || (this is not Item && Item.Find(name) is not null))
+            {
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
-            else if (Room.Find(name) is not null)
+            }
+
+            if((this is Room && Room.FindExclude(name, this as Room) is not null)
+                || (this is not Room && Room.Find(name) is not null))
+            {
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");
+            }
+
             return null;
         }
 

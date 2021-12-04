@@ -91,7 +91,7 @@ namespace shift
                 var varText = groups[0].Value;
                 if (StringComparer.OrdinalIgnoreCase.Equals(varName, "curroom"))
                 {
-                    text = text.Replace(varText, Game.instance.CurRoom.DisplayName);
+                    text = text.Replace(varText, Game.instance.CurRoom.Name);
                 }
                 else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "heldcount"))
                 {
@@ -99,7 +99,7 @@ namespace shift
                 }
                 else if (StringComparer.OrdinalIgnoreCase.Equals(varName, "targitem"))
                 {
-                    text = text.Replace(varText, $"{(Item.CurTarget?.DisplayName ?? "nothing")}");
+                    text = text.Replace(varText, $"{(Item.CurTarget?.Name ?? "nothing")}");
                 }
             }
             return text;
