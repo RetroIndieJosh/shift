@@ -1,4 +1,20 @@
-﻿using System;
+﻿// SHIFT - a cross-platform toolkit for streamlined, scripted text adventures
+// Copyright (C) 2022 Joshua D McLean
+//
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free Software
+// Foundation, either version 3 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+// details.
+//
+// You should have received a copy of the GNU General Public License along with
+// this program as LICENSE.txt. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,7 +28,7 @@ namespace shift
             var gamedir = $"{Directory.GetCurrentDirectory()}/game";
             var files = Directory.GetFiles(gamedir, "*.shift", SearchOption.AllDirectories);
             Console.WriteLine($"Files in {gamedir}:");
-            for(var i = 0; i < files.Length; i++)
+            for (var i = 0; i < files.Length; i++)
             {
                 var filename = files[i].Split('/', '\\').Last();
                 Console.WriteLine($"({i})\t{filename}");
@@ -28,7 +44,7 @@ namespace shift
                     return null;
                 }
 
-                if(!int.TryParse(input, out var index) || index < 0 || index >= files.Length)
+                if (!int.TryParse(input, out var index) || index < 0 || index >= files.Length)
                 {
                     Console.WriteLine("Please enter a valid index.");
                     continue;
@@ -40,6 +56,13 @@ namespace shift
 
         static void Main(string[] args)
         {
+
+            Console.WriteLine("SHIFT Copyright (C) 2022 Joshua D McLean");
+            Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY; for details type SHOW W.");
+            Console.Write("This is free software, and you are welcome to redistribute it under certain conditions; ");
+            Console.WriteLine("type SHOW C for details.");
+            Console.WriteLine();
+
             var filename = args.FirstOrDefault();
 
             if (filename is null)
@@ -48,7 +71,7 @@ namespace shift
                 filename = GetTargetFile();
             }
 
-            if(filename is null)
+            if (filename is null)
             {
                 return;
             }

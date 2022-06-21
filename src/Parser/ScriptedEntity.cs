@@ -1,4 +1,20 @@
-﻿using System;
+﻿// SHIFT - a cross-platform toolkit for streamlined, scripted text adventures
+// Copyright (C) 2022 Joshua D McLean
+//
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free Software
+// Foundation, either version 3 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+// details.
+//
+// You should have received a copy of the GNU General Public License along with
+// this program as LICENSE.txt. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -62,7 +78,7 @@ namespace shift
             isLoaded = true;
         }
 
-        public static EntityType Find(string name, List<EntityType> list, int skip=0)
+        public static EntityType Find(string name, List<EntityType> list, int skip = 0)
         {
             var matches = list.Where(e => e.Matches(name)).ToList();
             if (matches.Count == 0)
@@ -123,13 +139,13 @@ namespace shift
                 return new Problem(ProblemType.Error, $"Name clash: {name} is a command. Choose a different name.");
             }
 
-            if((this is Item && Item.FindExclude(name, this as Item) is not null)
+            if ((this is Item && Item.FindExclude(name, this as Item) is not null)
                 || (this is not Item && Item.Find(name) is not null))
             {
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing item. Choose a different name.");
             }
 
-            if((this is Room && Room.FindExclude(name, this as Room) is not null)
+            if ((this is Room && Room.FindExclude(name, this as Room) is not null)
                 || (this is not Room && Room.Find(name) is not null))
             {
                 return new Problem(ProblemType.Error, $"Name clash: {name} is an existing room. Choose a different name.");

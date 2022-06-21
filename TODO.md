@@ -25,6 +25,8 @@
     - store a list of built-in variable names for lookup
 - update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate
     - check that ScriptReference works correctly
+- add license text to each source file and license to program 
+    - print message at beginning and implement `show w` and `show c`
 
 ### Variables
 
@@ -132,6 +134,7 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Critical / Major
 
+- autocomplete doesn't work on linux ?!
 - parser/compiler object constructors should read only name
     - then parse vars
     - then parse everything else

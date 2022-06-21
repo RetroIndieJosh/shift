@@ -1,6 +1,6 @@
 # SHIFT / Survival Horror Interactive Fiction Tool
 
-(c)2021 Joshua McLean aka [Retro Indie Josh](https://retroindiejosh.itch.io)
+(c)2022 Joshua McLean aka [Retro Indie Josh](https://retroindiejosh.itch.io)
 
 Released under a permissive GPL v3 license. See LICENSE.txt for more information.
 
@@ -11,3 +11,4 @@ Although traditional IF commands are supported (`LOOK`, `EXAMINE`, and `USE`, al
 A developer specifies their game through a brief, readable, and writable scripting language also called SHIFT, with the `.shift` extension.
 
 See the [SHIFT Scripting Specification](doc/ShiftSpec.md) for more detailed information on scripting.
+
