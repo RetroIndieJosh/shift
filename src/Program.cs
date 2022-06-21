@@ -17,7 +17,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace shift
 {
@@ -57,10 +56,10 @@ namespace shift
         static void Main(string[] args)
         {
 
-            Console.WriteLine("SHIFT Copyright (C) 2022 Joshua D McLean");
-            Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY; for details type SHOW W.");
-            Console.Write("This is free software, and you are welcome to redistribute it under certain conditions; ");
-            Console.WriteLine("type SHOW C for details.");
+            Console.WriteLine("SHIFT Copyright (C) 2022 Joshua D McLean\n\n"
+                + "This program comes with ABSOLUTELY NO WARRANTY; for details type GNU.\n"
+                + "This is free software, and you are welcome to redistribute it under certain conditions; "
+                + "see the file LICENSE.txt for details.");
             Console.WriteLine();
 
             var filename = args.FirstOrDefault();

@@ -91,6 +91,8 @@ namespace shift
             }
         }
 
+        // TODO JM this method is too long
+        // TODO JM rename all TODO items with TODO JM
         public static Game CreateGame(string filename, bool verbose = false)
         {
             var game = new Game();
