@@ -24,8 +24,6 @@
 
 - clean up this file and migrate to freedcamp
   
-- can't pick up items in forest house, but can in built in var (is it related to the end of line comment?)
-- title is shown always as (null)
 - variables checked as keywords (PLAYER, CURROOM, etc.) on naming
   - store a list of built-in variable names for lookup
 - update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate
@@ -138,19 +136,16 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 
 ## Critical / Major
 
-- autocomplete doesn't work on linux ?!
 - parser/compiler object constructors should read only name
   - then parse vars
   - then parse everything else
   - this allows cross-referencing for object references and variables
-- implement --compile option to build `.shift` file into `.sb` binary file (string mangling + serilization)
+- --compile option to build `.shift` file into `.sb` binary file (string mangling + serilization)
   - still allow loading `.shift` scripts without compile step for testing (`.sb` is for release)
-- implement --verify option to check if valid `.shift` script
-- implement `ScriptReferenceList` for state lists
-- implement `ItemState` as a `ScriptableObject` so it can use `ScriptReference<ItemState>` to parse
-- automatic testing that runs through all scripts in `game/test` and asks if the test was passed on quit
-  - then print test results with pass/fail and percentage
-  - problem: intro description doesn't print on fail (could print in test mode?)
+- --verify option to check if valid `.shift` script
+- `ScriptReferenceList` for state lists
+- `ItemState` as a `ScriptableObject` so it can use `ScriptReference<ItemState>` to parse
+- automatic testing that runs through all scripts in `game/test` to ensure there are no parsing/scripting errors
 - disambiguate between held quantity and in-room quantity
   - i.e. player carries 7 bullets and room contains 4 bullets, what does "bullet" refer to? we must ask: "held bullets or  bullets in room?"
     - or by context: 
@@ -161,16 +156,12 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 - BUG: Display.Flush() might miss final newline when text ends on blank line
 - BUG: Display.Flush() counts incorrectly on write with multiple `\n`s (i.e. "three\nlines\nlong" counts as one line)
 - Game: use (inventory)
-- Items: aliases
 - Items: plurals
 - Text: messages based on state
-  
         - `[if item name = state]response[else if item name = other state]other response[else]yet another response[end]`
 - Text: messages based on location
-  
         - `[if in room name]response[else if in other room name]other response[else]yet another response[end]`
 - Text: messages based on held items
-  
         - `[if has item name]response[else if has other item name]other response[else]yet another response[end]`
 - Items: combine (inventory)
 
