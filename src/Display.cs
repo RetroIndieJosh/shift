@@ -29,8 +29,17 @@ namespace shift
         const string BackslashTag = "*&BACKSLASH^~";
         const string PageTag = "*&PAGEBREAK^~";
 
+        // TODO JM make not public
+        public static int LineDigits = 2;
+
+        // TODO make not public
+        public static bool VerboseMode = false;
+
         private static readonly Regex varRegex = new(@"\[([^]]*)\]", RegexOptions.Compiled);
         private static readonly List<string> commandHistory = new();
+
+        private static readonly List<string> errorMessages = new();
+        private static readonly List<string> warnMessages = new();
 
         private static string text = "";
         private static int historyIndex = 0;
@@ -121,6 +130,11 @@ namespace shift
             return text;
         }
 
+        public static void Error(string message, int line = 0)
+        {
+            errorMessages.Add($"{LineStr(line)}ERROR {message}");
+        }
+
         public static void Flush()
         {
             text = text
@@ -147,6 +161,37 @@ namespace shift
 
             text = "";
         }
+
+        public static void Log(string message, int line = 0)
+        {
+            if (VerboseMode)
+                Display.WriteLine($"{LineStr(line)}{message}");
+        }
+
+        public static void Warn(string message, int line = -1)
+        {
+            warnMessages.Add($"{LineStr(line)}WARNING {message}");
+        }
+
+        // returns whether any errors were detected
+        public static bool WriteProblems(string filename)
+        {
+            if (warnMessages.Count > 0)
+            {
+                WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
+                warnMessages.Sort();
+                warnMessages.ForEach(error => Display.WriteLine($"\t{error}"));
+            }
+
+            if (errorMessages.Count == 0)
+                return false;
+
+            Display.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
+            errorMessages.Sort();
+            errorMessages.ForEach(error => Display.WriteLine($"\t{error}"));
+            return true;
+        }
+
 
         public static ConsoleKeyInfo ReadKey(bool capture = false)
         {
@@ -240,6 +285,11 @@ namespace shift
             if (!string.IsNullOrEmpty(s))
                 Write(s, args);
             Write("\n");
+        }
+
+        private static string LineStr(int line)
+        {
+            return line > 0 ? $"[{line.ToString().PadLeft(LineDigits, '0')}] " : "[runtime] ";
         }
 
         private static void ClearLine()

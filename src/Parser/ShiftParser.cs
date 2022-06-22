@@ -31,38 +31,6 @@ namespace shift
 
         public static Room StartRoom;
 
-        // TODO move to Display
-        private static bool verboseMode = false;
-
-        private static readonly List<string> errorMessages = new();
-        private static readonly List<string> warnMessages = new();
-
-        private static int lineDigits = 2;
-
-        private static string LineStr(int line)
-        {
-            return line > 0 ? $"[{line.ToString().PadLeft(lineDigits, '0')}] " : "[runtime] ";
-        }
-
-        // TODO move to display?
-        public static void Error(string message, int line = 0)
-        {
-            errorMessages.Add($"{LineStr(line)}ERROR {message}");
-        }
-
-        // TODO move to display
-        public static void Log(string message, int line = 0)
-        {
-            if (verboseMode)
-                Display.WriteLine($"{LineStr(line)}{message}");
-        }
-
-        // TODO move to display?
-        public static void Warn(string message, int line = -1)
-        {
-            warnMessages.Add($"{LineStr(line)}WARNING {message}");
-        }
-
         private static Problem EndBlock(BlockType type, List<ScriptLine> lines)
         {
             switch (type)
@@ -106,10 +74,10 @@ namespace shift
                 return null;
             }
 
-            verboseMode = verbose;
+            Display.VerboseMode = verbose;
 
             var lineStrings = File.ReadAllLines(filename).ToList();
-            lineDigits = lineStrings.Count.ToString().Length;
+            Display.LineDigits = lineStrings.Count.ToString().Length;
 
             // TODO use this to filter lines (groups)?
             // syntax check
@@ -143,7 +111,7 @@ namespace shift
                 lines.Add(new ScriptLine(noCommentText, i + 1));
             }
             var removeCount = lines.RemoveAll(line => string.IsNullOrEmpty(line.Text));
-            Log($"Removed {removeCount} blank lines.", lines.Count);
+            Display.Log($"Removed {removeCount} blank lines.", lines.Count);
 
             var prevIndent = 0;
             var blockLines = new List<ScriptLine>();
@@ -156,14 +124,14 @@ namespace shift
                 {
                     if (blockLines.Count == 0)
                     {
-                        Error("Empty block ends here", line.LineNumber);
+                        Display.Error("Empty block ends here", line.LineNumber);
                         continue;
                     }
 
                     var problem = EndBlock(blockType, blockLines);
                     if (problem is not null)
                         problem.Report(line.LineNumber);
-                    Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
+                    Display.Log($"{blockLines[0].Text} defined in {blockLines.Count} lines", line.LineNumber);
                     blockType = BlockType.Game;
                     blockLines.Clear();
                 }
@@ -184,7 +152,7 @@ namespace shift
 
                 if (prevBlockType != BlockType.Game && prevBlockType != blockType)
                 {
-                    Error("Illegal nested indentation detected", line.LineNumber);
+                    Display.Error("Illegal nested indentation detected", line.LineNumber);
                     continue;
                 }
 
@@ -208,32 +176,13 @@ namespace shift
             }
 
             if (StartRoom is null)
-                Error("No start room defined.");
+                Display.Error("No start room defined.");
 
-            Log($"Game data defined in {gameLines.Count} lines", lines.Count);
-            if (WriteProblems(filename))
+            Display.Log($"Game data defined in {gameLines.Count} lines", lines.Count);
+            if (Display.WriteProblems(filename))
                 return null;
             game.LoadScript(gameLines, StartRoom);
             return game;
-        }
-
-        // returns whether any errors were detected
-        private static bool WriteProblems(string filename)
-        {
-            if (warnMessages.Count > 0)
-            {
-                Display.WriteLine($"Interpretation of `{filename}` resulted in the following {warnMessages.Count} warning(s):");
-                warnMessages.Sort();
-                warnMessages.ForEach(error => Display.WriteLine($"\t{error}"));
-            }
-
-            if (errorMessages.Count == 0)
-                return false;
-
-            Display.WriteLine($"Interpretation of `{filename}` halted due to {errorMessages.Count} error(s):");
-            errorMessages.Sort();
-            errorMessages.ForEach(error => Display.WriteLine($"\t{error}"));
-            return true;
         }
 
         public static List<string> Tokenize(string line)

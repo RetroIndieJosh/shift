@@ -41,9 +41,9 @@ namespace shift
         public void Report(int lineNumber = 0)
         {
             if (Type == ProblemType.Error)
-                ShiftParser.Error(Message, lineNumber);
+                Display.Error(Message, lineNumber);
             else if (Type == ProblemType.Warning)
-                ShiftParser.Warn(Message, lineNumber);
+                Display.Warn(Message, lineNumber);
         }
     }
 }

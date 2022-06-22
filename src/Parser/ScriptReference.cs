@@ -31,8 +31,10 @@ namespace shift
 
             Value = ScriptedEntity<RefType>.Find(args[0]);
             if (Value is null)
+            {
                 return new Problem(ProblemType.Error,
                     $"Parsing ScriptRef: No {typeof(RefType)} found by name {args[0]}.");
+            }
             return null;
         }
     }

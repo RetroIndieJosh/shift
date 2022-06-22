@@ -40,7 +40,7 @@ namespace shift
             var spaces = line.TakeWhile(c => c == ' ').Count();
             if (spaces % SpacesPerIndent != 0)
             {
-                ShiftParser.Error($"Invalid spacing: expected mult of 4, got {spaces}", number);
+                Display.Error($"Invalid spacing: expected mult of 4, got {spaces}", number);
                 return;
             }
 

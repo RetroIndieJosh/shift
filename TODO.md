@@ -28,7 +28,7 @@
   - store a list of built-in variable names for lookup
 - update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate
   - check that ScriptReference works correctly
-- implement `show w` and `show c` for license
+- better error system that doesn't rely on returns (some sort of error manager with statics methods?)
 
 ### Variables
 
