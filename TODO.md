@@ -24,7 +24,9 @@
 
 - clean up this file and migrate to freedcamp
   
-  variables checked as keywords (PLAYER, CURROOM, etc.) on naming
+- can't pick up items in forest house, but can in built in var (is it related to the end of line comment?)
+- title is shown always as (null)
+- variables checked as keywords (PLAYER, CURROOM, etc.) on naming
   - store a list of built-in variable names for lookup
 - update Item, Game, and Room to use ScriptFields and ScriptReferences where appropriate
   - check that ScriptReference works correctly
@@ -217,6 +219,7 @@ If `item1` or `item2` is an `itemtype`, this applies to COMBINE with any item of
 - Parser: flexible indentation
 - Parser: command scripting
 - Rooms: autokeys?
+- map generation (ASCII) based on paths
 
 ## Ideas
 

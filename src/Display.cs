@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+// TODO JM move warning, log, error, etc. to some sort of log class that also handles logging to file
 namespace shift
 {
     // A wrapper for the C# console to allow easy modification for other interfaces
