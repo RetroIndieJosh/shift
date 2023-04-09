@@ -18,3 +18,7 @@ See the [SHIFT Scripting Specification](doc/ShiftSpec.md) for more detailed info
 SHIFT applies Occam's Razor to interactive fiction. With a focus on site-based adventures and classic object-inventory puzzles, we want to minimize the required effort for the player and make it as close to a streamlined video game experience as possible. Rather than coming up with a verb, the user simply states the item they wish to interact with. In most cases, this interaction will be obvious in context. In the few instances where it's ambiguous, the player is presented a menu so they don't need to invent actions to take.
 
 This system is *not* meant for more narrative- or conversation-driven interactive fiction, or beautiful generated prose. It goes back to the basics of game implementation, allowing its use not only as a parser text game engine, but as a way to prototype similar video games such as the titual survival horror genre, steeped in a historical connection to point and click adventure games.
+
+## State of the Project
+
+As of April 2023, this project has been abandoned in favor of [RenPaC](https://github.com/RetroIndieJosh/renpac/) which operates on similar principles by using a simplified script language to create adventure games. Through RenPaC focuses currently on visual adventures, future editions may cycle back to including a text parser option modeled on SHIFT.
